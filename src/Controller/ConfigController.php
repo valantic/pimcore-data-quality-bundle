@@ -3,9 +3,11 @@
 namespace Valantic\DataQualityBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\External\AdminerController;
+use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validation;
 use Symfony\Component\Yaml\Yaml;
 use Valantic\DataQualityBundle\ValanticDataQualityBundle;
 
@@ -27,6 +29,7 @@ class ConfigController extends AdminerController
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
+
         $parsed = Yaml::parseFile(ValanticDataQualityBundle::getConfigFilePath());
         $entries = [];
         foreach ($parsed as $className => $attribute) {
@@ -47,5 +50,39 @@ class ConfigController extends AdminerController
         }
 
         return $this->json($entries);
+    }
+
+    /**
+     * @Route("/show/", options={"expose"=true})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function showAction(Request $request): JsonResponse
+    {
+        // check permissions
+        $this->checkPermission(self::CONFIG_NAME);
+
+        $obj = DataObject::getById($request->query->getInt('id'));
+        $config = Yaml::parseFile(ValanticDataQualityBundle::getConfigFilePath())[$obj->getClassName()];
+        $builder = Validation::createValidatorBuilder();
+        $validator = $builder->getValidator();
+        $attributes = [];
+        foreach ($config as $field => $rules) {
+            $constraints = [];
+            foreach ($rules as $constraintName => $args) {
+                $constraintClassName = 'Symfony\Component\Validator\Constraints\\' . $constraintName;
+                $constraints[] = new $constraintClassName(...([$args ?? null]));
+            }
+            $violations = $validator->validate($obj->get($field), $constraints);
+
+            $attributes[] = [
+                'attribute' => $field,
+                'score' => 1 - (count($violations) / count($rules)),
+            ];
+        }
+
+        return $this->json(['scores' => $attributes]);
     }
 }
