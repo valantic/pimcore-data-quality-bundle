@@ -9,6 +9,14 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    Valantic\DataQualityBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
     Valantic\DataQualityBundle\Command\:
         resource: '../../Command'
         tags: ['console.command']
