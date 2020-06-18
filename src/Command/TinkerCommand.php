@@ -46,7 +46,7 @@ class TinkerCommand extends AbstractCommand
             $violations = $validator->validate($obj->get($field), $constraints);
 
             $output->writeLn(count($violations) ? 'FAILED' : 'PASSED');
-            foreach ($violations as $violation){
+            foreach ($violations as $violation) {
                 dump($violation->getMessage());
             }
         }
