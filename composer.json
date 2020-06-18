@@ -1,0 +1,28 @@
+{
+    "name": "valantic-pimcore/data-quality-bundle",
+    "description": "Data quality score for Pimcore",
+    "type": "pimcore-bundle",
+    "require": {
+        "pimcore/pimcore": "^6.6",
+        "symfony/validator": "^4.4"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Linus Metzler",
+            "email": "linus.metzler@cec.valantic.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Valantic\\DataQualityBundle\\": "src/"
+        }
+    },
+    "extra": {
+        "pimcore": {
+            "bundles": [
+                "Valantic\\DataQualityBundle\\ValanticDataQualityBundle"
+            ]
+        }
+    }
+}
