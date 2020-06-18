@@ -23,7 +23,21 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
                 }
             }
         });
+    },
 
+    postOpenObject:function(object){
+        object.tabbar.add({
+            title: t('valantic_dataquality_pimcore_tab_name'),
+            tabConfig: {
+                tooltip: t('valantic_dataquality_pimcore_tab_name')
+            },
+            iconCls: 'pimcore_material_icon_info pimcore_material_icon',
+            handler: function (obj) {
+                // TODO: vendor/pimcore/pimcore/bundles/AdminBundle/Resources/public/js/pimcore/object/object.js
+                // TODO: vendor/pimcore/pimcore/bundles/AdminBundle/Resources/public/js/pimcore/object/versions.js
+            }.bind(this, object)
+        });
+        pimcore.layout.refresh();
     }
 });
 

@@ -1,4 +1,5 @@
 valantic_dataquality_pimcore_nav_menu_name: 'Data Quality'
+valantic_dataquality_pimcore_tab_name: 'Data Quality'
 valantic_dataquality_config_column_classname: 'Class name'
 valantic_dataquality_config_tooltip: 'Data Quality Config'
 valantic_dataquality_config_column_attribute: 'Attribute'
