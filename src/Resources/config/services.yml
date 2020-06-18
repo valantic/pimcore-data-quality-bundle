@@ -13,3 +13,8 @@ services:
         resource: '../../Command'
         tags: ['console.command']
 
+
+    Valantic\DataQualityBundle\Installer\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('ValanticDataQualityBundle')"

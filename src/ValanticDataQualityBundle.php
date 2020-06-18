@@ -18,4 +18,13 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
     {
         return 'valantic-pimcore/data-quality-bundle';
     }
+    /**
+     * {@inheritdoc}
+     *
+     * @return InstallerInterface|null
+     */
+    public function getInstaller()
+    {
+        return $this->container->get(Installer::class);
+    }
 }
