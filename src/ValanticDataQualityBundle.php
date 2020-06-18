@@ -18,6 +18,18 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
     {
         return 'valantic-pimcore/data-quality-bundle';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getJsPaths(): array
+    {
+        return [
+            '/bundles/valanticdataquality/js/pimcore/editor.js',
+            '/bundles/valanticdataquality/js/pimcore/startup.js',
+        ];
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -26,5 +38,10 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
     public function getInstaller()
     {
         return $this->container->get(Installer::class);
+    }
+
+    public static function getConfigFilePath(): string
+    {
+        return PIMCORE_CONFIGURATION_DIRECTORY.'/valantic_dataquality_config.yml';
     }
 }
