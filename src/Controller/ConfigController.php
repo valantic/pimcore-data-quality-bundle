@@ -83,6 +83,9 @@ class ConfigController extends AdminerController
             ];
         }
 
-        return $this->json(['scores' => $attributes]);
+        return $this->json([
+            'scores' => $attributes,
+            'score' => array_sum(array_column($attributes, 'score')) / count($attributes),
+        ]);
     }
 }
