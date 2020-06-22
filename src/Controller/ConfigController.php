@@ -196,4 +196,25 @@ class ConfigController extends BaseController
             ),
         ]);
     }
+
+    /**
+     * Delete a constraint for a class attribute from the config.
+     *
+     * @Route("/delete-constraint", options={"expose"=true}, methods={"DELETE"})
+     *
+     * @param Request $request
+     * @param ConfigWriter $config
+     *
+     * @return JsonResponse
+     */
+    public function deleteConstraintAction(Request $request, ConfigWriter $config): JsonResponse
+    {
+        return $this->json([
+            'status' => $config->deleteConstraint(
+                $request->request->get('classname'),
+                $request->request->get('attributename'),
+                $request->request->get('constraint')
+            ),
+        ]);
+    }
 }

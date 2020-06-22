@@ -123,7 +123,7 @@ valantic.dataquality.editor = Class.create({
                 },
                 listeners: {
                     rowclick: function (grid, record, tr, rowIndex, e, eOpts) {
-                        this.showDetail(rowIndex);
+                        this.showDetail(record);
                     }.bind(this),
                     cellcontextmenu: this.onMainContextmenu.bind(this),
                 }
@@ -185,11 +185,45 @@ valantic.dataquality.editor = Class.create({
         menu.showAt(e.pageX, e.pageY);
     },
 
-    showDetail: function (rowIndex) {
-        var rec = this.store.getAt(rowIndex);
+    onDetailContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+        var menu = new Ext.menu.Menu();
+        menu.add([{
+            text: t("delete"),
+            iconCls: "pimcore_icon_delete",
+            handler: function () {
+                Ext.Ajax.request({
+                    url: Routing.generate('valantic_dataquality_config_deleteconstraint'),
+                    method: "delete",
+                    params: {
+                        classname: this.record.get('classname'),
+                        attributename: this.record.get('attributename'),
+                        constraint: record.get('constraint'),
+                    },
+                    success: function (response, opts) {
+                        this.store.reload({
+                            callback: function (records, operation, success) {
+                                var updatedRecord = this.store.data.items
+                                    .filter(record => record.get('classname') === this.record.get('classname'))
+                                    .filter(record => record.get('attributename') === this.record.get('attributename'))
+                                    [0];
+
+                                this.showDetail(this.store.getById(updatedRecord.getId()));
+                            }.bind(this)
+                        });
+                    }.bind(this),
+                });
+
+            }.bind(this)
+        }]);
+
+        e.stopEvent();
+        menu.showAt(e.pageX, e.pageY);
+    },
+
+    showDetail: function (rec) {
         this.record = rec;
 
-        var keyValueStore = new Ext.data.Store({
+        var detailsStore = new Ext.data.Store({
             proxy: {
                 type: 'memory',
                 reader: {
@@ -198,12 +232,11 @@ valantic.dataquality.editor = Class.create({
                 }
             },
             autoDestroy: true,
-            data: rec.data,
-            fields: ['constraint', 'args']
+            data: rec.data
         });
 
-        var keyValueGrid = new Ext.grid.GridPanel({
-            store: keyValueStore,
+        var detailsGrid = new Ext.grid.GridPanel({
+            store: detailsStore,
             title: t("valantic_dataquality_config_details_for") + ' ' + rec.get('classname') + '.' + rec.get('attributename'),
             columns: [
                 {
@@ -227,6 +260,9 @@ valantic.dataquality.editor = Class.create({
             autoScroll: true,
             viewConfig: {
                 forceFit: true
+            },
+            listeners: {
+                cellcontextmenu: this.onDetailContextmenu.bind(this),
             }
         });
 
@@ -246,7 +282,7 @@ valantic.dataquality.editor = Class.create({
         if (this.detailView.getDockedItems().length === 0) {
             this.detailView.addDocked(detailTbar);
         }
-        this.detailView.add(keyValueGrid);
+        this.detailView.add(detailsGrid);
         this.detailView.updateLayout();
     },
 
@@ -406,8 +442,16 @@ valantic.dataquality.editor = Class.create({
                             attributename: this.record.get('attributename'),
                         },
                         success: function (response, opts) {
-                            this.store.reload(); // FIXME detailView not updated
-                            this.detailView.updateLayout();
+                            this.store.reload({
+                                callback: function (records, operation, success) {
+                                    var updatedRecord = this.store.data.items
+                                        .filter(record => record.get('classname') === this.record.get('classname'))
+                                        .filter(record => record.get('attributename') === this.record.get('attributename'))
+                                        [0];
+
+                                    this.showDetail(this.store.getById(updatedRecord.getId()));
+                                }.bind(this)
+                            });
                         }.bind(this),
                     });
 

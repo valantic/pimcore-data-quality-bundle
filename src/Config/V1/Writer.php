@@ -91,6 +91,30 @@ class Writer extends Config
     }
 
     /**
+     * Adds a new config entry for a class-attribute constraint if it does not yet exist.
+     *
+     * @param string $className
+     * @param string $attributeName
+     * @param string $constraint
+     * @return bool
+     */
+    public function deleteConstraint($className, $attributeName, $constraint): bool
+    {
+        if (!in_array($attributeName, $this->reader->getConfiguredClassAttributes($className), true)) {
+            return true;
+        }
+
+        $raw = $this->reader->getRaw();
+        if (!in_array($className, $this->reader->getConfiguredClasses(), true)) {
+            return true;
+        }
+
+        unset($raw[$className][$attributeName][$constraint]);
+
+        return $this->writeConfig($raw);
+    }
+
+    /**
      * Persists the new config to disk.
      * @param array $raw The new config.
      * @return bool
