@@ -9,7 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Yaml\Yaml;
+use Valantic\DataQualityBundle\Config\V1\Config;
 use Valantic\DataQualityBundle\ValanticDataQualityBundle;
+use Valantic\DataQualityBundle\Validation\ValidateObject;
 
 /**
  * @Route("/admin/valantic/data-quality")
@@ -22,29 +24,29 @@ class ConfigController extends AdminerController
      * @Route("/list", options={"expose"=true})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function listAction(Request $request): JsonResponse
+    public function listAction(Request $request, Config $config): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
-        $parsed = Yaml::parseFile(ValanticDataQualityBundle::getConfigFilePath());
         $entries = [];
-        foreach ($parsed as $className => $attribute) {
-            foreach ($attribute as $name => $rules) {
-                $r = [];
+        foreach ($config->getValidatableClasses() as $className) {
+            foreach ($config->getForClass($className) as $attribute => $rules) {
+                $transformedRules = [];
                 foreach ($rules as $constraint => $args) {
-                    $r[] = [
+                    $transformedRules[] = [
                         'constraint' => $constraint,
                         'args' => $args ? [$args] : null,
                     ];
                 }
                 $entries[] = [
                     'classname' => $className,
-                    'attribute' => $name,
-                    'rules' => $r,
+                    'attribute' => $attribute,
+                    'rules' => $transformedRules,
                 ];
             }
         }
@@ -56,36 +58,40 @@ class ConfigController extends AdminerController
      * @Route("/show/", options={"expose"=true})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
-    public function showAction(Request $request): JsonResponse
+    public function showAction(Request $request, Config $config): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
         $obj = DataObject::getById($request->query->getInt('id'));
-        $config = Yaml::parseFile(ValanticDataQualityBundle::getConfigFilePath())[$obj->getClassName()];
-        $builder = Validation::createValidatorBuilder();
-        $validator = $builder->getValidator();
-        $attributes = [];
-        foreach ($config as $field => $rules) {
-            $constraints = [];
-            foreach ($rules as $constraintName => $args) {
-                $constraintClassName = 'Symfony\Component\Validator\Constraints\\' . $constraintName;
-                $constraints[] = new $constraintClassName(...([$args ?? null]));
-            }
-            $violations = $validator->validate($obj->get($field), $constraints);
+        if(!$obj){
+            return $this->json([
+                'scores' => [],
+                'score' => -1,
+            ]);
+        }
 
-            $attributes[] = [
-                'attribute' => $field,
-                'score' => 1 - (count($violations) / count($rules)),
+        $validation = new ValidateObject($obj, $config);
+        $validation->validate();
+
+        $scores=[];
+        foreach ($validation->attributeScores() as $attribute=>$score){
+
+            $scores[] = [
+                'attribute' => $attribute,
+                'score' => $score,
             ];
         }
 
         return $this->json([
-            'scores' => $attributes,
-            'score' => array_sum(array_column($attributes, 'score')) / count($attributes),
+            'scores' => $scores,
+            'score' => $validation->score(),
         ]);
     }
 }

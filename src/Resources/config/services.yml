@@ -26,3 +26,6 @@ services:
         public: true
         arguments:
             $bundle: "@=service('kernel').getBundle('ValanticDataQualityBundle')"
+
+
+    Valantic\DataQualityBundle\Config\V1\Config: ~

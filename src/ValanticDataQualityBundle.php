@@ -40,9 +40,4 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
     {
         return $this->container->get(Installer::class);
     }
-
-    public static function getConfigFilePath(): string
-    {
-        return PIMCORE_CONFIGURATION_DIRECTORY.'/valantic_dataquality_config.yml';
-    }
 }
