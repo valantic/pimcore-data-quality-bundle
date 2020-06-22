@@ -3,7 +3,7 @@
 namespace Valantic\DataQualityBundle\Validation;
 
 use Pimcore\Model\DataObject\Concrete;
-use Valantic\DataQualityBundle\Config\V1\Config;
+use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
 
 class ValidateObject implements Validatable, Scorable
 {
@@ -18,7 +18,7 @@ class ValidateObject implements Validatable, Scorable
     protected $validationConfig;
 
     /**
-     * @var Config
+     * @var ConfigReader
      */
     protected $config;
 
@@ -31,9 +31,9 @@ class ValidateObject implements Validatable, Scorable
     /**
      * Validate an object and all its attributes.
      * @param Concrete $obj The object to validate.
-     * @param Config $config
+     * @param ConfigReader $config
      */
-    public function __construct(Concrete $obj, Config $config)
+    public function __construct(Concrete $obj, ConfigReader $config)
     {
         $this->obj = $obj;
         $this->validationConfig = $config->getForObject($obj);

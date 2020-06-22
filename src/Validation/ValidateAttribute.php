@@ -7,7 +7,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
-use Valantic\DataQualityBundle\Config\V1\Config;
+use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
 
 class ValidateAttribute implements Validatable, Scorable
 {
@@ -27,7 +27,7 @@ class ValidateAttribute implements Validatable, Scorable
     protected $attribute;
 
     /**
-     * @var Config
+     * @var ConfigReader
      */
     protected $config;
 
@@ -47,9 +47,9 @@ class ValidateAttribute implements Validatable, Scorable
      *
      * @param Concrete $obj Object to validate
      * @param string $attribute Attribute to validate
-     * @param Config $config
+     * @param ConfigReader $config
      */
-    public function __construct(Concrete $obj, string $attribute, Config $config)
+    public function __construct(Concrete $obj, string $attribute, ConfigReader $config)
     {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();

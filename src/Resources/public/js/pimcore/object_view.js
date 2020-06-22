@@ -30,7 +30,7 @@ valantic.dataquality.object_view = Class.create({
                     }],
                 proxy: {
                     type: 'ajax',
-                    url: Routing.generate('valantic_dataquality_config_show'),
+                    url: Routing.generate('valantic_dataquality_score_show'),
                     extraParams: {
                         id: this.object.id
                     },

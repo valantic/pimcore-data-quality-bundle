@@ -2,39 +2,37 @@
 
 namespace Valantic\DataQualityBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\Admin\External\AdminerController;
-use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Listing;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Yaml\Yaml;
-use Valantic\DataQualityBundle\Config\V1\Config;
-use Valantic\DataQualityBundle\ValanticDataQualityBundle;
-use Valantic\DataQualityBundle\Validation\ValidateObject;
+use Throwable;
+use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Config\V1\Writer as ConfigWriter;
 
 /**
- * @Route("/admin/valantic/data-quality")
+ * @Route("/admin/valantic/data-quality/config")
  */
-class ConfigController extends AdminerController
+class ConfigController extends BaseController
 {
-    public const CONFIG_NAME = 'plugin_valantic_dataquality_config';
-
     /**
+     * Returns the config for the admin editor.
+     *
      * @Route("/list", options={"expose"=true})
      *
      * @param Request $request
-     * @param Config $config
+     * @param ConfigReader $config
      *
      * @return JsonResponse
      */
-    public function listAction(Request $request, Config $config): JsonResponse
+    public function listAction(Request $request, ConfigReader $config): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
         $entries = [];
-        foreach ($config->getValidatableClasses() as $className) {
+        foreach ($config->getConfiguredClasses() as $className) {
             foreach ($config->getForClass($className) as $attribute => $rules) {
                 $transformedRules = [];
                 foreach ($rules as $constraint => $args) {
@@ -55,43 +53,80 @@ class ConfigController extends AdminerController
     }
 
     /**
-     * @Route("/show/", options={"expose"=true})
+     * Return a list of possible classes to configure.
+     *
+     * @Route("/classes", options={"expose"=true})
      *
      * @param Request $request
-     * @param Config $config
      *
      * @return JsonResponse
-     *
-     * @throws \Exception
      */
-    public function showAction(Request $request, Config $config): JsonResponse
+    public function classesAction(Request $request): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
-        $obj = DataObject::getById($request->query->getInt('id'));
-        if(!$obj){
-            return $this->json([
-                'scores' => [],
-                'score' => -1,
-            ]);
+        $classesList = new Listing();
+        $classesList->setOrderKey('name');
+        $classesList->setOrder('asc');
+        $classes = $classesList->load();
+
+        $classNames = [];
+        foreach (array_column($classes, 'name') as $name) {
+            $classNames[] = ['name' => $name];
         }
 
-        $validation = new ValidateObject($obj, $config);
-        $validation->validate();
+        return $this->json(['classes' => $classNames]);
+    }
 
-        $scores=[];
-        foreach ($validation->attributeScores() as $attribute=>$score){
+    /**
+     * Return a list of possible attributes to configure for a class (?classname=x).
+     *
+     * @Route("/attributes", options={"expose"=true})
+     *
+     * @param Request $request
+     * @param ConfigReader $config
+     *
+     * @return JsonResponse
+     */
+    public function attributesAction(Request $request, ConfigReader $config): JsonResponse
+    {
+        if (!$request->query->has('classname')) {
+            return $this->json(['attributes' => []]);
+        }
+        // check permissions
+        $this->checkPermission(self::CONFIG_NAME);
 
-            $scores[] = [
-                'attribute' => $attribute,
-                'score' => $score,
-            ];
+        try {
+            $definition = ClassDefinition::getByName($request->query->get('classname'));
+            $attributes = $definition->getFieldDefinitions();
+        } catch (Throwable $throwable) {
+            return $this->json(['attributes' => []]);
         }
 
+        $names = array_diff(array_keys($attributes), $config->getConfiguredClassAttributes($definition->getName()));
+
+        $attributeNames = [];
+        foreach ($names as $name) {
+            $attributeNames[] = ['name' => $name];
+        }
+
+        return $this->json(['attributes' => $attributeNames]);
+    }
+
+    /**
+     * Adds a new classname-attributename pair to the config.
+     *
+     * @Route("/add", options={"expose"=true}, methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function addAction(Request $request, ConfigWriter $config): JsonResponse
+    {
         return $this->json([
-            'scores' => $scores,
-            'score' => $validation->score(),
+            'status' => $config->addClassAttribute($request->request->get('classname'), $request->request->get('attributename')),
         ]);
     }
 }
