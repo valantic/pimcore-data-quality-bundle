@@ -34,7 +34,6 @@ valantic.dataquality.object_view = Class.create({
                     extraParams: {
                         id: this.object.id
                     },
-                    // Reader is now on the proxy, as the message was explaining
                     reader: {
                         type: 'json',
                         rootProperty: 'scores'

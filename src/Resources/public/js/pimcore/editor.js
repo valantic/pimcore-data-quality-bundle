@@ -27,7 +27,20 @@ valantic.dataquality.editor = Class.create({
                 Routing.generate('valantic_dataquality_config_list'),
                 ['classname', 'attribute', 'rules'],
                 itemsPerPage,
-                {autoLoad: true, remoteFilter: false}
+                {
+                    autoLoad: true,
+                    remoteFilter: false,
+                    sorters: [
+                        {
+                            property: 'classname',
+                            direction: 'ASC'
+                        },
+                        {
+                            property: 'attributename',
+                            direction: 'ASC',
+                        },
+                    ]
+                }
             );
 
             this.filterField = new Ext.form.TextField({
@@ -82,9 +95,9 @@ valantic.dataquality.editor = Class.create({
                     renderer: Ext.util.Format.htmlEncode
                 },
                 {
-                    text: t('valantic_dataquality_config_column_attribute'),
+                    text: t('valantic_dataquality_config_column_attributename'),
                     sortable: true,
-                    dataIndex: 'attribute',
+                    dataIndex: 'attributename',
                     filter: 'string',
                     flex: 200,
                     renderer: Ext.util.Format.htmlEncode
@@ -165,7 +178,7 @@ valantic.dataquality.editor = Class.create({
 
         var keyValueGrid = new Ext.grid.GridPanel({
             store: keyValueStore,
-            title: t("valantic_dataquality_config_details_for") + ' ' + rec.get('classname') + '.' + rec.get('attribute'),
+            title: t("valantic_dataquality_config_details_for") + ' ' + rec.get('classname') + '.' + rec.get('attributename'),
             columns: [
                 {
                     text: t("valantic_dataquality_config_column_constraint"),
@@ -247,7 +260,7 @@ valantic.dataquality.editor = Class.create({
 
         var attributenameCombo = new Ext.form.field.ComboBox({
             xtype: "combo",
-            fieldLabel: t('valantic_dataquality_config_column_attribute'),
+            fieldLabel: t('valantic_dataquality_config_column_attributename'),
             name: "attributename",
             editable: true,
             displayField: 'name',

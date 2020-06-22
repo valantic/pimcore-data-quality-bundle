@@ -43,7 +43,7 @@ class ConfigController extends BaseController
                 }
                 $entries[] = [
                     'classname' => $className,
-                    'attribute' => $attribute,
+                    'attributename' => $attribute,
                     'rules' => $transformedRules,
                 ];
             }
