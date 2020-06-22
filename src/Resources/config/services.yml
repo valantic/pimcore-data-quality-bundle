@@ -31,3 +31,5 @@ services:
     Valantic\DataQualityBundle\Config\V1\Reader: ~
 
     Valantic\DataQualityBundle\Config\V1\Writer: ~
+
+    Valantic\DataQualityBundle\Validation\Definitions: ~

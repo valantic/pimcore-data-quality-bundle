@@ -51,6 +51,7 @@ valantic.dataquality.editor = Class.create({
                 listeners: {
                     "keydown": function (field, key) {
                         if (key.getKey() == key.ENTER) {
+                            // TODO: missing server-side
                             var input = field;
                             var proxy = this.store.getProxy();
                             proxy.extraParams.filterText = input.getValue();
@@ -67,7 +68,7 @@ valantic.dataquality.editor = Class.create({
             var tbarItems = [
                 {
                     text: t('add'),
-                    handler: this.onAdd.bind(this),
+                    handler: this.onAddMain.bind(this),
                     iconCls: "pimcore_icon_add"
                 },
                 "->",
@@ -122,12 +123,8 @@ valantic.dataquality.editor = Class.create({
                 },
                 listeners: {
                     rowclick: function (grid, record, tr, rowIndex, e, eOpts) {
-                        this.showDetail(grid, rowIndex, tr, rowIndex);
+                        this.showDetail(rowIndex);
                     }.bind(this),
-                    beforerender: function () {
-                        this.store.setRemoteFilter(true);
-                    }.bind(this)
-
                 }
             });
 
@@ -160,8 +157,9 @@ valantic.dataquality.editor = Class.create({
         return this.layout;
     },
 
-    showDetail: function (grid, record, tr, rowIndex, e, eOpts) {
+    showDetail: function (rowIndex) {
         var rec = this.store.getAt(rowIndex);
+        this.record = rec;
 
         var keyValueStore = new Ext.data.Store({
             proxy: {
@@ -187,7 +185,10 @@ valantic.dataquality.editor = Class.create({
                     flex: 60
                 },
                 {
-                    text: t("valantic_dataquality_config_column_args"), sortable: true, dataIndex: 'args', flex: 30,
+                    text: t("valantic_dataquality_config_column_parameters"),
+                    sortable: true,
+                    dataIndex: 'args',
+                    flex: 30,
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return value ? JSON.stringify(value) : '';
                     }
@@ -201,13 +202,27 @@ valantic.dataquality.editor = Class.create({
             }
         });
 
+
+        var detailTbar = Ext.create('Ext.Toolbar', {
+            cls: 'pimcore_main_toolbar',
+            items: [
+                {
+                    text: t('add'),
+                    handler: this.onAddDetail.bind(this),
+                    iconCls: "pimcore_icon_add"
+                }
+            ]
+        });
+
         this.detailView.removeAll();
+        if (this.detailView.getDockedItems().length === 0) {
+            this.detailView.addDocked(detailTbar);
+        }
         this.detailView.add(keyValueGrid);
         this.detailView.updateLayout();
     },
 
-    onAdd: function () {
-
+    onAddMain: function () {
         var classesStore = new Ext.data.Store({
             fields: ["name"],
             proxy: {
@@ -276,7 +291,7 @@ valantic.dataquality.editor = Class.create({
             items: [classnameCombo, attributenameCombo]
         });
 
-        var addWin = new Ext.Window({
+        var addMainWin = new Ext.Window({
             modal: true,
             width: 300,
             height: 200,
@@ -294,12 +309,81 @@ valantic.dataquality.editor = Class.create({
                         params: values
                     });
 
-                    addWin.close();
+                    addMainWin.close();
                     this.store.reload();
                 }.bind(this)
             }]
         });
 
-        addWin.show();
+        addMainWin.show();
+    },
+    onAddDetail: function () {
+        var constraintsStore = new Ext.data.Store({
+            fields: ["name"],
+            proxy: {
+                type: 'ajax',
+                url: Routing.generate('valantic_dataquality_config_constraints'),
+                reader: {
+                    type: 'json',
+                    rootProperty: 'constraints'
+                }
+            }
+        });
+
+        var formPanel = new Ext.form.FormPanel({
+            bodyStyle: "padding:10px;",
+            items: [
+                {
+                    xtype: "combo",
+                    fieldLabel: t('valantic_dataquality_config_column_constraint'),
+                    name: "constraint",
+                    editable: true,
+                    displayField: 'name',
+                    valueField: 'name',
+                    store: constraintsStore,
+                    mode: "local",
+                    triggerAction: "all",
+                    width: 400,
+                },
+                {
+                    xtype: "textareafield",
+                    fieldLabel: t('valantic_dataquality_config_column_parameters'),
+                    name: "params",
+                    editable: true,
+                    width: 400,
+                    height: 200,
+                }
+            ]
+        });
+
+        var addDetailWin = new Ext.Window({
+            modal: true,
+            width: 450,
+            height: 350,
+            closable: true,
+            items: [formPanel],
+            buttons: [{
+                text: t("save"),
+                iconCls: "pimcore_icon_accept",
+                handler: function () {
+                    var values = formPanel.getForm().getFieldValues();
+                    Ext.Ajax.request({
+                        url: Routing.generate('valantic_dataquality_config_addconstraint'),
+                        method: "post",
+                        params: {
+                            ...values,
+                            classname: this.record.get('classname'),
+                            attributename: this.record.get('attributename'),
+                        }
+                    });
+
+                    addDetailWin.close();
+                    this.store.reload(); // FIXME detailView not updated
+                    this.detailView.updateLayout();
+                }.bind(this)
+            }]
+        });
+
+        addDetailWin.show();
     },
 });

@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Config\V1\Writer as ConfigWriter;
+use Valantic\DataQualityBundle\Validation\Definitions;
 
 /**
  * @Route("/admin/valantic/data-quality/config")
@@ -26,7 +27,7 @@ class ConfigController extends BaseController
      *
      * @return JsonResponse
      */
-    public function listAction(Request $request, ConfigReader $config): JsonResponse
+    public function listAction(ConfigReader $config): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
@@ -61,7 +62,7 @@ class ConfigController extends BaseController
      *
      * @return JsonResponse
      */
-    public function classesAction(Request $request): JsonResponse
+    public function classesAction(): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
@@ -120,13 +121,59 @@ class ConfigController extends BaseController
      * @Route("/add", options={"expose"=true}, methods={"POST"})
      *
      * @param Request $request
+     * @param ConfigWriter $config
      *
      * @return JsonResponse
      */
     public function addAction(Request $request, ConfigWriter $config): JsonResponse
     {
         return $this->json([
-            'status' => $config->addClassAttribute($request->request->get('classname'), $request->request->get('attributename')),
+            'status' => $config->addClassAttribute(
+                $request->request->get('classname'),
+                $request->request->get('attributename')
+            ),
+        ]);
+    }
+
+    /**
+     * Returns a list of possible constraints.
+     *
+     * @Route("/constraints", options={"expose"=true})
+     *
+     * @param Definitions $definitions
+     *
+     * @return JsonResponse
+     */
+    public function constraintsAction(Definitions $definitions): JsonResponse
+    {
+        $symfonyNames = $definitions->symfony();
+        $constraints = [];
+        foreach ($symfonyNames as $name) {
+            $constraints[] = ['name' => $name];
+        }
+
+        return $this->json(['constraints' => $constraints]);
+    }
+
+    /**
+     * Adds a new constraint for a class attribute to the config.
+     *
+     * @Route("/add-constraint", options={"expose"=true}, methods={"POST"})
+     *
+     * @param Request $request
+     * @param ConfigWriter $config
+     *
+     * @return JsonResponse
+     */
+    public function addConstraintAction(Request $request, ConfigWriter $config): JsonResponse
+    {
+        return $this->json([
+            'status' => $config->addConstraint(
+                $request->request->get('classname'),
+                $request->request->get('attributename'),
+                $request->request->get('constraint'),
+                $request->request->get('params')
+            ),
         ]);
     }
 }
