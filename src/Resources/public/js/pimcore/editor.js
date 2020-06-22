@@ -125,6 +125,7 @@ valantic.dataquality.editor = Class.create({
                     rowclick: function (grid, record, tr, rowIndex, e, eOpts) {
                         this.showDetail(rowIndex);
                     }.bind(this),
+                    cellcontextmenu: this.onMainContextmenu.bind(this),
                 }
             });
 
@@ -155,6 +156,33 @@ valantic.dataquality.editor = Class.create({
         }
 
         return this.layout;
+    },
+
+    onMainContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+        var rec = this.store.getAt(rowIndex);
+
+        var menu = new Ext.menu.Menu();
+        menu.add([{
+            text: t("delete"),
+            iconCls: "pimcore_icon_delete",
+            handler: function () {
+                Ext.Ajax.request({
+                    url: Routing.generate('valantic_dataquality_config_delete'),
+                    method: "delete",
+                    params: {
+                        classname: rec.get('classname'),
+                        attributename: rec.get('attributename'),
+                    },
+                    success: function (response, opts) {
+                        this.store.reload();
+                    }.bind(this),
+                });
+
+            }.bind(this)
+        }]);
+
+        e.stopEvent();
+        menu.showAt(e.pageX, e.pageY);
     },
 
     showDetail: function (rowIndex) {
@@ -306,11 +334,13 @@ valantic.dataquality.editor = Class.create({
                     Ext.Ajax.request({
                         url: Routing.generate('valantic_dataquality_config_add'),
                         method: "post",
-                        params: values
+                        params: values,
+                        success: function (response, opts) {
+                            this.store.reload();
+                        }.bind(this),
                     });
 
                     addMainWin.close();
-                    this.store.reload();
                 }.bind(this)
             }]
         });
@@ -374,12 +404,14 @@ valantic.dataquality.editor = Class.create({
                             ...values,
                             classname: this.record.get('classname'),
                             attributename: this.record.get('attributename'),
-                        }
+                        },
+                        success: function (response, opts) {
+                            this.store.reload(); // FIXME detailView not updated
+                            this.detailView.updateLayout();
+                        }.bind(this),
                     });
 
                     addDetailWin.close();
-                    this.store.reload(); // FIXME detailView not updated
-                    this.detailView.updateLayout();
                 }.bind(this)
             }]
         });

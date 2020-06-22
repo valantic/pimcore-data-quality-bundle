@@ -136,6 +136,26 @@ class ConfigController extends BaseController
     }
 
     /**
+     * Deletes a classname-attributename pair from the config.
+     *
+     * @Route("/delete", options={"expose"=true}, methods={"DELETE"})
+     *
+     * @param Request $request
+     * @param ConfigWriter $config
+     *
+     * @return JsonResponse
+     */
+    public function deleteAction(Request $request, ConfigWriter $config): JsonResponse
+    {
+        return $this->json([
+            'status' => $config->removeClassAttribute(
+                $request->request->get('classname'),
+                $request->request->get('attributename')
+            ),
+        ]);
+    }
+
+    /**
      * Returns a list of possible constraints.
      *
      * @Route("/constraints", options={"expose"=true})

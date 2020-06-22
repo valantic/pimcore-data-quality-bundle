@@ -43,6 +43,29 @@ class Writer extends Config
         return $this->writeConfig($raw);
     }
 
+
+    /**
+     * Adds a new config entry for a class-attribute combination if it does not yet exist.
+     *
+     * @param string $className
+     * @param string $attributeName
+     * @return bool
+     */
+    public function removeClassAttribute(string $className, string $attributeName): bool
+    {
+        if (!in_array($attributeName, $this->reader->getConfiguredClassAttributes($className), true)) {
+            return true;
+        }
+
+        $raw = $this->reader->getRaw();
+        if (!in_array($className, $this->reader->getConfiguredClasses(), true)) {
+            return true;
+        }
+        unset($raw[$className][$attributeName]);
+
+        return $this->writeConfig($raw);
+    }
+
     /**
      * Adds a new config entry for a class-attribute constraint if it does not yet exist.
      *
