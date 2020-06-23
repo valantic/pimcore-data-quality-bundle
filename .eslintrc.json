@@ -14,10 +14,8 @@
       4
     ],
     "quotes": ["error", "single"],
-    "no-var": "off",
     "object-shorthand": "off",
     "func-names": "off",
-    "vars-on-top": "off",
     "prefer-arrow-callback": "off",
     "new-cap": "off"
   },

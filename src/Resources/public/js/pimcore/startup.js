@@ -32,4 +32,4 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
 });
 
 // eslint-disable-next-line no-unused-vars
-var ValanticDataQualityBundlePlugin = new pimcore.plugin.ValanticDataQualityBundle();
+const ValanticDataQualityBundlePlugin = new pimcore.plugin.ValanticDataQualityBundle();

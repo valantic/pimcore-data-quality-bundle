@@ -7,7 +7,7 @@ valantic.dataquality.object_view = Class.create({
 
     getLayout: function () {
         if (this.layout == null) {
-            var modelName = 'pvalantic.dataquality.report';
+            const modelName = 'pvalantic.dataquality.report';
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                     extend: 'Ext.data.Model',
@@ -40,7 +40,7 @@ valantic.dataquality.object_view = Class.create({
                 },
             });
 
-            var grid = Ext.create('Ext.grid.Panel', {
+            const grid = Ext.create('Ext.grid.Panel', {
                 store: this.store,
                 columns: [
                     {

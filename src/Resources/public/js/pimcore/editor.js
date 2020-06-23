@@ -3,7 +3,7 @@ valantic.dataquality.editor = Class.create({
 
     // eslint-disable-next-line no-unused-vars
     initialize: function (element, type) {
-        var tabPanel = Ext.getCmp('pimcore_panel_tabs');
+        const tabPanel = Ext.getCmp('pimcore_panel_tabs');
         tabPanel.add(this.getLayout());
         tabPanel.setActiveTab(this.getLayout());
 
@@ -15,13 +15,13 @@ valantic.dataquality.editor = Class.create({
     },
 
     activate: function () {
-        var tabPanel = Ext.getCmp('pimcore_panel_tabs');
+        const tabPanel = Ext.getCmp('pimcore_panel_tabs');
         tabPanel.activate(this.getLayout());
     },
 
     getLayout: function () {
         if (this.layout == null) {
-            var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
+            const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('valantic_dataquality_config_list'),
                 ['classname', 'attribute', 'rules'],
@@ -51,8 +51,8 @@ valantic.dataquality.editor = Class.create({
                     keydown: function (field, key) {
                         if (key.getKey() === key.ENTER) {
                             // TODO: missing server-side
-                            var input = field;
-                            var proxy = this.store.getProxy();
+                            const input = field;
+                            const proxy = this.store.getProxy();
                             proxy.extraParams.filterText = input.getValue();
 
                             this.store.load();
@@ -63,7 +63,7 @@ valantic.dataquality.editor = Class.create({
 
             this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
-            var tbarItems = [
+            const tbarItems = [
                 {
                     text: t('add'),
                     handler: this.onAddMain.bind(this),
@@ -78,12 +78,12 @@ valantic.dataquality.editor = Class.create({
                 this.filterField,
             ];
 
-            var tbar = Ext.create('Ext.Toolbar', {
+            const tbar = Ext.create('Ext.Toolbar', {
                 cls: 'pimcore_main_toolbar',
                 items: tbarItems,
             });
 
-            var columns = [
+            const columns = [
                 {
                     text: 'ID', sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60,
                 },
@@ -105,7 +105,7 @@ valantic.dataquality.editor = Class.create({
                 },
             ];
 
-            var plugins = ['pimcore.gridfilters'];
+            const plugins = ['pimcore.gridfilters'];
 
             this.grid = new Ext.grid.GridPanel({
                 store: this.store,
@@ -138,7 +138,7 @@ valantic.dataquality.editor = Class.create({
                 layout: 'fit',
             });
 
-            var layoutConf = {
+            const layoutConf = {
                 tabConfig: {
                     tooltip: t('valantic_dataquality_config_tooltip'),
                 },
@@ -161,9 +161,9 @@ valantic.dataquality.editor = Class.create({
 
     // eslint-disable-next-line no-unused-vars
     onMainContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-        var rec = this.store.getAt(rowIndex);
+        const rec = this.store.getAt(rowIndex);
 
-        var menu = new Ext.menu.Menu();
+        const menu = new Ext.menu.Menu();
         menu.add([{
             text: t('delete'),
             iconCls: 'pimcore_icon_delete',
@@ -189,7 +189,7 @@ valantic.dataquality.editor = Class.create({
 
     // eslint-disable-next-line no-unused-vars
     onDetailContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-        var menu = new Ext.menu.Menu();
+        const menu = new Ext.menu.Menu();
         menu.add([{
             text: t('delete'),
             iconCls: 'pimcore_icon_delete',
@@ -207,7 +207,7 @@ valantic.dataquality.editor = Class.create({
                         this.store.reload({
                             // eslint-disable-next-line no-unused-vars
                             callback: function (records, operation, success) {
-                                var updatedRecord = this.store.data.items
+                                const updatedRecord = this.store.data.items
                                     .filter((r) => r.get('classname') === this.record.get('classname'))
                                     .filter((r) => r.get('attributename') === this.record.get('attributename'))[0];
 
@@ -226,7 +226,7 @@ valantic.dataquality.editor = Class.create({
     showDetail: function (rec) {
         this.record = rec;
 
-        var detailsStore = new Ext.data.Store({
+        const detailsStore = new Ext.data.Store({
             proxy: {
                 type: 'memory',
                 reader: {
@@ -238,7 +238,7 @@ valantic.dataquality.editor = Class.create({
             data: rec.data,
         });
 
-        var detailsGrid = new Ext.grid.GridPanel({
+        const detailsGrid = new Ext.grid.GridPanel({
             store: detailsStore,
             title: `${t('valantic_dataquality_config_details_for')} ${rec.get('classname')}.${rec.get('attributename')}`,
             columns: [
@@ -270,7 +270,7 @@ valantic.dataquality.editor = Class.create({
             },
         });
 
-        var detailTbar = Ext.create('Ext.Toolbar', {
+        const detailTbar = Ext.create('Ext.Toolbar', {
             cls: 'pimcore_main_toolbar',
             items: [
                 {
@@ -290,7 +290,7 @@ valantic.dataquality.editor = Class.create({
     },
 
     onAddMain: function () {
-        var classesStore = new Ext.data.Store({
+        const classesStore = new Ext.data.Store({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
@@ -302,7 +302,7 @@ valantic.dataquality.editor = Class.create({
             },
         });
 
-        var attributesStore = new Ext.data.Store({
+        const attributesStore = new Ext.data.Store({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
@@ -317,7 +317,7 @@ valantic.dataquality.editor = Class.create({
             },
         });
 
-        var attributenameCombo = new Ext.form.field.ComboBox({
+        const attributenameCombo = new Ext.form.field.ComboBox({
             xtype: 'combo',
             fieldLabel: t('valantic_dataquality_config_column_attributename'),
             name: 'attributename',
@@ -330,7 +330,7 @@ valantic.dataquality.editor = Class.create({
             width: 250,
         });
 
-        var classnameCombo = {
+        const classnameCombo = {
             xtype: 'combo',
             fieldLabel: t('valantic_dataquality_config_column_classname'),
             name: 'classname',
@@ -344,7 +344,7 @@ valantic.dataquality.editor = Class.create({
             listeners: {
                 // eslint-disable-next-line no-unused-vars
                 select: function (combo, value, index) {
-                    var classname = combo.getValue();
+                    const classname = combo.getValue();
                     attributesStore.getProxy().setExtraParams({
                         classname: classname,
                     });
@@ -354,12 +354,12 @@ valantic.dataquality.editor = Class.create({
             },
         };
 
-        var formPanel = new Ext.form.FormPanel({
+        const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
             items: [classnameCombo, attributenameCombo],
         });
 
-        var addMainWin = new Ext.Window({
+        const addMainWin = new Ext.Window({
             modal: true,
             width: 300,
             height: 200,
@@ -369,7 +369,7 @@ valantic.dataquality.editor = Class.create({
                 text: t('save'),
                 iconCls: 'pimcore_icon_accept',
                 handler: function () {
-                    var values = formPanel.getForm().getFieldValues();
+                    const values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
                         url: Routing.generate('valantic_dataquality_config_add'),
@@ -389,7 +389,7 @@ valantic.dataquality.editor = Class.create({
         addMainWin.show();
     },
     onAddDetail: function () {
-        var constraintsStore = new Ext.data.Store({
+        const constraintsStore = new Ext.data.Store({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
@@ -401,7 +401,7 @@ valantic.dataquality.editor = Class.create({
             },
         });
 
-        var formPanel = new Ext.form.FormPanel({
+        const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
             items: [
                 {
@@ -427,7 +427,7 @@ valantic.dataquality.editor = Class.create({
             ],
         });
 
-        var addDetailWin = new Ext.Window({
+        const addDetailWin = new Ext.Window({
             modal: true,
             width: 450,
             height: 350,
@@ -437,7 +437,7 @@ valantic.dataquality.editor = Class.create({
                 text: t('save'),
                 iconCls: 'pimcore_icon_accept',
                 handler: function () {
-                    var values = formPanel.getForm().getFieldValues();
+                    const values = formPanel.getForm().getFieldValues();
                     Ext.Ajax.request({
                         url: Routing.generate('valantic_dataquality_config_addconstraint'),
                         method: 'post',
@@ -451,7 +451,7 @@ valantic.dataquality.editor = Class.create({
                             this.store.reload({
                                 // eslint-disable-next-line no-unused-vars
                                 callback: function (records, operation, success) {
-                                    var updatedRecord = this.store.data.items
+                                    const updatedRecord = this.store.data.items
                                         .filter((record) => record.get('classname') === this.record.get('classname'))
                                         .filter((record) => record.get('attributename') === this.record.get('attributename'))[0];
 
