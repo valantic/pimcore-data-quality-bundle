@@ -48,9 +48,8 @@ valantic.dataquality.editor = Class.create({
                 style: 'margin: 0 10px 0 0;',
                 enableKeyEvents: true,
                 listeners: {
-                    keydown: function (field, key) {
-                        if (key.getKey() === key.ENTER) {
-                            // TODO: missing server-side
+                    keyup: function (field, key) {
+                        if (key.getKey() === key.ENTER || field.getValue().length === 0) {
                             const input = field;
                             const proxy = this.store.getProxy();
                             proxy.extraParams.filterText = input.getValue();

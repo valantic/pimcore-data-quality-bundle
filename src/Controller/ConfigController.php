@@ -27,10 +27,12 @@ class ConfigController extends BaseController
      *
      * @return JsonResponse
      */
-    public function listAction(ConfigReader $config): JsonResponse
+    public function listAction(Request $request, ConfigReader $config): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
+
+        $filter = $request->get('filterText');
 
         $entries = [];
         foreach ($config->getConfiguredClasses() as $className) {
@@ -41,6 +43,11 @@ class ConfigController extends BaseController
                         'constraint' => $constraint,
                         'args' => $args ? [$args] : null,
                     ];
+                }
+                if($filter){
+                    if(stripos($className, $filter) === false && stripos($attribute, $filter)===false){
+                        continue;
+                    }
                 }
                 $entries[] = [
                     'classname' => $className,
