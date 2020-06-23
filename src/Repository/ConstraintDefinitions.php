@@ -2,12 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Validation;
 
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Validation;
-
-class Definitions
+class ConstraintDefinitions
 {
     public function symfony()
     {

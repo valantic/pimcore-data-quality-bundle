@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Config\V1\Writer as ConfigWriter;
-use Valantic\DataQualityBundle\Validation\Definitions;
+use Valantic\DataQualityBundle\Validation\ConstraintDefinitions;
 
 /**
  * @Route("/admin/valantic/data-quality/config")
@@ -167,11 +167,11 @@ class ConfigController extends BaseController
      *
      * @Route("/constraints", options={"expose"=true}, methods={"GET"})
      *
-     * @param Definitions $definitions
+     * @param ConstraintDefinitions $definitions
      *
      * @return JsonResponse
      */
-    public function listConstraintsAction(Definitions $definitions): JsonResponse
+    public function listConstraintsAction(ConstraintDefinitions $definitions): JsonResponse
     {
         $symfonyNames = $definitions->symfony();
         $constraints = [];
