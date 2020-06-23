@@ -3,7 +3,7 @@
 namespace Valantic\DataQualityBundle\Controller;
 
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\ClassDefinition\Listing;
+use Pimcore\Model\DataObject\ClassDefinition\Listing as ClassDefinitionListing;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,7 +20,7 @@ class ConfigController extends BaseController
     /**
      * Returns the config for the admin editor.
      *
-     * @Route("/list", options={"expose"=true})
+     * @Route("/list", options={"expose"=true}, methods={"GET", "POST"})
      *
      * @param Request $request
      * @param ConfigReader $config
@@ -63,18 +63,18 @@ class ConfigController extends BaseController
     /**
      * Return a list of possible classes to configure.
      *
-     * @Route("/classes", options={"expose"=true})
+     * @Route("/classes", options={"expose"=true}, methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function classesAction(): JsonResponse
+    public function listClassesAction(): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
-        $classesList = new Listing();
+        $classesList = new ClassDefinitionListing();
         $classesList->setOrderKey('name');
         $classesList->setOrder('asc');
         $classes = $classesList->load();
@@ -90,14 +90,14 @@ class ConfigController extends BaseController
     /**
      * Return a list of possible attributes to configure for a class (?classname=x).
      *
-     * @Route("/attributes", options={"expose"=true})
+     * @Route("/attributes", options={"expose"=true}, methods={"GET"})
      *
      * @param Request $request
      * @param ConfigReader $config
      *
      * @return JsonResponse
      */
-    public function attributesAction(Request $request, ConfigReader $config): JsonResponse
+    public function listAttributesAction(Request $request, ConfigReader $config): JsonResponse
     {
         if (!$request->query->has('classname')) {
             return $this->json(['attributes' => []]);
@@ -125,14 +125,14 @@ class ConfigController extends BaseController
     /**
      * Adds a new classname-attributename pair to the config.
      *
-     * @Route("/add", options={"expose"=true}, methods={"POST"})
+     * @Route("/attributes", options={"expose"=true}, methods={"POST"})
      *
      * @param Request $request
      * @param ConfigWriter $config
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request, ConfigWriter $config): JsonResponse
+    public function addAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
         return $this->json([
             'status' => $config->addClassAttribute(
@@ -145,14 +145,14 @@ class ConfigController extends BaseController
     /**
      * Deletes a classname-attributename pair from the config.
      *
-     * @Route("/delete", options={"expose"=true}, methods={"DELETE"})
+     * @Route("/attributes", options={"expose"=true}, methods={"DELETE"})
      *
      * @param Request $request
      * @param ConfigWriter $config
      *
      * @return JsonResponse
      */
-    public function deleteAction(Request $request, ConfigWriter $config): JsonResponse
+    public function deleteAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
         return $this->json([
             'status' => $config->removeClassAttribute(
@@ -165,13 +165,13 @@ class ConfigController extends BaseController
     /**
      * Returns a list of possible constraints.
      *
-     * @Route("/constraints", options={"expose"=true})
+     * @Route("/constraints", options={"expose"=true}, methods={"GET"})
      *
      * @param Definitions $definitions
      *
      * @return JsonResponse
      */
-    public function constraintsAction(Definitions $definitions): JsonResponse
+    public function listConstraintsAction(Definitions $definitions): JsonResponse
     {
         $symfonyNames = $definitions->symfony();
         $constraints = [];
@@ -185,7 +185,7 @@ class ConfigController extends BaseController
     /**
      * Adds a new constraint for a class attribute to the config.
      *
-     * @Route("/add-constraint", options={"expose"=true}, methods={"POST"})
+     * @Route("/constraints", options={"expose"=true}, methods={"POST"})
      *
      * @param Request $request
      * @param ConfigWriter $config
@@ -207,7 +207,7 @@ class ConfigController extends BaseController
     /**
      * Delete a constraint for a class attribute from the config.
      *
-     * @Route("/delete-constraint", options={"expose"=true}, methods={"DELETE"})
+     * @Route("/constraints", options={"expose"=true}, methods={"DELETE"})
      *
      * @param Request $request
      * @param ConfigWriter $config

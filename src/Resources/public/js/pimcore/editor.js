@@ -168,7 +168,7 @@ valantic.dataquality.editor = Class.create({
             iconCls: 'pimcore_icon_delete',
             handler: function () {
                 Ext.Ajax.request({
-                    url: Routing.generate('valantic_dataquality_config_delete'),
+                    url: Routing.generate('valantic_dataquality_config_deleteattribute'),
                     method: 'delete',
                     params: {
                         classname: rec.get('classname'),
@@ -293,7 +293,7 @@ valantic.dataquality.editor = Class.create({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('valantic_dataquality_config_classes'),
+                url: Routing.generate('valantic_dataquality_config_listclasses'),
                 reader: {
                     type: 'json',
                     rootProperty: 'classes',
@@ -305,7 +305,7 @@ valantic.dataquality.editor = Class.create({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('valantic_dataquality_config_attributes'),
+                url: Routing.generate('valantic_dataquality_config_listattributes'),
                 extraParams: {
                     classname: '',
                 },
@@ -371,7 +371,7 @@ valantic.dataquality.editor = Class.create({
                     const values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
-                        url: Routing.generate('valantic_dataquality_config_add'),
+                        url: Routing.generate('valantic_dataquality_config_addattribute'),
                         method: 'post',
                         params: values,
                         // eslint-disable-next-line no-unused-vars
@@ -392,7 +392,7 @@ valantic.dataquality.editor = Class.create({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('valantic_dataquality_config_constraints'),
+                url: Routing.generate('valantic_dataquality_config_listconstraints'),
                 reader: {
                     type: 'json',
                     rootProperty: 'constraints',
