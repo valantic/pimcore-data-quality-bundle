@@ -27,7 +27,7 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
 
         menu.add({
             text: t('valantic_dataquality_config_meta_tooltip'),
-            iconCls: 'pimcore_nav_icon_object',
+            iconCls: 'pimcore_nav_icon_properties',
             handler: function () {
                 try {
                     pimcore.globalmanager.get('valantic_dataquality_meta').activate();

@@ -96,6 +96,7 @@ valantic.dataquality.meta = Class.create({
                     dataIndex: 'locales',
                     filter: 'string',
                     flex: 200,
+                    // eslint-disable-next-line no-unused-vars
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return value.join(', ');
                     },
@@ -199,9 +200,6 @@ valantic.dataquality.meta = Class.create({
             },
         });
 
-        classesStore.load();
-        localesStore.load();
-
         const localeCombo = new Ext.ux.form.MultiSelect({
             fieldLabel: t('valantic_dataquality_config_column_locales'),
             name: 'locales[]',
@@ -259,6 +257,11 @@ valantic.dataquality.meta = Class.create({
                     modifyWin.close();
                 }.bind(this),
             }],
+        });
+
+        modifyWin.on('beforerender', function () {
+            classesStore.load();
+            localesStore.load();
         });
 
         modifyWin.show();
