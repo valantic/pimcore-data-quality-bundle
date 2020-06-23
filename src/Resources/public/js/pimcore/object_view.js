@@ -1,4 +1,4 @@
-pimcore.registerNS("valantic.dataquality.object_view");
+pimcore.registerNS('valantic.dataquality.object_view');
 valantic.dataquality.object_view = Class.create({
 
     initialize: function (object) {
@@ -64,7 +64,7 @@ valantic.dataquality.object_view = Class.create({
                 width: 440,
             });
 
-            grid.on("beforerender", function () {
+            grid.on('beforerender', function () {
                 this.store.load();
             }.bind(this));
 
@@ -80,7 +80,7 @@ valantic.dataquality.object_view = Class.create({
                 iconCls: 'pimcore_material_icon_info pimcore_material_icon',
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
-                layout: "border",
+                layout: 'border',
                 items: [grid]
             });
 

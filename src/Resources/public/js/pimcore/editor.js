@@ -1,20 +1,20 @@
-pimcore.registerNS("valantic.dataquality.editor");
+pimcore.registerNS('valantic.dataquality.editor');
 valantic.dataquality.editor = Class.create({
 
     initialize: function (element, type) {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        var tabPanel = Ext.getCmp('pimcore_panel_tabs');
         tabPanel.add(this.getLayout());
         tabPanel.setActiveTab(this.getLayout());
 
-        this.getLayout().on("destroy", function () {
-            pimcore.globalmanager.remove("valantic_dataquality_editor");
+        this.getLayout().on('destroy', function () {
+            pimcore.globalmanager.remove('valantic_dataquality_editor');
         });
 
         pimcore.layout.refresh();
     },
 
     activate: function () {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        var tabPanel = Ext.getCmp('pimcore_panel_tabs');
         tabPanel.activate(this.getLayout());
     },
 
@@ -44,12 +44,12 @@ valantic.dataquality.editor = Class.create({
             );
 
             this.filterField = new Ext.form.TextField({
-                xtype: "textfield",
+                xtype: 'textfield',
                 width: 200,
-                style: "margin: 0 10px 0 0;",
+                style: 'margin: 0 10px 0 0;',
                 enableKeyEvents: true,
                 listeners: {
-                    "keydown": function (field, key) {
+                    'keydown': function (field, key) {
                         if (key.getKey() == key.ENTER) {
                             // TODO: missing server-side
                             var input = field;
@@ -69,13 +69,13 @@ valantic.dataquality.editor = Class.create({
                 {
                     text: t('add'),
                     handler: this.onAddMain.bind(this),
-                    iconCls: "pimcore_icon_add"
+                    iconCls: 'pimcore_icon_add'
                 },
-                "->",
+                '->',
                 {
-                    text: t("filter") + "/" + t("search"),
-                    xtype: "tbtext",
-                    style: "margin: 0 10px 0 0;"
+                    text: t('filter') + '/' + t('search'),
+                    xtype: 'tbtext',
+                    style: 'margin: 0 10px 0 0;'
                 },
                 this.filterField
             ];
@@ -86,7 +86,7 @@ valantic.dataquality.editor = Class.create({
             });
 
             var columns = [
-                {text: "ID", sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60},
+                {text: 'ID', sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60},
                 {
                     text: t('valantic_dataquality_config_column_classname'),
                     sortable: true,
@@ -109,12 +109,12 @@ valantic.dataquality.editor = Class.create({
 
             this.grid = new Ext.grid.GridPanel({
                 store: this.store,
-                region: "center",
+                region: 'center',
                 columns: columns,
                 columnLines: true,
                 bbar: this.pagingtoolbar,
                 tbar: tbar,
-                autoExpandColumn: "description",
+                autoExpandColumn: 'description',
                 stripeRows: true,
                 autoScroll: true,
                 plugins: plugins,
@@ -130,27 +130,27 @@ valantic.dataquality.editor = Class.create({
             });
 
             this.detailView = new Ext.Panel({
-                region: "east",
+                region: 'east',
                 minWidth: 350,
                 width: 350,
                 split: true,
-                layout: "fit"
+                layout: 'fit'
             });
 
             var layoutConf = {
                 tabConfig: {
                     tooltip: t('valantic_dataquality_config_tooltip')
                 },
-                iconCls: "pimcore_nav_icon_object",
+                iconCls: 'pimcore_nav_icon_object',
                 items: [this.grid, this.detailView],
-                layout: "border",
+                layout: 'border',
             };
 
-            layoutConf["title"] = t('valantic_dataquality_config_tooltip');
+            layoutConf['title'] = t('valantic_dataquality_config_tooltip');
 
             this.layout = new Ext.Panel(layoutConf);
 
-            this.layout.on("activate", function () {
+            this.layout.on('activate', function () {
                 this.store.load();
             }.bind(this));
         }
@@ -163,12 +163,12 @@ valantic.dataquality.editor = Class.create({
 
         var menu = new Ext.menu.Menu();
         menu.add([{
-            text: t("delete"),
-            iconCls: "pimcore_icon_delete",
+            text: t('delete'),
+            iconCls: 'pimcore_icon_delete',
             handler: function () {
                 Ext.Ajax.request({
                     url: Routing.generate('valantic_dataquality_config_delete'),
-                    method: "delete",
+                    method: 'delete',
                     params: {
                         classname: rec.get('classname'),
                         attributename: rec.get('attributename'),
@@ -188,12 +188,12 @@ valantic.dataquality.editor = Class.create({
     onDetailContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         var menu = new Ext.menu.Menu();
         menu.add([{
-            text: t("delete"),
-            iconCls: "pimcore_icon_delete",
+            text: t('delete'),
+            iconCls: 'pimcore_icon_delete',
             handler: function () {
                 Ext.Ajax.request({
                     url: Routing.generate('valantic_dataquality_config_deleteconstraint'),
-                    method: "delete",
+                    method: 'delete',
                     params: {
                         classname: this.record.get('classname'),
                         attributename: this.record.get('attributename'),
@@ -237,16 +237,16 @@ valantic.dataquality.editor = Class.create({
 
         var detailsGrid = new Ext.grid.GridPanel({
             store: detailsStore,
-            title: t("valantic_dataquality_config_details_for") + ' ' + rec.get('classname') + '.' + rec.get('attributename'),
+            title: t('valantic_dataquality_config_details_for') + ' ' + rec.get('classname') + '.' + rec.get('attributename'),
             columns: [
                 {
-                    text: t("valantic_dataquality_config_column_constraint"),
+                    text: t('valantic_dataquality_config_column_constraint'),
                     sortable: true,
                     dataIndex: 'constraint',
                     flex: 60
                 },
                 {
-                    text: t("valantic_dataquality_config_column_parameters"),
+                    text: t('valantic_dataquality_config_column_parameters'),
                     sortable: true,
                     dataIndex: 'args',
                     flex: 30,
@@ -273,7 +273,7 @@ valantic.dataquality.editor = Class.create({
                 {
                     text: t('add'),
                     handler: this.onAddDetail.bind(this),
-                    iconCls: "pimcore_icon_add"
+                    iconCls: 'pimcore_icon_add'
                 }
             ]
         });
@@ -288,7 +288,7 @@ valantic.dataquality.editor = Class.create({
 
     onAddMain: function () {
         var classesStore = new Ext.data.Store({
-            fields: ["name"],
+            fields: ['name'],
             proxy: {
                 type: 'ajax',
                 url: Routing.generate('valantic_dataquality_config_classes'),
@@ -300,7 +300,7 @@ valantic.dataquality.editor = Class.create({
         });
 
         var attributesStore = new Ext.data.Store({
-            fields: ["name"],
+            fields: ['name'],
             proxy: {
                 type: 'ajax',
                 url: Routing.generate('valantic_dataquality_config_attributes'),
@@ -315,15 +315,15 @@ valantic.dataquality.editor = Class.create({
         });
 
         var classnameCombo = {
-            xtype: "combo",
+            xtype: 'combo',
             fieldLabel: t('valantic_dataquality_config_column_classname'),
-            name: "classname",
+            name: 'classname',
             editable: true,
             displayField: 'name',
             valueField: 'name',
             store: classesStore,
-            mode: "local",
-            triggerAction: "all",
+            mode: 'local',
+            triggerAction: 'all',
             width: 250,
             listeners: {
                 'select': function (combo, value, index) {
@@ -338,20 +338,20 @@ valantic.dataquality.editor = Class.create({
         };
 
         var attributenameCombo = new Ext.form.field.ComboBox({
-            xtype: "combo",
+            xtype: 'combo',
             fieldLabel: t('valantic_dataquality_config_column_attributename'),
-            name: "attributename",
+            name: 'attributename',
             editable: true,
             displayField: 'name',
             valueField: 'name',
             store: attributesStore,
-            mode: "local",
-            triggerAction: "all",
+            mode: 'local',
+            triggerAction: 'all',
             width: 250
         });
 
         var formPanel = new Ext.form.FormPanel({
-            bodyStyle: "padding:10px;",
+            bodyStyle: 'padding:10px;',
             items: [classnameCombo, attributenameCombo]
         });
 
@@ -362,14 +362,14 @@ valantic.dataquality.editor = Class.create({
             closable: true,
             items: [formPanel],
             buttons: [{
-                text: t("save"),
-                iconCls: "pimcore_icon_accept",
+                text: t('save'),
+                iconCls: 'pimcore_icon_accept',
                 handler: function () {
                     var values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
                         url: Routing.generate('valantic_dataquality_config_add'),
-                        method: "post",
+                        method: 'post',
                         params: values,
                         success: function (response, opts) {
                             this.store.reload();
@@ -385,7 +385,7 @@ valantic.dataquality.editor = Class.create({
     },
     onAddDetail: function () {
         var constraintsStore = new Ext.data.Store({
-            fields: ["name"],
+            fields: ['name'],
             proxy: {
                 type: 'ajax',
                 url: Routing.generate('valantic_dataquality_config_constraints'),
@@ -397,24 +397,24 @@ valantic.dataquality.editor = Class.create({
         });
 
         var formPanel = new Ext.form.FormPanel({
-            bodyStyle: "padding:10px;",
+            bodyStyle: 'padding:10px;',
             items: [
                 {
-                    xtype: "combo",
+                    xtype: 'combo',
                     fieldLabel: t('valantic_dataquality_config_column_constraint'),
-                    name: "constraint",
+                    name: 'constraint',
                     editable: true,
                     displayField: 'name',
                     valueField: 'name',
                     store: constraintsStore,
-                    mode: "local",
-                    triggerAction: "all",
+                    mode: 'local',
+                    triggerAction: 'all',
                     width: 400,
                 },
                 {
-                    xtype: "textareafield",
+                    xtype: 'textareafield',
                     fieldLabel: t('valantic_dataquality_config_column_parameters'),
-                    name: "params",
+                    name: 'params',
                     editable: true,
                     width: 400,
                     height: 200,
@@ -429,13 +429,13 @@ valantic.dataquality.editor = Class.create({
             closable: true,
             items: [formPanel],
             buttons: [{
-                text: t("save"),
-                iconCls: "pimcore_icon_accept",
+                text: t('save'),
+                iconCls: 'pimcore_icon_accept',
                 handler: function () {
                     var values = formPanel.getForm().getFieldValues();
                     Ext.Ajax.request({
                         url: Routing.generate('valantic_dataquality_config_addconstraint'),
-                        method: "post",
+                        method: 'post',
                         params: {
                             ...values,
                             classname: this.record.get('classname'),
