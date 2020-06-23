@@ -2,11 +2,8 @@
 
 namespace Valantic\DataQualityBundle\Config\V1\Constraints;
 
-use Symfony\Component\Yaml\Yaml;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
-use Valantic\DataQualityBundle\Config\V1\Config;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader;
 
 class Writer extends AbstractWriter
 {

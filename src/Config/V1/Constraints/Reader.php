@@ -3,14 +3,8 @@
 namespace Valantic\DataQualityBundle\Config\V1\Constraints;
 
 use Pimcore\Model\DataObject\Concrete;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Yaml\Exception\ExceptionInterface as YamlException;
-use Symfony\Component\Yaml\Yaml;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\AbstractReader;
-use Valantic\DataQualityBundle\Config\V1\Config;
-use Valantic\DataQualityBundle\Event\InvalidConfigEvent;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 class Reader extends AbstractReader

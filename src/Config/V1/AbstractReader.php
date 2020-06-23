@@ -53,9 +53,10 @@ abstract class AbstractReader extends Config
         return $this->getSection(self::CONFIG_SECTION_LOCALES);
     }
 
-    abstract protected function getCurrentSectionName():string;
+    abstract protected function getCurrentSectionName(): string;
 
-    protected function getCurrentSection():array{
+    protected function getCurrentSection(): array
+    {
         return $this->getSection($this->getCurrentSectionName());
     }
 }
