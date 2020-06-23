@@ -10,7 +10,7 @@ use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
 use Pimcore\Migrations\MigrationManager;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Valantic\DataQualityBundle\Config\V1\Writer as ConfigWriter;
-use Valantic\DataQualityBundle\Controller\ConfigController;
+use Valantic\DataQualityBundle\Controller\ConstraintConfigController;
 
 class Installer extends MigrationInstaller
 {
@@ -49,7 +49,7 @@ class Installer extends MigrationInstaller
     public function isInstalled(): bool
     {
         $db = Db::get();
-        $check = $db->fetchOne("SELECT `key` FROM `users_permission_definitions` where `key` = ?", [ConfigController::CONFIG_NAME]);
+        $check = $db->fetchOne("SELECT `key` FROM `users_permission_definitions` where `key` = ?", [ConstraintConfigController::CONFIG_NAME]);
 
         return (bool)$check;
     }
@@ -59,7 +59,7 @@ class Installer extends MigrationInstaller
      */
     public function migrateInstall(Schema $schema, Version $version)
     {
-        $version->addSql('INSERT INTO `users_permission_definitions` (`key`) VALUES (?);', [ConfigController::CONFIG_NAME]);
+        $version->addSql('INSERT INTO `users_permission_definitions` (`key`) VALUES (?);', [ConstraintConfigController::CONFIG_NAME]);
         $this->writer->ensureConfigExists();
     }
 
@@ -68,6 +68,6 @@ class Installer extends MigrationInstaller
      */
     public function migrateUninstall(Schema $schema, Version $version)
     {
-        $version->addSql('DELETE FROM `users_permission_definitions` WHERE `key` = ?;', [ConfigController::CONFIG_NAME]);
+        $version->addSql('DELETE FROM `users_permission_definitions` WHERE `key` = ?;', [ConstraintConfigController::CONFIG_NAME]);
     }
 }

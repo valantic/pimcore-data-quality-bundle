@@ -1,5 +1,5 @@
-pimcore.registerNS('valantic.dataquality.editor');
-valantic.dataquality.editor = Class.create({
+pimcore.registerNS('valantic.dataquality.constraints');
+valantic.dataquality.constraints = Class.create({
 
     // eslint-disable-next-line no-unused-vars
     initialize: function (element, type) {
@@ -8,7 +8,7 @@ valantic.dataquality.editor = Class.create({
         tabPanel.setActiveTab(this.getLayout());
 
         this.getLayout().on('destroy', function () {
-            pimcore.globalmanager.remove('valantic_dataquality_editor');
+            pimcore.globalmanager.remove('valantic_dataquality_constraints');
         });
 
         pimcore.layout.refresh();
@@ -23,7 +23,7 @@ valantic.dataquality.editor = Class.create({
         if (this.layout == null) {
             const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
-                Routing.generate('valantic_dataquality_config_list'),
+                Routing.generate('valantic_dataquality_constraintconfig_list'),
                 ['classname', 'attribute', 'rules'],
                 itemsPerPage,
                 {
@@ -139,14 +139,14 @@ valantic.dataquality.editor = Class.create({
 
             const layoutConf = {
                 tabConfig: {
-                    tooltip: t('valantic_dataquality_config_tooltip'),
+                    tooltip: t('valantic_dataquality_config_constraints_tooltip'),
                 },
                 iconCls: 'pimcore_nav_icon_object',
                 items: [this.grid, this.detailView],
                 layout: 'border',
             };
 
-            layoutConf.title = t('valantic_dataquality_config_tooltip');
+            layoutConf.title = t('valantic_dataquality_config_constraints_tooltip');
 
             this.layout = new Ext.Panel(layoutConf);
 
@@ -168,7 +168,7 @@ valantic.dataquality.editor = Class.create({
             iconCls: 'pimcore_icon_delete',
             handler: function () {
                 Ext.Ajax.request({
-                    url: Routing.generate('valantic_dataquality_config_deleteattribute'),
+                    url: Routing.generate('valantic_dataquality_constraintconfig_deleteattribute'),
                     method: 'delete',
                     params: {
                         classname: rec.get('classname'),
@@ -194,7 +194,7 @@ valantic.dataquality.editor = Class.create({
             iconCls: 'pimcore_icon_delete',
             handler: function () {
                 Ext.Ajax.request({
-                    url: Routing.generate('valantic_dataquality_config_deleteconstraint'),
+                    url: Routing.generate('valantic_dataquality_constraintconfig_deleteconstraint'),
                     method: 'delete',
                     params: {
                         classname: this.record.get('classname'),
@@ -293,7 +293,7 @@ valantic.dataquality.editor = Class.create({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('valantic_dataquality_config_listclasses'),
+                url: Routing.generate('valantic_dataquality_constraintconfig_listclasses'),
                 reader: {
                     type: 'json',
                     rootProperty: 'classes',
@@ -305,7 +305,7 @@ valantic.dataquality.editor = Class.create({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('valantic_dataquality_config_listattributes'),
+                url: Routing.generate('valantic_dataquality_constraintconfig_listattributes'),
                 extraParams: {
                     classname: '',
                 },
@@ -371,7 +371,7 @@ valantic.dataquality.editor = Class.create({
                     const values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
-                        url: Routing.generate('valantic_dataquality_config_addattribute'),
+                        url: Routing.generate('valantic_dataquality_constraintconfig_addattribute'),
                         method: 'post',
                         params: values,
                         // eslint-disable-next-line no-unused-vars
@@ -392,7 +392,7 @@ valantic.dataquality.editor = Class.create({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('valantic_dataquality_config_listconstraints'),
+                url: Routing.generate('valantic_dataquality_constraintconfig_listconstraints'),
                 reader: {
                     type: 'json',
                     rootProperty: 'constraints',
@@ -438,7 +438,7 @@ valantic.dataquality.editor = Class.create({
                 handler: function () {
                     const values = formPanel.getForm().getFieldValues();
                     Ext.Ajax.request({
-                        url: Routing.generate('valantic_dataquality_config_addconstraint'),
+                        url: Routing.generate('valantic_dataquality_constraintconfig_addconstraint'),
                         method: 'post',
                         params: {
                             ...values,

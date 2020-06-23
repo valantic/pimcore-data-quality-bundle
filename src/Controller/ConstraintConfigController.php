@@ -15,9 +15,9 @@ use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 /**
- * @Route("/admin/valantic/data-quality/config")
+ * @Route("/admin/valantic/data-quality/constraint-config")
  */
-class ConfigController extends BaseController
+class ConstraintConfigController extends BaseController
 {
     /**
      * Returns the config for the admin editor.

@@ -12,14 +12,15 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
     // eslint-disable-next-line no-unused-vars
     pimcoreReady: function (params, broker) {
         const menu = pimcore.globalmanager.get('layout_toolbar').marketingMenu;
+
         menu.add({
-            text: t('valantic_dataquality_pimcore_nav_menu_name'),
+            text: t('valantic_dataquality_config_constraints_tooltip'),
             iconCls: 'pimcore_nav_icon_object',
             handler: function () {
                 try {
-                    pimcore.globalmanager.get('valantic_dataquality_editor').activate();
+                    pimcore.globalmanager.get('valantic_dataquality_constraints').activate();
                 } catch (e) {
-                    pimcore.globalmanager.add('valantic_dataquality_editor', new valantic.dataquality.editor());
+                    pimcore.globalmanager.add('valantic_dataquality_constraints', new valantic.dataquality.constraints());
                 }
             },
         });
