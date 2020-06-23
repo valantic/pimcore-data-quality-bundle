@@ -10,6 +10,14 @@ abstract class Config
 {
     protected const CONFIG_SECTION_CONSTRAINTS = 'constraints';
 
+    protected const CONFIG_SECTION_LOCALES = 'locales';
+
+    /**
+     * The identifier (a const starting with CONFIG_SECTION_) for the current config section.
+     * @return string
+     */
+    abstract protected function getCurrentSectionName(): string;
+
     /**
      * Returns the absolute path to the config file.
      *
@@ -24,6 +32,7 @@ abstract class Config
      * Returns the raw config as read from disk.
      *
      * @return array
+     * @internal
      */
     protected function getRaw(): array
     {
@@ -45,6 +54,26 @@ abstract class Config
          * @var $parsed array
          */
         return $parsed;
+    }
+
+    /**
+     * Get a config section.
+     *
+     * @param string $name
+     * @return array
+     */
+    private function getSection(string $name): array
+    {
+        return array_key_exists($name, $this->getRaw()) ? $this->getRaw()[$name] : [];
+    }
+
+    /**
+     * Default method to get the current section inside a config class.
+     * @return array
+     */
+    protected function getCurrentSection(): array
+    {
+        return $this->getSection($this->getCurrentSectionName());
     }
 
     /**

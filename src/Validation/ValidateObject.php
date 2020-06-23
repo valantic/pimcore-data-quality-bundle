@@ -3,7 +3,8 @@
 namespace Valantic\DataQualityBundle\Validation;
 
 use Pimcore\Model\DataObject\Concrete;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
+use Valantic\DataQualityBundle\Config\V1\Locales\Reader as LocalesConfig;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 class ValidateObject implements Validatable, Scorable
@@ -19,9 +20,9 @@ class ValidateObject implements Validatable, Scorable
     protected $validationConfig;
 
     /**
-     * @var ConfigReader
+     * @var ConstraintsConfig
      */
-    protected $config;
+    protected $constraintsConfig;
 
     /**
      * Validators used for this object.
@@ -35,16 +36,23 @@ class ValidateObject implements Validatable, Scorable
     protected $classInformation;
 
     /**
+     * @var LocalesConfig
+     */
+    protected $localesConfig;
+
+    /**
      * Validate an object and all its attributes.
      * @param Concrete $obj The object to validate.
-     * @param ConfigReader $config
+     * @param ConstraintsConfig $constraintsConfig
+     * @param LocalesConfig $localesConfig
      */
-    public function __construct(Concrete $obj, ConfigReader $config)
+    public function __construct(Concrete $obj, ConstraintsConfig $constraintsConfig, LocalesConfig $localesConfig)
     {
         $this->obj = $obj;
-        $this->validationConfig = $config->getForObject($obj);
-        $this->config = $config;
+        $this->validationConfig = $constraintsConfig->getForObject($obj);
+        $this->constraintsConfig = $constraintsConfig;
         $this->classInformation = new ClassInformation($this->obj->getClassName());
+        $this->localesConfig = $localesConfig;
     }
 
     /**
@@ -55,10 +63,10 @@ class ValidateObject implements Validatable, Scorable
         $validators = [];
         foreach ($this->getValidatableAttributes() as $attribute) {
             if ($this->classInformation->isPlainAttribute($attribute)) {
-                $validator = new ValidatePlainAttribute($this->obj, $attribute, $this->config);
+                $validator = new ValidatePlainAttribute($this->obj, $attribute, $this->constraintsConfig, $this->localesConfig);
             }
             if ($this->classInformation->isLocalizedAttribute($attribute)) {
-                $validator = new ValidateLocalizedAttribute($this->obj, $attribute, $this->config);
+                $validator = new ValidateLocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->localesConfig);
             }
             if (isset($validator)) {
                 $validator->validate();

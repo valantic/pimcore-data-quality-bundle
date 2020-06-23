@@ -5,7 +5,8 @@ namespace Valantic\DataQualityBundle\Validation;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
+use Valantic\DataQualityBundle\Config\V1\Locales\Reader as LocalesConfig;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 abstract class AbstractValidateAttribute implements Validatable, Scorable
@@ -26,9 +27,9 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable
     protected $attribute;
 
     /**
-     * @var ConfigReader
+     * @var ConstraintsConfig
      */
-    protected $config;
+    protected $constraintsConfig;
 
     /**
      * @var array
@@ -47,21 +48,28 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable
     protected $classInformation;
 
     /**
+     * @var LocalesConfig
+     */
+    protected $localesConfig;
+
+    /**
      * Validates an attribute of an object.
      *
      * @param Concrete $obj Object to validate
      * @param string $attribute Attribute to validate
-     * @param ConfigReader $config
+     * @param ConstraintsConfig $constraintsConfig
+     * @param LocalesConfig $localesConfig
      */
-    public function __construct(Concrete $obj, string $attribute, ConfigReader $config)
+    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, LocalesConfig $localesConfig)
     {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
         $this->obj = $obj;
         $this->attribute = $attribute;
-        $this->config = $config;
-        $this->validationConfig = $config->getForObjectAttribute($obj, $attribute);
+        $this->constraintsConfig = $constraintsConfig;
+        $this->validationConfig = $constraintsConfig->getForObjectAttribute($obj, $attribute);
         $this->classInformation = new ClassInformation($this->obj->getClassName());
+        $this->localesConfig = $localesConfig;
     }
 
     /**

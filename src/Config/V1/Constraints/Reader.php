@@ -3,26 +3,16 @@
 namespace Valantic\DataQualityBundle\Config\V1\Constraints;
 
 use Pimcore\Model\DataObject\Concrete;
-use Throwable;
 use Valantic\DataQualityBundle\Config\V1\AbstractReader;
-use Valantic\DataQualityBundle\Service\ClassInformation;
 
 class Reader extends AbstractReader
 {
+    /**
+     * {@inheritDoc}
+     */
     protected function getCurrentSectionName(): string
     {
         return self::CONFIG_SECTION_CONSTRAINTS;
-    }
-
-    /**
-     * Given $obj, return the corresponding config.
-     *
-     * @param Concrete $obj
-     * @return array
-     */
-    public function getForObject(Concrete $obj): array
-    {
-        return $this->getForClass($obj->getClassName());
     }
 
     /**
@@ -33,16 +23,6 @@ class Reader extends AbstractReader
     public function getForObjectAttribute(Concrete $obj, string $attribute): array
     {
         return $this->getForClassAttribute($obj->getClassName(), $attribute);
-    }
-
-    /**
-     * Get the list of classes than can be validated i.e. are configured.
-     *
-     * @return array
-     */
-    public function getConfiguredClasses(): array
-    {
-        return array_keys($this->getCurrentSection());
     }
 
     /**
@@ -58,27 +38,6 @@ class Reader extends AbstractReader
     }
 
     /**
-     * Given a class name, return the corresponding config.
-     *
-     * @param string $className Base name or ::class
-     * @return array
-     */
-    public function getForClass(string $className): array
-    {
-        try {
-            $className = (new ClassInformation($className))->getClassName();
-        } catch (Throwable $throwable) {
-            return [];
-        }
-
-        if (!in_array($className, $this->getConfiguredClasses(), true)) {
-            return [];
-        }
-
-        return $this->safeArray($this->getCurrentSection(), $className);
-    }
-
-    /**
      * Given a class name, return the corresponding config for $attribute.
      *
      * @param string $className Base name or ::class
@@ -90,5 +49,16 @@ class Reader extends AbstractReader
         $classConfig = $this->getForClass($className);
 
         return $this->safeArray($classConfig, $attribute);
+    }
+
+    /**
+     * Checks whether $attributeName in $className is configured.
+     * @param string $className
+     * @param string $attributeName
+     * @return bool
+     */
+    public function isClassAttributeConfigured(string $className, string $attributeName): bool
+    {
+        return in_array($attributeName, $this->getConfiguredClassAttributes($className), true);
     }
 }

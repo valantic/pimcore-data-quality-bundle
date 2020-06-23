@@ -2,8 +2,11 @@
 
 namespace Valantic\DataQualityBundle\Config\V1;
 
+use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Valantic\DataQualityBundle\Service\ClassInformation;
+use Throwable;
 
 abstract class AbstractReader extends Config
 {
@@ -23,40 +26,55 @@ abstract class AbstractReader extends Config
     }
 
     /**
-     * Get a config section.
+     * Get the list of classes than can be validated i.e. are configured.
      *
-     * @param string $name
      * @return array
      */
-    protected function getSection(string $name): array
+    public function getConfiguredClasses(): array
     {
-        return array_key_exists($name, $this->getRaw()) ? $this->getRaw()[$name] : [];
+        return array_keys($this->getCurrentSection());
     }
 
     /**
-     * Get the constraints section from the config.
-     *
-     * @return array
+     * Checks whether $className is configured.
+     * @param string $className
+     * @return bool
      */
-    public function getConstraintsSection(): array
+    public function isClassConfigured(string $className): bool
     {
-        return $this->getSection(self::CONFIG_SECTION_CONSTRAINTS);
+        return in_array($className, $this->getConfiguredClasses(), true);
     }
 
     /**
-     * Get the locales section from the config.
+     * Given a class name, return the corresponding config.
      *
+     * @param string $className Base name or ::class
      * @return array
      */
-    public function getLocalesSection(): array
+    public function getForClass(string $className): array
     {
-        return $this->getSection(self::CONFIG_SECTION_LOCALES);
+        try {
+            $className = (new ClassInformation($className))->getClassName();
+        } catch (Throwable $throwable) {
+            return [];
+        }
+
+        if (!$this->isClassConfigured($className)) {
+            return [];
+        }
+
+        return $this->safeArray($this->getCurrentSection(), $className);
     }
 
-    abstract protected function getCurrentSectionName(): string;
-
-    protected function getCurrentSection(): array
+    /**
+     * Given $obj, return the corresponding config.
+     *
+     * @param Concrete $obj
+     * @return array
+     */
+    public function getForObject(Concrete $obj): array
     {
-        return $this->getSection($this->getCurrentSectionName());
+        return $this->getForClass($obj->getClassName());
     }
+
 }

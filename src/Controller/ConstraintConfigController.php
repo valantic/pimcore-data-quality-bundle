@@ -2,9 +2,6 @@
 
 namespace Valantic\DataQualityBundle\Controller;
 
-use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
-use Pimcore\Model\DataObject\ClassDefinition\Listing as ClassDefinitionListing;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,7 +29,6 @@ class ConstraintConfigController extends BaseController
      */
     public function listAction(Request $request, ConfigReader $config, ConfigWriter $writer): JsonResponse
     {
-        // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
         $writer->ensureConfigExists();
@@ -70,22 +66,13 @@ class ConstraintConfigController extends BaseController
      *
      * @Route("/classes", options={"expose"=true}, methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function listClassesAction(): JsonResponse
     {
-        // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
-        $classesList = new ClassDefinitionListing();
-        $classesList->setOrderKey('name');
-        $classesList->setOrder('asc');
-        $classes = $classesList->load();
-
-        $classNames = [];
-        foreach (array_column($classes, 'name') as $name) {
+        foreach ($this->getClassNames() as $name) {
             $classNames[] = ['name' => $name];
         }
 
@@ -104,11 +91,11 @@ class ConstraintConfigController extends BaseController
      */
     public function listAttributesAction(Request $request, ConfigReader $config): JsonResponse
     {
+        $this->checkPermission(self::CONFIG_NAME);
+
         if (!$request->query->has('classname')) {
             return $this->json(['attributes' => []]);
         }
-        // check permissions
-        $this->checkPermission(self::CONFIG_NAME);
 
         try {
             $classData = new ClassInformation($request->query->get('classname'));
@@ -139,6 +126,8 @@ class ConstraintConfigController extends BaseController
      */
     public function addAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        $this->checkPermission(self::CONFIG_NAME);
+
         return $this->json([
             'status' => $config->addClassAttribute(
                 $request->request->get('classname'),
@@ -159,6 +148,8 @@ class ConstraintConfigController extends BaseController
      */
     public function deleteAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        $this->checkPermission(self::CONFIG_NAME);
+
         return $this->json([
             'status' => $config->removeClassAttribute(
                 $request->request->get('classname'),
@@ -178,6 +169,8 @@ class ConstraintConfigController extends BaseController
      */
     public function listConstraintsAction(ConstraintDefinitions $definitions): JsonResponse
     {
+        $this->checkPermission(self::CONFIG_NAME);
+
         $symfonyNames = $definitions->symfony();
         $constraints = [];
         foreach ($symfonyNames as $name) {
@@ -199,6 +192,8 @@ class ConstraintConfigController extends BaseController
      */
     public function addConstraintAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        $this->checkPermission(self::CONFIG_NAME);
+
         return $this->json([
             'status' => $config->addConstraint(
                 $request->request->get('classname'),
@@ -221,6 +216,8 @@ class ConstraintConfigController extends BaseController
      */
     public function deleteConstraintAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        $this->checkPermission(self::CONFIG_NAME);
+
         return $this->json([
             'status' => $config->deleteConstraint(
                 $request->request->get('classname'),

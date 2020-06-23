@@ -8,6 +8,14 @@ use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
 class Writer extends AbstractWriter
 {
     /**
+     * {@inheritDoc}
+     */
+    protected function getCurrentSectionName(): string
+    {
+        return self::CONFIG_SECTION_CONSTRAINTS;
+    }
+
+    /**
      * Write the bundle's config file.
      * @param Reader $reader
      */
@@ -25,12 +33,12 @@ class Writer extends AbstractWriter
      */
     public function addClassAttribute(string $className, string $attributeName): bool
     {
-        if (in_array($attributeName, $this->reader->getConfiguredClassAttributes($className), true)) {
+        if ($this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
-        $raw = $this->reader->getRaw();
-        if (!in_array($className, $this->reader->getConfiguredClasses(), true)) {
+        $raw = $this->getCurrentSection();
+        if (!$this->reader->isClassConfigured($className)) {
             $raw[$className] = [];
         }
         $raw[$className][$attributeName] = [];
@@ -48,12 +56,12 @@ class Writer extends AbstractWriter
      */
     public function removeClassAttribute(string $className, string $attributeName): bool
     {
-        if (!in_array($attributeName, $this->reader->getConfiguredClassAttributes($className), true)) {
+        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
-        $raw = $this->reader->getRaw();
-        if (!in_array($className, $this->reader->getConfiguredClasses(), true)) {
+        $raw = $this->reader->getCurrentSection();
+        if (!$this->reader->isClassConfigured($className)) {
             return true;
         }
         unset($raw[$className][$attributeName]);
@@ -70,7 +78,7 @@ class Writer extends AbstractWriter
      * @param string $params
      * @return bool
      */
-    public function addConstraint($className, $attributeName, $constraint, $params = ''): bool
+    public function addConstraint(string $className, string $attributeName, string $constraint, string $params = ''): bool
     {
         try {
             $paramsParsed = json_decode($params, true, 512, JSON_THROW_ON_ERROR);
@@ -78,7 +86,7 @@ class Writer extends AbstractWriter
             $paramsParsed = null;
         }
 
-        $raw = $this->reader->getRaw();
+        $raw = $this->reader->getCurrentSection();
 
         $raw[$className][$attributeName][$constraint] = $paramsParsed;
 
@@ -93,14 +101,14 @@ class Writer extends AbstractWriter
      * @param string $constraint
      * @return bool
      */
-    public function deleteConstraint($className, $attributeName, $constraint): bool
+    public function deleteConstraint(string $className, string $attributeName, string $constraint): bool
     {
-        if (!in_array($attributeName, $this->reader->getConfiguredClassAttributes($className), true)) {
+        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
-        $raw = $this->reader->getRaw();
-        if (!in_array($className, $this->reader->getConfiguredClasses(), true)) {
+        $raw = $this->reader->getCurrentSection();
+        if (!$this->reader->isClassConfigured($className)) {
             return true;
         }
 
