@@ -42,7 +42,7 @@ class ConstraintConfigController extends BaseController
                 foreach ($rules as $constraint => $args) {
                     $transformedRules[] = [
                         'constraint' => $constraint,
-                        'args' => $args ? [$args] : null,
+                        'args' => $args,
                     ];
                 }
                 if ($filter) {
