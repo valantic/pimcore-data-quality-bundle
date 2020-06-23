@@ -1,6 +1,7 @@
 pimcore.registerNS('valantic.dataquality.editor');
 valantic.dataquality.editor = Class.create({
 
+    // eslint-disable-next-line no-unused-vars
     initialize: function (element, type) {
         var tabPanel = Ext.getCmp('pimcore_panel_tabs');
         tabPanel.add(this.getLayout());
@@ -48,7 +49,7 @@ valantic.dataquality.editor = Class.create({
                 enableKeyEvents: true,
                 listeners: {
                     keydown: function (field, key) {
-                        if (key.getKey() == key.ENTER) {
+                        if (key.getKey() === key.ENTER) {
                             // TODO: missing server-side
                             var input = field;
                             var proxy = this.store.getProxy();
@@ -121,6 +122,7 @@ valantic.dataquality.editor = Class.create({
                     forceFit: true,
                 },
                 listeners: {
+                    // eslint-disable-next-line no-unused-vars
                     rowclick: function (grid, record, tr, rowIndex, e, eOpts) {
                         this.showDetail(record);
                     }.bind(this),
@@ -157,6 +159,7 @@ valantic.dataquality.editor = Class.create({
         return this.layout;
     },
 
+    // eslint-disable-next-line no-unused-vars
     onMainContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         var rec = this.store.getAt(rowIndex);
 
@@ -172,6 +175,7 @@ valantic.dataquality.editor = Class.create({
                         classname: rec.get('classname'),
                         attributename: rec.get('attributename'),
                     },
+                    // eslint-disable-next-line no-unused-vars
                     success: function (response, opts) {
                         this.store.reload();
                     }.bind(this),
@@ -183,6 +187,7 @@ valantic.dataquality.editor = Class.create({
         menu.showAt(e.pageX, e.pageY);
     },
 
+    // eslint-disable-next-line no-unused-vars
     onDetailContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         var menu = new Ext.menu.Menu();
         menu.add([{
@@ -197,13 +202,14 @@ valantic.dataquality.editor = Class.create({
                         attributename: this.record.get('attributename'),
                         constraint: record.get('constraint'),
                     },
+                    // eslint-disable-next-line no-unused-vars
                     success: function (response, opts) {
                         this.store.reload({
+                            // eslint-disable-next-line no-unused-vars
                             callback: function (records, operation, success) {
                                 var updatedRecord = this.store.data.items
-                                    .filter((record) => record.get('classname') === this.record.get('classname'))
-                                    .filter((record) => record.get('attributename') === this.record.get('attributename'))
-                                    [0];
+                                    .filter((r) => r.get('classname') === this.record.get('classname'))
+                                    .filter((r) => r.get('attributename') === this.record.get('attributename'))[0];
 
                                 this.showDetail(this.store.getById(updatedRecord.getId()));
                             }.bind(this),
@@ -247,6 +253,7 @@ valantic.dataquality.editor = Class.create({
                     sortable: true,
                     dataIndex: 'args',
                     flex: 30,
+                    // eslint-disable-next-line no-unused-vars
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return value ? JSON.stringify(value) : '';
                     },
@@ -310,29 +317,6 @@ valantic.dataquality.editor = Class.create({
             },
         });
 
-        var classnameCombo = {
-            xtype: 'combo',
-            fieldLabel: t('valantic_dataquality_config_column_classname'),
-            name: 'classname',
-            editable: true,
-            displayField: 'name',
-            valueField: 'name',
-            store: classesStore,
-            mode: 'local',
-            triggerAction: 'all',
-            width: 250,
-            listeners: {
-                select: function (combo, value, index) {
-                    var classname = combo.getValue();
-                    attributesStore.getProxy().setExtraParams({
-                        classname: classname,
-                    });
-                    attributesStore.load();
-                    attributenameCombo.clearValue();
-                },
-            },
-        };
-
         var attributenameCombo = new Ext.form.field.ComboBox({
             xtype: 'combo',
             fieldLabel: t('valantic_dataquality_config_column_attributename'),
@@ -345,6 +329,30 @@ valantic.dataquality.editor = Class.create({
             triggerAction: 'all',
             width: 250,
         });
+
+        var classnameCombo = {
+            xtype: 'combo',
+            fieldLabel: t('valantic_dataquality_config_column_classname'),
+            name: 'classname',
+            editable: true,
+            displayField: 'name',
+            valueField: 'name',
+            store: classesStore,
+            mode: 'local',
+            triggerAction: 'all',
+            width: 250,
+            listeners: {
+                // eslint-disable-next-line no-unused-vars
+                select: function (combo, value, index) {
+                    var classname = combo.getValue();
+                    attributesStore.getProxy().setExtraParams({
+                        classname: classname,
+                    });
+                    attributesStore.load();
+                    attributenameCombo.clearValue();
+                },
+            },
+        };
 
         var formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
@@ -367,6 +375,7 @@ valantic.dataquality.editor = Class.create({
                         url: Routing.generate('valantic_dataquality_config_add'),
                         method: 'post',
                         params: values,
+                        // eslint-disable-next-line no-unused-vars
                         success: function (response, opts) {
                             this.store.reload();
                         }.bind(this),
@@ -437,13 +446,14 @@ valantic.dataquality.editor = Class.create({
                             classname: this.record.get('classname'),
                             attributename: this.record.get('attributename'),
                         },
+                        // eslint-disable-next-line no-unused-vars
                         success: function (response, opts) {
                             this.store.reload({
+                                // eslint-disable-next-line no-unused-vars
                                 callback: function (records, operation, success) {
                                     var updatedRecord = this.store.data.items
                                         .filter((record) => record.get('classname') === this.record.get('classname'))
-                                        .filter((record) => record.get('attributename') === this.record.get('attributename'))
-                                        [0];
+                                        .filter((record) => record.get('attributename') === this.record.get('attributename'))[0];
 
                                     this.showDetail(this.store.getById(updatedRecord.getId()));
                                 }.bind(this),

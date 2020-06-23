@@ -9,6 +9,7 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
         pimcore.plugin.broker.registerPlugin(this);
     },
 
+    // eslint-disable-next-line no-unused-vars
     pimcoreReady: function (params, broker) {
         const menu = pimcore.globalmanager.get('layout_toolbar').marketingMenu;
         menu.add({
@@ -30,4 +31,5 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
     },
 });
 
+// eslint-disable-next-line no-unused-vars
 var ValanticDataQualityBundlePlugin = new pimcore.plugin.ValanticDataQualityBundle();

@@ -1,0 +1,32 @@
+{
+  "env": {
+    "browser": true
+  },
+  "extends": [
+    "airbnb-base"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 11
+  },
+  "rules": {
+    "indent": [
+      "error",
+      4
+    ],
+    "quotes": ["error", "single"],
+    "no-var": "off",
+    "object-shorthand": "off",
+    "func-names": "off",
+    "vars-on-top": "off",
+    "prefer-arrow-callback": "off",
+    "new-cap": "off"
+  },
+  "globals": {
+    "pimcore": "readonly",
+    "Ext": "readonly",
+    "t": "readonly",
+    "Class": "readonly",
+    "Routing": "readonly",
+    "valantic": "readonly"
+  }
+}
