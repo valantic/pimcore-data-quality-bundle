@@ -1,7 +1,7 @@
 valantic_dataquality_pimcore_tab_name: 'Data Quality'
 valantic_dataquality_config_column_classname: 'Class name'
 valantic_dataquality_config_constraints_tooltip: 'Data Quality - Constraints'
-valantic_dataquality_config_locales_tooltip: 'Data Quality - Locales'
+valantic_dataquality_config_meta_tooltip: 'Data Quality - Meta'
 valantic_dataquality_config_column_attributename: 'Attribute'
 valantic_dataquality_config_column_score: 'Score'
 valantic_dataquality_config_details_for: 'Details for'

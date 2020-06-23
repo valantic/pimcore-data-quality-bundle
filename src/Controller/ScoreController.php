@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Valantic\DataQualityBundle\Validation\ValidateObject;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
-use Valantic\DataQualityBundle\Config\V1\Locales\Reader as LocalesConfig;
+use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 
 /**
  * @Route("/admin/valantic/data-quality/score")
@@ -24,11 +24,11 @@ class ScoreController extends BaseController
      * @param Request $request
      * @param ConstraintsConfig $constraintsConfig
      *
-     * @param LocalesConfig $localesConfig
+     * @param MetaConfig $metaConfig
      * @return JsonResponse
      *
      */
-    public function showAction(Request $request, ConstraintsConfig $constraintsConfig, LocalesConfig $localesConfig): JsonResponse
+    public function showAction(Request $request, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
@@ -41,7 +41,7 @@ class ScoreController extends BaseController
             ]);
         }
 
-        $validation = new ValidateObject($obj, $constraintsConfig, $localesConfig);
+        $validation = new ValidateObject($obj, $constraintsConfig, $metaConfig);
         $validation->validate();
 
         $scores = [];

@@ -55,7 +55,7 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute
      */
     protected function getLocalesInConfig(): array
     {
-        return $this->localesConfig->getForObject($this->obj);
+        return $this->metaConfig->getForObject($this->obj);
     }
 
     protected function getValidLocales(): array

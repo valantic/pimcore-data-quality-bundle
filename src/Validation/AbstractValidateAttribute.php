@@ -6,7 +6,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
-use Valantic\DataQualityBundle\Config\V1\Locales\Reader as LocalesConfig;
+use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 abstract class AbstractValidateAttribute implements Validatable, Scorable
@@ -48,9 +48,9 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable
     protected $classInformation;
 
     /**
-     * @var LocalesConfig
+     * @var MetaConfig
      */
-    protected $localesConfig;
+    protected $metaConfig;
 
     /**
      * Validates an attribute of an object.
@@ -58,9 +58,9 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable
      * @param Concrete $obj Object to validate
      * @param string $attribute Attribute to validate
      * @param ConstraintsConfig $constraintsConfig
-     * @param LocalesConfig $localesConfig
+     * @param MetaConfig $metaConfig
      */
-    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, LocalesConfig $localesConfig)
+    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig)
     {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
@@ -69,7 +69,7 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable
         $this->constraintsConfig = $constraintsConfig;
         $this->validationConfig = $constraintsConfig->getForObjectAttribute($obj, $attribute);
         $this->classInformation = new ClassInformation($this->obj->getClassName());
-        $this->localesConfig = $localesConfig;
+        $this->metaConfig = $metaConfig;
     }
 
     /**

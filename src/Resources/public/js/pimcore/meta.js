@@ -1,5 +1,5 @@
-pimcore.registerNS('valantic.dataquality.locales');
-valantic.dataquality.locales = Class.create({
+pimcore.registerNS('valantic.dataquality.meta');
+valantic.dataquality.meta = Class.create({
 
     // eslint-disable-next-line no-unused-vars
     initialize: function (element, type) {
@@ -8,7 +8,7 @@ valantic.dataquality.locales = Class.create({
         tabPanel.setActiveTab(this.getLayout());
 
         this.getLayout().on('destroy', function () {
-            pimcore.globalmanager.remove('valantic_dataquality_locales');
+            pimcore.globalmanager.remove('valantic_dataquality_meta');
         });
 
         pimcore.layout.refresh();
@@ -23,7 +23,7 @@ valantic.dataquality.locales = Class.create({
         if (this.layout == null) {
             const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
-                Routing.generate('valantic_dataquality_localeconfig_list'),
+                Routing.generate('valantic_dataquality_metaconfig_list'),
                 ['classname', 'locales'],
                 itemsPerPage,
                 {
@@ -126,14 +126,14 @@ valantic.dataquality.locales = Class.create({
 
             const layoutConf = {
                 tabConfig: {
-                    tooltip: t('valantic_dataquality_config_locales_tooltip'),
+                    tooltip: t('valantic_dataquality_config_meta_tooltip'),
                 },
                 iconCls: 'pimcore_nav_icon_object',
                 items: [this.grid],
                 layout: 'border',
             };
 
-            layoutConf.title = t('valantic_dataquality_config_locales_tooltip');
+            layoutConf.title = t('valantic_dataquality_config_meta_tooltip');
 
             this.layout = new Ext.Panel(layoutConf);
 
@@ -155,7 +155,7 @@ valantic.dataquality.locales = Class.create({
             iconCls: 'pimcore_icon_delete',
             handler: function () {
                 Ext.Ajax.request({
-                    url: Routing.generate('valantic_dataquality_localeconfig_delete'),
+                    url: Routing.generate('valantic_dataquality_metaconfig_delete'),
                     method: 'delete',
                     params: {
                         classname: rec.get('classname'),
@@ -179,7 +179,7 @@ valantic.dataquality.locales = Class.create({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('valantic_dataquality_localeconfig_listclasses'),
+                url: Routing.generate('valantic_dataquality_metaconfig_listclasses'),
                 reader: {
                     type: 'json',
                     rootProperty: 'classes',
@@ -191,7 +191,7 @@ valantic.dataquality.locales = Class.create({
             fields: ['name'],
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('valantic_dataquality_localeconfig_listlocales'),
+                url: Routing.generate('valantic_dataquality_metaconfig_listlocales'),
                 reader: {
                     type: 'json',
                     rootProperty: 'locales',
@@ -247,7 +247,7 @@ valantic.dataquality.locales = Class.create({
                     const values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
-                        url: Routing.generate('valantic_dataquality_localeconfig_modify'),
+                        url: Routing.generate('valantic_dataquality_metaconfig_modify'),
                         method: 'post',
                         params: values,
                         // eslint-disable-next-line no-unused-vars

@@ -26,7 +26,7 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/valanticdataquality/js/pimcore/constraints.js',
-            '/bundles/valanticdataquality/js/pimcore/locales.js',
+            '/bundles/valanticdataquality/js/pimcore/meta.js',
             '/bundles/valanticdataquality/js/pimcore/object_view.js',
             '/bundles/valanticdataquality/js/pimcore/startup.js',
         ];

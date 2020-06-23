@@ -38,6 +38,6 @@ services:
 
     Valantic\DataQualityBundle\Config\V1\Constraints\Writer: ~
 
-    Valantic\DataQualityBundle\Config\V1\Locales\Reader: ~
+    Valantic\DataQualityBundle\Config\V1\Meta\Reader: ~
 
-    Valantic\DataQualityBundle\Config\V1\Locales\Writer: ~
+    Valantic\DataQualityBundle\Config\V1\Meta\Writer: ~

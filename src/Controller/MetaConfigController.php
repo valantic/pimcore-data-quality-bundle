@@ -6,14 +6,14 @@ use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Valantic\DataQualityBundle\Config\V1\Locales\Reader as ConfigReader;
-use Valantic\DataQualityBundle\Config\V1\Locales\Writer as ConfigWriter;
+use Valantic\DataQualityBundle\Config\V1\Meta\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Config\V1\Meta\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 
 /**
- * @Route("/admin/valantic/data-quality/locale-config")
+ * @Route("/admin/valantic/data-quality/meta-config")
  */
-class LocaleConfigController extends BaseController
+class MetaConfigController extends BaseController
 {
     /**
      * Returns the config for the admin editor.

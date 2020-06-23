@@ -10,7 +10,7 @@ abstract class Config
 {
     protected const CONFIG_SECTION_CONSTRAINTS = 'constraints';
 
-    protected const CONFIG_SECTION_LOCALES = 'locales';
+    protected const CONFIG_SECTION_META = 'meta';
 
     /**
      * The identifier (a const starting with CONFIG_SECTION_) for the current config section.
