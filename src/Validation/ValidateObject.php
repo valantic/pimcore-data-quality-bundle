@@ -97,7 +97,16 @@ class ValidateObject implements Validatable, Scorable
     {
         $attributeScores = [];
         foreach ($this->validators as $attribute => $validator) {
-            $attributeScores[$attribute] = $validator->score();
+            $attributeScores[$attribute]['score'] = null;
+            $attributeScores[$attribute]['scores'] = null;
+
+            if ($validator instanceof Scorable) {
+                $attributeScores[$attribute]['score'] = $validator->score();
+            }
+
+            if ($validator instanceof MultiScorable) {
+                $attributeScores[$attribute]['scores'] = $validator->scores();
+            }
         }
 
         return $attributeScores;

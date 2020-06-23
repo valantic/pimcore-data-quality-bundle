@@ -47,10 +47,9 @@ class ScoreController extends BaseController
         $scores = [];
         foreach ($validation->attributeScores() as $attribute => $score) {
 
-            $scores[] = [
+            $scores[] = array_merge_recursive($score, [
                 'attribute' => $attribute,
-                'score' => $score,
-            ];
+            ]);
         }
 
         return $this->json([

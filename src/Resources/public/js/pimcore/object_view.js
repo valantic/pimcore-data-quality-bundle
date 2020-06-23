@@ -7,13 +7,15 @@ valantic.dataquality.object_view = Class.create({
 
     getLayout: function () {
         if (this.layout == null) {
-            const modelName = 'pvalantic.dataquality.report';
+            const modelName = 'valantic.dataquality.report';
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                     extend: 'Ext.data.Model',
-                    fields: ['attribute', 'score'],
+                    fields: ['attribute', 'score', 'scores'],
                 });
             }
+
+            const formatAsPercentage = (v) => (!Number.isNaN(v) ? `${(v * 100).toFixed(2)} %` : '');
 
             this.store = new Ext.data.Store({
                 model: modelName,
@@ -36,35 +38,57 @@ valantic.dataquality.object_view = Class.create({
                         type: 'json',
                         rootProperty: 'scores',
                     },
-
+                },
+                listeners: {
+                    load: function (store) {
+                        const scoredLocales = store.getData().items
+                            .map((item) => item.get('scores'))
+                            .filter((item) => !!item)
+                            .flatMap((i) => Object.keys(i))
+                            .filter((value, index, self) => self.indexOf(value) === index);
+                        const columns = [
+                            {
+                                text: t('valantic_dataquality_view_column_attributename'),
+                                sortable: true,
+                                dataIndex: 'attribute',
+                                editable: false,
+                                flex: 1,
+                            },
+                            {
+                                text: t('valantic_dataquality_view_column_score'),
+                                sortable: true,
+                                dataIndex: 'score',
+                                editable: false,
+                                flex: 1,
+                                renderer: function (value) {
+                                    return formatAsPercentage(value);
+                                },
+                                align: 'right',
+                            },
+                        ];
+                        const localeColumn = (locale) => ({
+                            text: `${t('valantic_dataquality_view_column_score')} (${locale})`,
+                            sortable: true,
+                            dataIndex: 'scores',
+                            renderer: function (value) {
+                                return formatAsPercentage(value[locale]);
+                            },
+                            editable: false,
+                            flex: 1,
+                            align: 'right',
+                        });
+                        scoredLocales.forEach((locale) => columns.push(localeColumn(locale)));
+                        // eslint-disable-next-line no-use-before-define
+                        grid.setColumns(columns);
+                    },
                 },
             });
 
             const grid = Ext.create('Ext.grid.Panel', {
                 store: this.store,
-                columns: [
-                    {
-                        text: t('valantic_dataquality_config_column_attributename'),
-                        sortable: true,
-                        dataIndex: 'attribute',
-                        editable: false,
-                        width: 240,
-                    },
-                    {
-                        text: t('valantic_dataquality_config_column_score'),
-                        sortable: true,
-                        dataIndex: 'score',
-                        editable: false,
-                        width: 200,
-                        // eslint-disable-next-line no-unused-vars
-                        renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                            return `${(value * 100).toFixed(2)} %`;
-                        },
-                        align: 'right',
-                    },
-                ],
+                columns: [],
                 stripeRows: true,
-                width: 440,
+                width: 600, // FIXME: full-width
             });
 
             grid.on('beforerender', function () {
@@ -72,8 +96,6 @@ valantic.dataquality.object_view = Class.create({
             }.bind(this));
 
             grid.reference = this;
-
-            this.iframeId = `object_version_iframe_${this.object.id}`;
 
             this.layout = new Ext.Panel({
                 title: t('valantic_dataquality_pimcore_tab_name'),
@@ -92,6 +114,7 @@ valantic.dataquality.object_view = Class.create({
     },
 
     reload: function () {
+        // TODO: add button to trigger
         this.store.reload();
     },
 

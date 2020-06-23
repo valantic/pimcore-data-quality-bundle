@@ -6,7 +6,7 @@ use Exception;
 use Pimcore\Tool;
 use Throwable;
 
-class ValidateLocalizedAttribute extends AbstractValidateAttribute
+class ValidateLocalizedAttribute extends AbstractValidateAttribute implements MultiScorable
 {
     /**
      * {@inheritDoc}
@@ -35,13 +35,25 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute
             return 0;
         }
 
-        $scoreSum = 0;
+        return array_sum($this->scores()) / count($this->getValidatableLocales());
+    }
 
-        foreach ($this->getValidatableLocales() as $locale) {
-            $scoreSum += 1 - (count($this->violations[$locale]) / count($this->getConstraints()));
+    /**
+     * {@inheritDoc}
+     */
+    public function scores(): array
+    {
+        if (!count($this->getConstraints())) {
+            return [];
         }
 
-        return $scoreSum/count($this->getValidatableLocales());
+        $scores = [];
+
+        foreach ($this->getValidatableLocales() as $locale) {
+            $scores[$locale] = 1 - (count($this->violations[$locale]) / count($this->getConstraints()));
+        }
+
+        return $scores;
     }
 
     protected function getValidatableLocales(): array
