@@ -7,7 +7,9 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Exception\ExceptionInterface as YamlException;
 use Symfony\Component\Yaml\Yaml;
+use Throwable;
 use Valantic\DataQualityBundle\Exception\InvalidConfigEvent;
+use Valantic\DataQualityBundle\Service\ClassInformation;
 
 class Reader extends Config
 {
@@ -105,9 +107,10 @@ class Reader extends Config
      */
     public function getForClass(string $className): array
     {
-        if (strpos($className, '\\') !== false) {
-            $nameParts = explode('\\', $className);
-            $className = $nameParts[count($nameParts) - 1];
+        try {
+            $className = (new ClassInformation($className))->getClassName();
+        }catch(Throwable $throwable){
+            return [];
         }
 
         if (!in_array($className, $this->getConfiguredClasses(), true)) {

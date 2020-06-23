@@ -4,6 +4,7 @@ namespace Valantic\DataQualityBundle\Validation;
 
 use Pimcore\Model\DataObject\Concrete;
 use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Service\ClassInformation;
 
 class ValidateObject implements Validatable, Scorable
 {
@@ -24,9 +25,14 @@ class ValidateObject implements Validatable, Scorable
 
     /**
      * Validators used for this object.
-     * @var ValidateAttribute[]
+     * @var ValidatePlainAttribute[]
      */
     protected $validators = [];
+
+    /**
+     * @var ClassInformation
+     */
+    protected $classInformation;
 
     /**
      * Validate an object and all its attributes.
@@ -38,6 +44,7 @@ class ValidateObject implements Validatable, Scorable
         $this->obj = $obj;
         $this->validationConfig = $config->getForObject($obj);
         $this->config = $config;
+        $this->classInformation = new ClassInformation($this->obj->getClassName());
     }
 
     /**
@@ -47,9 +54,17 @@ class ValidateObject implements Validatable, Scorable
     {
         $validators = [];
         foreach ($this->getValidatableAttributes() as $attribute) {
-            $validator = new ValidateAttribute($this->obj, $attribute, $this->config);
-            $validator->validate();
-            $validators[$attribute] = $validator;
+            if ($this->classInformation->isPlainAttribute($attribute)) {
+                $validator = new ValidatePlainAttribute($this->obj, $attribute, $this->config);
+            }
+            if ($this->classInformation->isLocalizedAttribute($attribute)) {
+                $validator = new ValidateLocalizedAttribute($this->obj, $attribute, $this->config);
+            }
+            if (isset($validator)) {
+                $validator->validate();
+                $validators[$attribute] = $validator;
+            }
+            unset($validator);
         }
         $this->validators = $validators;
     }
@@ -104,6 +119,6 @@ class ValidateObject implements Validatable, Scorable
      */
     protected function getAttributesInObject(): array
     {
-        return array_keys($this->obj->getClass()->getFieldDefinitions());
+        return array_keys($this->classInformation->getAttributesFlattened());
     }
 }

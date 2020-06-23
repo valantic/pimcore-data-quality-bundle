@@ -2,14 +2,13 @@
 
 namespace Valantic\DataQualityBundle\Validation;
 
-use Exception;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Service\ClassInformation;
 
-class ValidateAttribute implements Validatable, Scorable
+abstract class AbstractValidateAttribute implements Validatable, Scorable
 {
     /**
      * @var ValidatorInterface
@@ -43,6 +42,11 @@ class ValidateAttribute implements Validatable, Scorable
     protected $violations = [];
 
     /**
+     * @var ClassInformation
+     */
+    protected $classInformation;
+
+    /**
      * Validates an attribute of an object.
      *
      * @param Concrete $obj Object to validate
@@ -57,22 +61,7 @@ class ValidateAttribute implements Validatable, Scorable
         $this->attribute = $attribute;
         $this->config = $config;
         $this->validationConfig = $config->getForObjectAttribute($obj, $attribute);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function validate()
-    {
-        if (!array_key_exists($this->attribute, $this->obj->getClass()->getFieldDefinitions())) {
-            return;
-        }
-
-        try {
-            $this->violations = $this->validator->validate($this->obj->get($this->attribute), $this->getConstraints());
-        } catch (Exception $e) {
-            // TODO: emit event
-        }
+        $this->classInformation = new ClassInformation($this->obj->getClassName());
     }
 
     /**

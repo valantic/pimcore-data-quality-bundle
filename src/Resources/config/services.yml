@@ -28,8 +28,12 @@ services:
             $bundle: "@=service('kernel').getBundle('ValanticDataQualityBundle')"
 
 
+    Valantic\DataQualityBundle\Service\:
+        resource: '../../Service'
+
+    Valantic\DataQualityBundle\Repository\:
+        resource: '../../Repository'
+
     Valantic\DataQualityBundle\Config\V1\Reader: ~
 
     Valantic\DataQualityBundle\Config\V1\Writer: ~
-
-    Valantic\DataQualityBundle\Validation\Definitions: ~

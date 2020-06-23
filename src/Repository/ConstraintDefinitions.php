@@ -1,6 +1,6 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Validation;
+namespace Valantic\DataQualityBundle\Repository;
 
 class ConstraintDefinitions
 {

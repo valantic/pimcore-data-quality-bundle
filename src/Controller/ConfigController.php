@@ -3,6 +3,7 @@
 namespace Valantic\DataQualityBundle\Controller;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Listing as ClassDefinitionListing;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,7 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Config\V1\Writer as ConfigWriter;
-use Valantic\DataQualityBundle\Validation\ConstraintDefinitions;
+use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
+use Valantic\DataQualityBundle\Service\ClassInformation;
 
 /**
  * @Route("/admin/valantic/data-quality/config")
@@ -44,8 +46,8 @@ class ConfigController extends BaseController
                         'args' => $args ? [$args] : null,
                     ];
                 }
-                if($filter){
-                    if(stripos($className, $filter) === false && stripos($attribute, $filter)===false){
+                if ($filter) {
+                    if (stripos($className, $filter) === false && stripos($attribute, $filter) === false) {
                         continue;
                     }
                 }
@@ -106,13 +108,13 @@ class ConfigController extends BaseController
         $this->checkPermission(self::CONFIG_NAME);
 
         try {
-            $definition = ClassDefinition::getByName($request->query->get('classname'));
-            $attributes = $definition->getFieldDefinitions();
+            $classData = new ClassInformation($request->query->get('classname'));
+            $attributes = array_keys($classData->getAttributesFlattened());
         } catch (Throwable $throwable) {
             return $this->json(['attributes' => []]);
         }
 
-        $names = array_diff(array_keys($attributes), $config->getConfiguredClassAttributes($definition->getName()));
+        $names = array_diff($attributes, $config->getConfiguredClassAttributes($classData->getClassName()));
 
         $attributeNames = [];
         foreach ($names as $name) {
