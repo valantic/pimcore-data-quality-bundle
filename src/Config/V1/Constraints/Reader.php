@@ -1,6 +1,6 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Config\V1;
+namespace Valantic\DataQualityBundle\Config\V1\Constraints;
 
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -8,45 +8,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Exception\ExceptionInterface as YamlException;
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
+use Valantic\DataQualityBundle\Config\V1\AbstractReader;
+use Valantic\DataQualityBundle\Config\V1\Config;
 use Valantic\DataQualityBundle\Event\InvalidConfigEvent;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
-class Reader extends Config
+class Reader extends AbstractReader
 {
-    /**
-     * @var EventDispatcher
-     */
-    protected $eventDispatcher;
-
-    /**
-     * Read and write the bundle's configuration.
-     *
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    protected function getCurrentSectionName(): string
     {
-        $this->eventDispatcher = $eventDispatcher;
-    }
-
-    /**
-     * Get a config section.
-     *
-     * @param string $name
-     * @return array
-     */
-    protected function getSection(string $name): array
-    {
-        return array_key_exists($name, $this->getRaw()) ? $this->getRaw()[$name] : [];
-    }
-
-    /**
-     * Get the constraints section from the config.
-     *
-     * @return array
-     */
-    public function getConstraintsSection(): array
-    {
-        return $this->getSection(self::CONFIG_SECTION_CONSTRAINTS);
+        return self::CONFIG_SECTION_CONSTRAINTS;
     }
 
     /**
@@ -77,7 +48,7 @@ class Reader extends Config
      */
     public function getConfiguredClasses(): array
     {
-        return array_keys($this->getConstraintsSection());
+        return array_keys($this->getCurrentSection());
     }
 
     /**
@@ -110,7 +81,7 @@ class Reader extends Config
             return [];
         }
 
-        return $this->safeArray($this->getConstraintsSection(), $className);
+        return $this->safeArray($this->getCurrentSection(), $className);
     }
 
     /**

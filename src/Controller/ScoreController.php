@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Valantic\DataQualityBundle\Validation\ValidateObject;
-use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
 
 /**
  * @Route("/admin/valantic/data-quality/score")

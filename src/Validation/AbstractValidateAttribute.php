@@ -5,7 +5,7 @@ namespace Valantic\DataQualityBundle\Validation;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 abstract class AbstractValidateAttribute implements Validatable, Scorable

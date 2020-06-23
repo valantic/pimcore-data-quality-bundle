@@ -9,7 +9,7 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
 use Pimcore\Migrations\MigrationManager;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use Valantic\DataQualityBundle\Config\V1\Writer as ConfigWriter;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Controller\ConstraintConfigController;
 
 class Installer extends MigrationInstaller

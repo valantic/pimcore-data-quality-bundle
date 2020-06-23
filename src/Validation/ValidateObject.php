@@ -3,7 +3,7 @@
 namespace Valantic\DataQualityBundle\Validation;
 
 use Pimcore\Model\DataObject\Concrete;
-use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 class ValidateObject implements Validatable, Scorable

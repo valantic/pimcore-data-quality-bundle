@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
-use Valantic\DataQualityBundle\Config\V1\Reader as ConfigReader;
-use Valantic\DataQualityBundle\Config\V1\Writer as ConfigWriter;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
@@ -26,6 +26,7 @@ class ConstraintConfigController extends BaseController
      *
      * @param Request $request
      * @param ConfigReader $config
+     * @param ConfigWriter $writer
      *
      * @return JsonResponse
      */

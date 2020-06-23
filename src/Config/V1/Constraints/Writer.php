@@ -1,17 +1,15 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Config\V1;
+namespace Valantic\DataQualityBundle\Config\V1\Constraints;
 
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
+use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
+use Valantic\DataQualityBundle\Config\V1\Config;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Reader;
 
-class Writer extends Config
+class Writer extends AbstractWriter
 {
-    /**
-     * @var Reader
-     */
-    protected $reader;
-
     /**
      * Write the bundle's config file.
      * @param Reader $reader
@@ -112,25 +110,5 @@ class Writer extends Config
         unset($raw[$className][$attributeName][$constraint]);
 
         return $this->writeConfig($raw);
-    }
-
-    /**
-     * Persists the new config to disk.
-     * @param array $raw The new config.
-     * @return bool
-     */
-    protected function writeConfig(array $raw): bool
-    {
-        try {
-            $yaml = Yaml::dump($raw, 4, 2, Yaml::DUMP_NULL_AS_TILDE);
-
-            return (bool)file_put_contents($this->getConfigFilePath(), $yaml);
-        } catch (Throwable $throwable) {
-            return false;
-        }
-    }
-
-    public function ensureConfigExists():bool{
-        return touch($this->getConfigFilePath());
     }
 }
