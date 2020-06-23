@@ -44,7 +44,7 @@ valantic.dataquality.object_view = Class.create({
                 store: this.store,
                 columns: [
                     {
-                        text: t('valantic_dataquality_config_column_attribute'),
+                        text: t('valantic_dataquality_config_column_attributename'),
                         sortable: true,
                         dataIndex: 'attribute',
                         editable: false,
@@ -56,6 +56,11 @@ valantic.dataquality.object_view = Class.create({
                         dataIndex: 'score',
                         editable: false,
                         width: 200,
+                        // eslint-disable-next-line no-unused-vars
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                            return `${(value * 100).toFixed(2)} %`;
+                        },
+                        align: 'right',
                     },
                 ],
                 stripeRows: true,
