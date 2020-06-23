@@ -129,4 +129,8 @@ class Writer extends Config
             return false;
         }
     }
+
+    public function ensureConfigExists():bool{
+        return touch($this->getConfigFilePath());
+    }
 }

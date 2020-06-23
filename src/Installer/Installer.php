@@ -5,11 +5,25 @@ namespace Valantic\DataQualityBundle\Installer;
 use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
+use Pimcore\Migrations\MigrationManager;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Valantic\DataQualityBundle\Config\V1\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Controller\ConfigController;
 
 class Installer extends MigrationInstaller
 {
+    /**
+     * @var ConfigWriter
+     */
+    protected $writer;
+
+    public function __construct(BundleInterface $bundle, ConnectionInterface $connection, MigrationManager $migrationManager, ConfigWriter $writer)
+    {
+        parent::__construct($bundle, $connection, $migrationManager);
+        $this->writer = $writer;
+    }
 
     public function getMigrationVersion(): string
     {
@@ -46,6 +60,7 @@ class Installer extends MigrationInstaller
     public function migrateInstall(Schema $schema, Version $version)
     {
         $version->addSql('INSERT INTO `users_permission_definitions` (`key`) VALUES (?);', [ConfigController::CONFIG_NAME]);
+        $this->writer->ensureConfigExists();
     }
 
     /**

@@ -29,10 +29,12 @@ class ConfigController extends BaseController
      *
      * @return JsonResponse
      */
-    public function listAction(Request $request, ConfigReader $config): JsonResponse
+    public function listAction(Request $request, ConfigReader $config, ConfigWriter $writer): JsonResponse
     {
         // check permissions
         $this->checkPermission(self::CONFIG_NAME);
+
+        $writer->ensureConfigExists();
 
         $filter = $request->get('filterText');
 

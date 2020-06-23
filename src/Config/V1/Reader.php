@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Exception\ExceptionInterface as YamlException;
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
-use Valantic\DataQualityBundle\Exception\InvalidConfigEvent;
+use Valantic\DataQualityBundle\Event\InvalidConfigEvent;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 class Reader extends Config

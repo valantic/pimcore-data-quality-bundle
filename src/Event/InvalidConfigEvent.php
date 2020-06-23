@@ -1,6 +1,6 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Exception;
+namespace Valantic\DataQualityBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
