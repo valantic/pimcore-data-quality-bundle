@@ -113,7 +113,7 @@ valantic.dataquality.constraints = Class.create({
                 columnLines: true,
                 bbar: this.pagingtoolbar,
                 tbar: tbar,
-                autoExpandColumn: 'description',
+                autoExpandColumn: 'attributename',
                 stripeRows: true,
                 autoScroll: true,
                 plugins: plugins,
@@ -210,7 +210,9 @@ valantic.dataquality.constraints = Class.create({
                                     .filter((r) => r.get('classname') === this.record.get('classname'))
                                     .filter((r) => r.get('attributename') === this.record.get('attributename'))[0];
 
-                                this.showDetail(this.store.getById(updatedRecord.getId()));
+                                if (updatedRecord) {
+                                    this.showDetail(this.store.getById(updatedRecord.getId()));
+                                }
                             }.bind(this),
                         });
                     }.bind(this),
@@ -454,7 +456,9 @@ valantic.dataquality.constraints = Class.create({
                                         .filter((record) => record.get('classname') === this.record.get('classname'))
                                         .filter((record) => record.get('attributename') === this.record.get('attributename'))[0];
 
-                                    this.showDetail(this.store.getById(updatedRecord.getId()));
+                                    if (updatedRecord) {
+                                        this.showDetail(this.store.getById(updatedRecord.getId()));
+                                    }
                                 }.bind(this),
                             });
                         }.bind(this),
