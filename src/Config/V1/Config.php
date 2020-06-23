@@ -2,8 +2,14 @@
 
 namespace Valantic\DataQualityBundle\Config\V1;
 
+use Symfony\Component\Yaml\Exception\ExceptionInterface as YamlException;
+use Symfony\Component\Yaml\Yaml;
+use Valantic\DataQualityBundle\Event\InvalidConfigEvent;
+
 abstract class Config
 {
+    protected const CONFIG_SECTION_CONSTRAINTS = 'constraints';
+
     /**
      * Returns the absolute path to the config file.
      *
@@ -12,6 +18,33 @@ abstract class Config
     protected function getConfigFilePath(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/valantic_dataquality_config.yml';
+    }
+
+    /**
+     * Returns the raw config as read from disk.
+     *
+     * @return array
+     */
+    protected function getRaw(): array
+    {
+        try {
+            $parsed = Yaml::parseFile($this->getConfigFilePath());
+        } catch (YamlException $exception) {
+            $this->eventDispatcher->dispatch(new InvalidConfigEvent());
+
+            return [];
+        }
+
+        if (!is_array($parsed)) {
+            $this->eventDispatcher->dispatch(new InvalidConfigEvent());
+
+            return [];
+        }
+
+        /**
+         * @var $parsed array
+         */
+        return $parsed;
     }
 
     /**

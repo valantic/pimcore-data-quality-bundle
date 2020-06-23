@@ -29,31 +29,24 @@ class Reader extends Config
     }
 
     /**
-     * Returns the raw config as read from disk.
+     * Get a config section.
+     *
+     * @param string $name
+     * @return array
+     */
+    protected function getSection(string $name): array
+    {
+        return array_key_exists($name, $this->getRaw()) ? $this->getRaw()[$name] : [];
+    }
+
+    /**
+     * Get the constraints section from the config.
      *
      * @return array
-     * @internal
      */
-    public function getRaw(): array
+    public function getConstraintsSection(): array
     {
-        try {
-            $parsed = Yaml::parseFile($this->getConfigFilePath());
-        } catch (YamlException $exception) {
-            $this->eventDispatcher->dispatch(new InvalidConfigEvent());
-
-            return [];
-        }
-
-        if (!is_array($parsed)) {
-            $this->eventDispatcher->dispatch(new InvalidConfigEvent());
-
-            return [];
-        }
-
-        /**
-         * @var $parsed array
-         */
-        return $parsed;
+        return $this->getSection(self::CONFIG_SECTION_CONSTRAINTS);
     }
 
     /**
@@ -84,7 +77,7 @@ class Reader extends Config
      */
     public function getConfiguredClasses(): array
     {
-        return array_keys($this->getRaw());
+        return array_keys($this->getConstraintsSection());
     }
 
     /**
@@ -109,7 +102,7 @@ class Reader extends Config
     {
         try {
             $className = (new ClassInformation($className))->getClassName();
-        }catch(Throwable $throwable){
+        } catch (Throwable $throwable) {
             return [];
         }
 
@@ -117,7 +110,7 @@ class Reader extends Config
             return [];
         }
 
-        return $this->safeArray($this->getRaw(), $className);
+        return $this->safeArray($this->getConstraintsSection(), $className);
     }
 
     /**
