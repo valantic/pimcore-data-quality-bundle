@@ -17,18 +17,17 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
             handler: function () {
                 try {
                     pimcore.globalmanager.get('valantic_dataquality_editor').activate();
-                }
-                catch (e) {
+                } catch (e) {
                     pimcore.globalmanager.add('valantic_dataquality_editor', new valantic.dataquality.editor());
                 }
-            }
+            },
         });
     },
 
-    postOpenObject:function(object){
+    postOpenObject: function (object) {
         object.tabbar.add(new valantic.dataquality.object_view(object).getLayout());
         pimcore.layout.refresh();
-    }
+    },
 });
 
 var ValanticDataQualityBundlePlugin = new pimcore.plugin.ValanticDataQualityBundle();

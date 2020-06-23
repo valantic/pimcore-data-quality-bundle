@@ -19,9 +19,7 @@ valantic.dataquality.editor = Class.create({
     },
 
     getLayout: function () {
-
         if (this.layout == null) {
-
             var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('valantic_dataquality_config_list'),
@@ -33,14 +31,14 @@ valantic.dataquality.editor = Class.create({
                     sorters: [
                         {
                             property: 'classname',
-                            direction: 'ASC'
+                            direction: 'ASC',
                         },
                         {
                             property: 'attributename',
                             direction: 'ASC',
                         },
-                    ]
-                }
+                    ],
+                },
             );
 
             this.filterField = new Ext.form.TextField({
@@ -49,7 +47,7 @@ valantic.dataquality.editor = Class.create({
                 style: 'margin: 0 10px 0 0;',
                 enableKeyEvents: true,
                 listeners: {
-                    'keydown': function (field, key) {
+                    keydown: function (field, key) {
                         if (key.getKey() == key.ENTER) {
                             // TODO: missing server-side
                             var input = field;
@@ -58,42 +56,43 @@ valantic.dataquality.editor = Class.create({
 
                             this.store.load();
                         }
-                    }.bind(this)
-                }
+                    }.bind(this),
+                },
             });
 
             this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
-
 
             var tbarItems = [
                 {
                     text: t('add'),
                     handler: this.onAddMain.bind(this),
-                    iconCls: 'pimcore_icon_add'
+                    iconCls: 'pimcore_icon_add',
                 },
                 '->',
                 {
-                    text: t('filter') + '/' + t('search'),
+                    text: `${t('filter')}/${t('search')}`,
                     xtype: 'tbtext',
-                    style: 'margin: 0 10px 0 0;'
+                    style: 'margin: 0 10px 0 0;',
                 },
-                this.filterField
+                this.filterField,
             ];
 
             var tbar = Ext.create('Ext.Toolbar', {
                 cls: 'pimcore_main_toolbar',
-                items: tbarItems
+                items: tbarItems,
             });
 
             var columns = [
-                {text: 'ID', sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60},
+                {
+                    text: 'ID', sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60,
+                },
                 {
                     text: t('valantic_dataquality_config_column_classname'),
                     sortable: true,
                     dataIndex: 'classname',
                     filter: 'string',
                     flex: 200,
-                    renderer: Ext.util.Format.htmlEncode
+                    renderer: Ext.util.Format.htmlEncode,
                 },
                 {
                     text: t('valantic_dataquality_config_column_attributename'),
@@ -101,7 +100,7 @@ valantic.dataquality.editor = Class.create({
                     dataIndex: 'attributename',
                     filter: 'string',
                     flex: 200,
-                    renderer: Ext.util.Format.htmlEncode
+                    renderer: Ext.util.Format.htmlEncode,
                 },
             ];
 
@@ -119,14 +118,14 @@ valantic.dataquality.editor = Class.create({
                 autoScroll: true,
                 plugins: plugins,
                 viewConfig: {
-                    forceFit: true
+                    forceFit: true,
                 },
                 listeners: {
                     rowclick: function (grid, record, tr, rowIndex, e, eOpts) {
                         this.showDetail(record);
                     }.bind(this),
                     cellcontextmenu: this.onMainContextmenu.bind(this),
-                }
+                },
             });
 
             this.detailView = new Ext.Panel({
@@ -134,19 +133,19 @@ valantic.dataquality.editor = Class.create({
                 minWidth: 350,
                 width: 350,
                 split: true,
-                layout: 'fit'
+                layout: 'fit',
             });
 
             var layoutConf = {
                 tabConfig: {
-                    tooltip: t('valantic_dataquality_config_tooltip')
+                    tooltip: t('valantic_dataquality_config_tooltip'),
                 },
                 iconCls: 'pimcore_nav_icon_object',
                 items: [this.grid, this.detailView],
                 layout: 'border',
             };
 
-            layoutConf['title'] = t('valantic_dataquality_config_tooltip');
+            layoutConf.title = t('valantic_dataquality_config_tooltip');
 
             this.layout = new Ext.Panel(layoutConf);
 
@@ -177,8 +176,7 @@ valantic.dataquality.editor = Class.create({
                         this.store.reload();
                     }.bind(this),
                 });
-
-            }.bind(this)
+            }.bind(this),
         }]);
 
         e.stopEvent();
@@ -203,17 +201,16 @@ valantic.dataquality.editor = Class.create({
                         this.store.reload({
                             callback: function (records, operation, success) {
                                 var updatedRecord = this.store.data.items
-                                    .filter(record => record.get('classname') === this.record.get('classname'))
-                                    .filter(record => record.get('attributename') === this.record.get('attributename'))
+                                    .filter((record) => record.get('classname') === this.record.get('classname'))
+                                    .filter((record) => record.get('attributename') === this.record.get('attributename'))
                                     [0];
 
                                 this.showDetail(this.store.getById(updatedRecord.getId()));
-                            }.bind(this)
+                            }.bind(this),
                         });
                     }.bind(this),
                 });
-
-            }.bind(this)
+            }.bind(this),
         }]);
 
         e.stopEvent();
@@ -228,22 +225,22 @@ valantic.dataquality.editor = Class.create({
                 type: 'memory',
                 reader: {
                     type: 'json',
-                    rootProperty: 'rules'
-                }
+                    rootProperty: 'rules',
+                },
             },
             autoDestroy: true,
-            data: rec.data
+            data: rec.data,
         });
 
         var detailsGrid = new Ext.grid.GridPanel({
             store: detailsStore,
-            title: t('valantic_dataquality_config_details_for') + ' ' + rec.get('classname') + '.' + rec.get('attributename'),
+            title: `${t('valantic_dataquality_config_details_for')} ${rec.get('classname')}.${rec.get('attributename')}`,
             columns: [
                 {
                     text: t('valantic_dataquality_config_column_constraint'),
                     sortable: true,
                     dataIndex: 'constraint',
-                    flex: 60
+                    flex: 60,
                 },
                 {
                     text: t('valantic_dataquality_config_column_parameters'),
@@ -252,20 +249,19 @@ valantic.dataquality.editor = Class.create({
                     flex: 30,
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return value ? JSON.stringify(value) : '';
-                    }
+                    },
                 },
             ],
             columnLines: true,
             stripeRows: true,
             autoScroll: true,
             viewConfig: {
-                forceFit: true
+                forceFit: true,
             },
             listeners: {
                 cellcontextmenu: this.onDetailContextmenu.bind(this),
-            }
+            },
         });
-
 
         var detailTbar = Ext.create('Ext.Toolbar', {
             cls: 'pimcore_main_toolbar',
@@ -273,9 +269,9 @@ valantic.dataquality.editor = Class.create({
                 {
                     text: t('add'),
                     handler: this.onAddDetail.bind(this),
-                    iconCls: 'pimcore_icon_add'
-                }
-            ]
+                    iconCls: 'pimcore_icon_add',
+                },
+            ],
         });
 
         this.detailView.removeAll();
@@ -294,9 +290,9 @@ valantic.dataquality.editor = Class.create({
                 url: Routing.generate('valantic_dataquality_config_classes'),
                 reader: {
                     type: 'json',
-                    rootProperty: 'classes'
-                }
-            }
+                    rootProperty: 'classes',
+                },
+            },
         });
 
         var attributesStore = new Ext.data.Store({
@@ -305,13 +301,13 @@ valantic.dataquality.editor = Class.create({
                 type: 'ajax',
                 url: Routing.generate('valantic_dataquality_config_attributes'),
                 extraParams: {
-                    classname: ''
+                    classname: '',
                 },
                 reader: {
                     type: 'json',
-                    rootProperty: 'attributes'
-                }
-            }
+                    rootProperty: 'attributes',
+                },
+            },
         });
 
         var classnameCombo = {
@@ -326,15 +322,15 @@ valantic.dataquality.editor = Class.create({
             triggerAction: 'all',
             width: 250,
             listeners: {
-                'select': function (combo, value, index) {
+                select: function (combo, value, index) {
                     var classname = combo.getValue();
                     attributesStore.getProxy().setExtraParams({
-                        classname: classname
+                        classname: classname,
                     });
                     attributesStore.load();
                     attributenameCombo.clearValue();
-                }
-            }
+                },
+            },
         };
 
         var attributenameCombo = new Ext.form.field.ComboBox({
@@ -347,12 +343,12 @@ valantic.dataquality.editor = Class.create({
             store: attributesStore,
             mode: 'local',
             triggerAction: 'all',
-            width: 250
+            width: 250,
         });
 
         var formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
-            items: [classnameCombo, attributenameCombo]
+            items: [classnameCombo, attributenameCombo],
         });
 
         var addMainWin = new Ext.Window({
@@ -377,8 +373,8 @@ valantic.dataquality.editor = Class.create({
                     });
 
                     addMainWin.close();
-                }.bind(this)
-            }]
+                }.bind(this),
+            }],
         });
 
         addMainWin.show();
@@ -391,9 +387,9 @@ valantic.dataquality.editor = Class.create({
                 url: Routing.generate('valantic_dataquality_config_constraints'),
                 reader: {
                     type: 'json',
-                    rootProperty: 'constraints'
-                }
-            }
+                    rootProperty: 'constraints',
+                },
+            },
         });
 
         var formPanel = new Ext.form.FormPanel({
@@ -418,8 +414,8 @@ valantic.dataquality.editor = Class.create({
                     editable: true,
                     width: 400,
                     height: 200,
-                }
-            ]
+                },
+            ],
         });
 
         var addDetailWin = new Ext.Window({
@@ -445,19 +441,19 @@ valantic.dataquality.editor = Class.create({
                             this.store.reload({
                                 callback: function (records, operation, success) {
                                     var updatedRecord = this.store.data.items
-                                        .filter(record => record.get('classname') === this.record.get('classname'))
-                                        .filter(record => record.get('attributename') === this.record.get('attributename'))
+                                        .filter((record) => record.get('classname') === this.record.get('classname'))
+                                        .filter((record) => record.get('attributename') === this.record.get('attributename'))
                                         [0];
 
                                     this.showDetail(this.store.getById(updatedRecord.getId()));
-                                }.bind(this)
+                                }.bind(this),
                             });
                         }.bind(this),
                     });
 
                     addDetailWin.close();
-                }.bind(this)
-            }]
+                }.bind(this),
+            }],
         });
 
         addDetailWin.show();

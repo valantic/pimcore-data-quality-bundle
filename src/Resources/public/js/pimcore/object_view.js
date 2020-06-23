@@ -6,14 +6,12 @@ valantic.dataquality.object_view = Class.create({
     },
 
     getLayout: function () {
-
         if (this.layout == null) {
-
             var modelName = 'pvalantic.dataquality.report';
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                     extend: 'Ext.data.Model',
-                    fields: ['attribute', 'score']
+                    fields: ['attribute', 'score'],
                 });
             }
 
@@ -22,24 +20,24 @@ valantic.dataquality.object_view = Class.create({
                 sorters: [
                     {
                         property: 'attribute',
-                        direction: 'ASC'
+                        direction: 'ASC',
                     },
                     {
                         property: 'score',
-                        direction: 'DESC'
+                        direction: 'DESC',
                     }],
                 proxy: {
                     type: 'ajax',
                     url: Routing.generate('valantic_dataquality_score_show'),
                     extraParams: {
-                        id: this.object.id
+                        id: this.object.id,
                     },
                     reader: {
                         type: 'json',
-                        rootProperty: 'scores'
-                    }
+                        rootProperty: 'scores',
+                    },
 
-                }
+                },
             });
 
             var grid = Ext.create('Ext.grid.Panel', {
@@ -50,14 +48,14 @@ valantic.dataquality.object_view = Class.create({
                         sortable: true,
                         dataIndex: 'attribute',
                         editable: false,
-                        width: 240
+                        width: 240,
                     },
                     {
                         text: t('valantic_dataquality_config_column_score'),
                         sortable: true,
                         dataIndex: 'score',
                         editable: false,
-                        width: 200
+                        width: 200,
                     },
                 ],
                 stripeRows: true,
@@ -70,20 +68,19 @@ valantic.dataquality.object_view = Class.create({
 
             grid.reference = this;
 
-            this.iframeId = 'object_version_iframe_' + this.object.id;
+            this.iframeId = `object_version_iframe_${this.object.id}`;
 
             this.layout = new Ext.Panel({
                 title: t('valantic_dataquality_pimcore_tab_name'),
                 tabConfig: {
-                    tooltip: t('valantic_dataquality_pimcore_tab_name')
+                    tooltip: t('valantic_dataquality_pimcore_tab_name'),
                 },
                 iconCls: 'pimcore_material_icon_info pimcore_material_icon',
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: 'border',
-                items: [grid]
+                items: [grid],
             });
-
         }
 
         return this.layout;
