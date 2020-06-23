@@ -24,6 +24,18 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
                 }
             },
         });
+
+        menu.add({
+            text: t('valantic_dataquality_config_locales_tooltip'),
+            iconCls: 'pimcore_nav_icon_object',
+            handler: function () {
+                try {
+                    pimcore.globalmanager.get('valantic_dataquality_locales').activate();
+                } catch (e) {
+                    pimcore.globalmanager.add('valantic_dataquality_locales', new valantic.dataquality.locales());
+                }
+            },
+        });
     },
 
     postOpenObject: function (object) {

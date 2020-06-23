@@ -106,9 +106,9 @@ class LocaleConfigController extends BaseController
     public function modifyAction(Request $request, ConfigWriter $config): JsonResponse
     {
         return $this->json([
-            'status' => $config->addClassAttribute(
+            'status' => $config->addOrUpdate(
                 $request->request->get('classname'),
-                $request->request->get('attributename')
+                $request->request->get('locales')
             ),
         ]);
     }
@@ -126,10 +126,7 @@ class LocaleConfigController extends BaseController
     public function deleteAction(Request $request, ConfigWriter $config): JsonResponse
     {
         return $this->json([
-            'status' => $config->removeClassAttribute(
-                $request->request->get('classname'),
-                $request->request->get('attributename')
-            ),
+            'status' => $config->delete($request->request->get('classname')),
         ]);
     }
 }

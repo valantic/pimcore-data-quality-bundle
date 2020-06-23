@@ -64,7 +64,9 @@ abstract class Config
      */
     private function getSection(string $name): array
     {
-        return array_key_exists($name, $this->getRaw()) ? $this->getRaw()[$name] : [];
+        return array_key_exists($name, $this->getRaw()) && $this->getRaw()[$name]
+            ? $this->getRaw()[$name]
+            : [];
     }
 
     /**
