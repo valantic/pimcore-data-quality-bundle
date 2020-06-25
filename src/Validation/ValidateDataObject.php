@@ -93,6 +93,11 @@ class ValidateDataObject implements Validatable, Scorable, MultiScorable
     {
         // get (array_column) all attribute scores that have (array_filter) multiple scores
         $multiScores = array_values(array_filter(array_column($this->attributeScores(), 'scores')));
+
+        if (!count($multiScores)) {
+            return [];
+        }
+
         $result = [];
         // iterate over the keys of all multiscores (... requires the array_values above)
         foreach (array_keys(array_merge_recursive(...$multiScores)) as $multiKey) {
