@@ -39,8 +39,19 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
     },
 
     postOpenObject: function (object) {
-        object.tabbar.add(new valantic.dataquality.object_view(object).getLayout());
-        pimcore.layout.refresh();
+        Ext.Ajax.request({
+            url: Routing.generate('valantic_dataquality_score_check'),
+            method: 'get',
+            params: {
+                id: object.id,
+            },
+            success: function (response) {
+                if (JSON.parse(response.responseText).status) {
+                    object.tabbar.add(new valantic.dataquality.object_view(object).getLayout());
+                    pimcore.layout.refresh();
+                }
+            },
+        });
     },
 });
 

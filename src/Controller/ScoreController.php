@@ -15,16 +15,15 @@ use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
  */
 class ScoreController extends BaseController
 {
-
     /**
      * Show score of an object (passed via ?id=n) for the admin backend.
      *
      * @Route("/show/", options={"expose"=true})
      *
      * @param Request $request
-     * @param ConstraintsConfig $constraintsConfig
-     *
+     * @param ConstraintsConfig $constraintsConfig     *
      * @param MetaConfig $metaConfig
+     *
      * @return JsonResponse
      *
      */
@@ -57,5 +56,35 @@ class ScoreController extends BaseController
             'scores' => $validation->scores(),
             'attributes' => $scores,
         ]);
+    }
+
+    /**
+     * Check if an object can be scored i.e. if it is configured.
+     *
+     * @Route("/check/", options={"expose"=true})
+     *
+     * @param Request $request
+     * @param ConstraintsConfig $constraintsConfig     *
+     * @param MetaConfig $metaConfig
+     *
+     * @return JsonResponse
+     *
+     */
+    public function checkAction(Request $request, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig): JsonResponse
+    {
+        // check permissions
+        $this->checkPermission(self::CONFIG_NAME);
+
+        $obj = DataObject::getById($request->query->getInt('id'));
+        if (!$obj) {
+            return $this->json([
+                'status' => false,
+            ]);
+        }
+
+        return $this->json([
+            'status' => $constraintsConfig->isObjectConfigured($obj),
+        ]);
+
     }
 }

@@ -77,4 +77,14 @@ abstract class AbstractReader extends Config
         return $this->getForClass($obj->getClassName());
     }
 
+    /**
+     * Checks whether $obj is configured.
+     * @param Concrete $obj
+     * @return bool
+     */
+    public function isObjectConfigured(Concrete $obj): bool
+    {
+        return count($this->getForObject($obj)) > 0;
+    }
+
 }
