@@ -15,7 +15,7 @@ valantic.dataquality.object_view = Class.create({
                 });
             }
 
-            const formatAsPercentage = (v) => (!Number.isNaN(v) ? `${(v * 100).toFixed(2)} %` : '');
+            const formatAsPercentage = (v) => (!Number.isNaN(v) ? `${(v * 100).toFixed(0)} %` : '');
 
             this.store = new Ext.data.Store({
                 model: modelName,
@@ -71,6 +71,9 @@ valantic.dataquality.object_view = Class.create({
                             sortable: true,
                             dataIndex: 'scores',
                             renderer: function (value) {
+                                if(Number.isNaN(value)){
+                                    return t('valantic_dataquality_view_not_localized_no_score');
+                                }
                                 return formatAsPercentage(value[locale]);
                             },
                             editable: false,
