@@ -54,6 +54,7 @@ class ConstraintConfigController extends BaseController
                     'classname' => $className,
                     'attributename' => $attribute,
                     'rules' => $transformedRules,
+                    'rules_count' => count($transformedRules),
                 ];
             }
         }

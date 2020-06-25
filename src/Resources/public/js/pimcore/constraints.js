@@ -24,7 +24,7 @@ valantic.dataquality.constraints = Class.create({
             const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('valantic_dataquality_constraintconfig_list'),
-                ['classname', 'attribute', 'rules'],
+                ['classname', 'attributename', 'rules_count', 'rules'],
                 itemsPerPage,
                 {
                     autoLoad: true,
@@ -84,9 +84,6 @@ valantic.dataquality.constraints = Class.create({
 
             const columns = [
                 {
-                    text: 'ID', sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60,
-                },
-                {
                     text: t('valantic_dataquality_config_column_classname'),
                     sortable: true,
                     dataIndex: 'classname',
@@ -101,6 +98,13 @@ valantic.dataquality.constraints = Class.create({
                     filter: 'string',
                     flex: 200,
                     renderer: Ext.util.Format.htmlEncode,
+                },
+                {
+                    text: t('valantic_dataquality_config_column_rules_count'),
+                    sortable: true,
+                    dataIndex: 'rules_count',
+                    filter: 'number',
+                    flex: 50,
                 },
             ];
 
