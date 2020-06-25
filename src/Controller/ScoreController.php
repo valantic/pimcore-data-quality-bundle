@@ -53,8 +53,9 @@ class ScoreController extends BaseController
         }
 
         return $this->json([
-            'scores' => $scores,
             'score' => $validation->score(),
+            'scores' => $validation->scores(),
+            'attributes' => $scores,
         ]);
     }
 }

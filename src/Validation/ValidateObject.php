@@ -7,7 +7,7 @@ use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
-class ValidateObject implements Validatable, Scorable
+class ValidateObject implements Validatable, Scorable, MultiScorable
 {
     /**
      * @var Concrete
@@ -86,7 +86,25 @@ class ValidateObject implements Validatable, Scorable
             return 0;
         }
 
-        return array_sum($this->attributeScores()) / count($this->getValidatableAttributes());
+        return array_sum(array_column($this->attributeScores(), 'score')) / count($this->getValidatableAttributes());
+    }
+
+    public function scores(): array
+    {
+        // get (array_column) all attribute scores that have (array_filter) multiple scores
+        $multiScores = array_values(array_filter(array_column($this->attributeScores(), 'scores')));
+        $result = [];
+        // iterate over the keys of all multiscores (... requires the array_values above)
+        foreach (array_keys(array_merge_recursive(...$multiScores)) as $multiKey) {
+            $scores = array_column($multiScores, $multiKey);
+            if (!count($scores)) {
+                $result[$multiKey] = 0;
+                continue;
+            }
+            $result[$multiKey] = array_sum($scores) / count($scores);
+        }
+
+        return $result;
     }
 
     /**

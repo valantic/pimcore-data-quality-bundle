@@ -36,7 +36,7 @@ valantic.dataquality.object_view = Class.create({
                     },
                     reader: {
                         type: 'json',
-                        rootProperty: 'scores',
+                        rootProperty: 'attributes',
                     },
                 },
                 listeners: {
