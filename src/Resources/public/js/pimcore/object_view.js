@@ -15,6 +15,12 @@ valantic.dataquality.object_view = Class.create({
                 });
             }
 
+            const statusDisplay = new Ext.Component({
+                xtype: 'component',
+                autoEl: {}, // will default to creating a DIV
+                html: t('valantic_dataquality_view_loading'),
+            });
+
             const formatAsPercentage = (v) => (!Number.isNaN(v) ? `${(v * 100).toFixed(0)} %` : '');
 
             this.store = new Ext.data.Store({
@@ -83,6 +89,7 @@ valantic.dataquality.object_view = Class.create({
                         scoredLocales.forEach((locale) => columns.push(localeColumn(locale)));
                         // eslint-disable-next-line no-use-before-define
                         grid.setColumns(columns);
+                        statusDisplay.setHtml('');
                     },
                 },
             });
@@ -109,7 +116,7 @@ valantic.dataquality.object_view = Class.create({
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: 'border',
-                items: [grid],
+                items: [statusDisplay, grid],
             });
         }
 
