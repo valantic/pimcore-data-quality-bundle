@@ -32,8 +32,9 @@ class ScoreController extends BaseController
         $obj = DataObject::getById($request->query->getInt('id'));
         if (!$obj) {
             return $this->json([
-                'scores' => [],
                 'score' => -1,
+                'scores' => [],
+                'attributes' => [],
             ]);
         }
 
@@ -43,9 +44,12 @@ class ScoreController extends BaseController
         $scores = [];
         foreach ($validation->attributeScores() as $attribute => $score) {
 
-            $scores[] = array_merge_recursive($score, [
-                'attribute' => $attribute,
-            ]);
+            $scores[] = array_merge_recursive(
+                [
+                    'attribute' => $attribute,
+                ],
+                $score
+            );
         }
 
         return $this->json([
