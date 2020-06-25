@@ -447,6 +447,58 @@ valantic.dataquality.constraints = Class.create({
                     editable: true,
                     width: 400,
                     height: 200,
+                    validator: function (value) {
+                        if (!formPanel.getValues().constraint) {
+                            return true;
+                        }
+                        const selectedConstraint = formPanel.items.getAt(0).getSelection();
+
+                        const defaultParameter = selectedConstraint.get('default_parameter');
+                        const requiredParameters = Object.keys(selectedConstraint.get('required_parameters'));
+                        const optionalParameters = Object.keys(selectedConstraint.get('optional_parameters'));
+
+                        const allParameters = [...requiredParameters, ...optionalParameters];
+
+                        const hasDefaultParameter = !!defaultParameter;
+                        const hasRequiredParameters = !!requiredParameters.length;
+                        const hasOptionalParameters = !!optionalParameters.length;
+
+                        const valueIsEmpty = (!value || !value.trim().length);
+
+                        // if there is/are neither a default parameter nor any required parameters, empty strings are fine
+                        if ((!hasDefaultParameter && !hasRequiredParameters) && valueIsEmpty) {
+                            return true;
+                        }
+
+                        let valueIsJson = false;
+                        let parsedValue = null;
+                        try {
+                            parsedValue = JSON.parse(value);
+                            valueIsJson = true;
+                        } catch (e) {
+                        }
+
+                        if (hasDefaultParameter && valueIsEmpty) {
+                            return t('valantic_dataquality_config_constraint_parameters_invalid_default_missing');
+                        }
+
+                        // if the constraint supports a default parameter, the value doesn't have to be JSON
+                        if (!valueIsJson) {
+                            return t('valantic_dataquality_config_constraint_parameters_invalid_not_json');
+                        }
+
+
+                        const configuredParameters = Object.keys(parsedValue);
+
+                        // if the constraint has required parameters, ensure all are configured
+                        if (hasRequiredParameters) {
+                            if (requiredParameters.length !== requiredParameters.filter(param => configuredParameters.includes(param)).length) {
+                                return t('valantic_dataquality_config_constraint_parameters_invalid_required_missing');
+                            }
+                        }
+
+                        return true;
+                    }
                 },
             ],
         });
@@ -461,6 +513,10 @@ valantic.dataquality.constraints = Class.create({
                 text: t('save'),
                 iconCls: 'pimcore_icon_accept',
                 handler: function () {
+                    if (!formPanel.getForm().isValid()) {
+                        alert(t('valantic_dataquality_config_constraint_form_invalid'));
+                        return;
+                    }
                     const values = formPanel.getForm().getFieldValues();
                     Ext.Ajax.request({
                         url: Routing.generate('valantic_dataquality_constraintconfig_addconstraint'),
