@@ -29,7 +29,6 @@ class ScoreController extends BaseController
      */
     public function showAction(Request $request, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig): JsonResponse
     {
-        // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
         $obj = DataObject::getById($request->query->getInt('id'));
@@ -72,7 +71,6 @@ class ScoreController extends BaseController
      */
     public function checkAction(Request $request, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig): JsonResponse
     {
-        // check permissions
         $this->checkPermission(self::CONFIG_NAME);
 
         $obj = DataObject::getById($request->query->getInt('id'));
