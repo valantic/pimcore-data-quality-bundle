@@ -15,12 +15,6 @@ valantic.dataquality.object_view = Class.create({
                 });
             }
 
-            const statusDisplay = new Ext.Component({
-                xtype: 'component',
-                autoEl: {}, // will default to creating a DIV
-                html: t('valantic_dataquality_view_loading'),
-            });
-
             const formatAsPercentage = (v) => (!Number.isNaN(v) ? `${(v * 100).toFixed(0)} %` : '');
 
             this.store = new Ext.data.Store({
@@ -89,14 +83,63 @@ valantic.dataquality.object_view = Class.create({
                         scoredLocales.forEach((locale) => columns.push(localeColumn(locale)));
                         // eslint-disable-next-line no-use-before-define
                         grid.setColumns(columns);
-                        statusDisplay.setHtml('');
                     },
                 },
+            });
+
+            const plugins = ['pimcore.gridfilters'];
+
+            this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
+
+            this.filterField = new Ext.form.TextField({
+                xtype: 'textfield',
+                width: 200,
+                style: 'margin: 0 10px 0 0;',
+                enableKeyEvents: true,
+                listeners: {
+                    keyup: function (field, key) {
+                        if (key.getKey() === key.ENTER || field.getValue().length === 0) {
+                            const input = field;
+                            const proxy = this.store.getProxy();
+                            proxy.extraParams.filterText = input.getValue();
+
+                            // TODO: not yet functional
+                            this.store.load();
+                        }
+                    }.bind(this),
+                },
+            });
+
+            const tbarItems = [
+                {
+                    text: t('refresh'),
+                    iconCls: 'pimcore_icon_reload',
+                    handler: this.reload.bind(this),
+                },
+                '->',
+                {
+                    text: `${t('filter')}/${t('search')}`,
+                    xtype: 'tbtext',
+                    style: 'margin: 0 10px 0 0;',
+                },
+                this.filterField,
+            ];
+
+            const tbar = Ext.create('Ext.Toolbar', {
+                cls: 'pimcore_main_toolbar',
+                items: tbarItems,
             });
 
             const grid = Ext.create('Ext.grid.Panel', {
                 store: this.store,
                 columns: [],
+                region: 'center',
+                bbar: this.pagingtoolbar,
+                tbar: tbar,
+                plugins: plugins,
+                viewConfig: {
+                    forceFit: true,
+                },
                 stripeRows: true,
                 width: 600, // FIXME: full-width
             });
@@ -116,7 +159,7 @@ valantic.dataquality.object_view = Class.create({
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: 'border',
-                items: [statusDisplay, grid],
+                items: [grid],
             });
         }
 
@@ -124,7 +167,6 @@ valantic.dataquality.object_view = Class.create({
     },
 
     reload: function () {
-        // TODO: add button to trigger
         this.store.reload();
     },
 
