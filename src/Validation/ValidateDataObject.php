@@ -7,7 +7,7 @@ use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
-class ValidateObject implements Validatable, Scorable, MultiScorable
+class ValidateDataObject implements Validatable, Scorable, MultiScorable
 {
     /**
      * @var Concrete

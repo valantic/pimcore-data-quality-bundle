@@ -6,7 +6,7 @@ use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Valantic\DataQualityBundle\Validation\ValidateObject;
+use Valantic\DataQualityBundle\Validation\ValidateDataObject;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 
@@ -41,7 +41,7 @@ class ScoreController extends BaseController
             ]);
         }
 
-        $validation = new ValidateObject($obj, $constraintsConfig, $metaConfig);
+        $validation = new ValidateDataObject($obj, $constraintsConfig, $metaConfig);
         $validation->validate();
 
         $scores = [];
