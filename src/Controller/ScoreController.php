@@ -21,13 +21,11 @@ class ScoreController extends BaseController
      * @Route("/show/", options={"expose"=true})
      *
      * @param Request $request
-     * @param ConstraintsConfig $constraintsConfig     *
-     * @param MetaConfig $metaConfig
+     * @param ValidateDataObject $validation
      *
      * @return JsonResponse
-     *
      */
-    public function showAction(Request $request, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig): JsonResponse
+    public function showAction(Request $request, ValidateDataObject $validation): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
 
@@ -39,7 +37,7 @@ class ScoreController extends BaseController
             ]);
         }
 
-        $validation = new ValidateDataObject($obj, $constraintsConfig, $metaConfig);
+        $validation->setObject($obj);
         $validation->validate();
 
         $scores = [];
@@ -63,13 +61,11 @@ class ScoreController extends BaseController
      * @Route("/check/", options={"expose"=true})
      *
      * @param Request $request
-     * @param ConstraintsConfig $constraintsConfig     *
-     * @param MetaConfig $metaConfig
+     * @param ConstraintsConfig $constraintsConfig
      *
      * @return JsonResponse
-     *
      */
-    public function checkAction(Request $request, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig): JsonResponse
+    public function checkAction(Request $request, ConstraintsConfig $constraintsConfig): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
 

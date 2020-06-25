@@ -41,3 +41,5 @@ services:
     Valantic\DataQualityBundle\Config\V1\Meta\Reader: ~
 
     Valantic\DataQualityBundle\Config\V1\Meta\Writer: ~
+
+    Valantic\DataQualityBundle\Validation\ValidateDataObject: ~

@@ -42,17 +42,24 @@ class ValidateDataObject implements Validatable, Scorable, MultiScorable
 
     /**
      * Validate an object and all its attributes.
-     * @param Concrete $obj The object to validate.
      * @param ConstraintsConfig $constraintsConfig
      * @param MetaConfig $metaConfig
      */
-    public function __construct(Concrete $obj, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig)
+    public function __construct(ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig)
+    {
+        $this->constraintsConfig = $constraintsConfig;
+        $this->metaConfig = $metaConfig;
+    }
+
+    /**
+     * Set the object to validate.
+     * @param Concrete $obj The object to validate.
+     */
+    public function setObject(Concrete $obj)
     {
         $this->obj = $obj;
-        $this->validationConfig = $constraintsConfig->getForObject($obj);
-        $this->constraintsConfig = $constraintsConfig;
+        $this->validationConfig = $this->constraintsConfig->getForObject($obj);
         $this->classInformation = new ClassInformation($this->obj->getClassName());
-        $this->metaConfig = $metaConfig;
     }
 
     /**
