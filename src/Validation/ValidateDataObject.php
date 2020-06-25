@@ -19,7 +19,7 @@ class ValidateDataObject extends AbstractValidateObject implements MultiScorable
      */
     public function setObject(AbstractElement $obj)
     {
-        if(!($obj instanceof Concrete)){
+        if (!($obj instanceof Concrete)) {
             throw new InvalidArgumentException('Please provide a Concrete DataObject.');
         }
 
@@ -83,28 +83,5 @@ class ValidateDataObject extends AbstractValidateObject implements MultiScorable
         }
 
         return $result;
-    }
-
-    /**
-     * Get the scores for the individual attributes.
-     * @return array
-     */
-    public function attributeScores(): array
-    {
-        $attributeScores = [];
-        foreach ($this->validators as $attribute => $validator) {
-            $attributeScores[$attribute]['score'] = null;
-            $attributeScores[$attribute]['scores'] = null;
-
-            if ($validator instanceof Scorable) {
-                $attributeScores[$attribute]['score'] = $validator->score();
-            }
-
-            if ($validator instanceof MultiScorable) {
-                $attributeScores[$attribute]['scores'] = $validator->scores();
-            }
-        }
-
-        return $attributeScores;
     }
 }

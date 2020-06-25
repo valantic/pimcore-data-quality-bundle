@@ -4,10 +4,17 @@ namespace Valantic\DataQualityBundle\Validation;
 
 use Exception;
 use Pimcore\Tool;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Throwable;
 
 class ValidateLocalizedAttribute extends AbstractValidateAttribute implements MultiScorable
 {
+    /**
+     * Violations found during validation.
+     * @var []
+     */
+    protected $violations = [];
+
     /**
      * {@inheritDoc}
      */
@@ -31,7 +38,7 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute implements Mu
      */
     public function score(): float
     {
-        if (!count($this->getConstraints())) {
+        if (!count($this->getConstraints()) || !count($this->getValidatableLocales())) {
             return 0;
         }
 
@@ -67,7 +74,7 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute implements Mu
      */
     protected function getLocalesInConfig(): array
     {
-        return $this->metaConfig->getForObject($this->obj);
+        return $this->metaConfig->getForObject($this->obj)[$this->metaConfig::KEY_LOCALES];
     }
 
     protected function getValidLocales(): array

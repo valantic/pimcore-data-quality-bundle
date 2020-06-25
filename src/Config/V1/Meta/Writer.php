@@ -4,7 +4,7 @@ namespace Valantic\DataQualityBundle\Config\V1\Meta;
 
 use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
 
-class Writer extends AbstractWriter
+class Writer extends AbstractWriter implements MetaKeys
 {
     /**
      * {@inheritDoc}
@@ -38,9 +38,9 @@ class Writer extends AbstractWriter
         if (!$this->reader->isClassConfigured($className)) {
             $raw[$className] = [];
         }
-        $raw[$className]['locales'] = $locales;
-        $raw[$className]['threshold_green'] = $thresholdGreen / 100;
-        $raw[$className]['threshold_orange'] = $thresholdOrange / 100;
+        $raw[$className][self::KEY_LOCALES] = $locales;
+        $raw[$className][self::KEY_THRESHOLD_GREEN] = $thresholdGreen / 100;
+        $raw[$className][self::KEY_THRESHOLD_ORANGE] = $thresholdOrange / 100;
 
         return $this->writeConfig($raw);
     }

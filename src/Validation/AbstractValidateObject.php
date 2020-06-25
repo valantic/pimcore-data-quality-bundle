@@ -9,8 +9,10 @@ use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
-abstract class AbstractValidateObject implements Validatable, Scorable
+abstract class AbstractValidateObject implements Validatable, Scorable, Colorable
 {
+    use ColorScoreTrait;
+
     /**
      * @var ConstraintsConfig
      */
@@ -80,4 +82,32 @@ abstract class AbstractValidateObject implements Validatable, Scorable
      * @param AbstractElement $obj The object to validate.
      */
     abstract public function setObject(AbstractElement $obj);
+
+    /**
+     * Get the scores for the individual attributes.
+     * @return array
+     */
+    public function attributeScores(): array
+    {
+        $attributeScores = [];
+        foreach ($this->validators as $attribute => $validator) {
+            $attributeScores[$attribute]['score'] = null;
+            $attributeScores[$attribute]['color'] = null;
+            $attributeScores[$attribute]['scores'] = null;
+
+            if ($validator instanceof Scorable) {
+                $attributeScores[$attribute]['score'] = $validator->score();
+            }
+
+            if ($validator instanceof MultiScorable) {
+                $attributeScores[$attribute]['scores'] = $validator->scores();
+            }
+
+            if ($validator instanceof Colorable) {
+                $attributeScores[$attribute]['color'] = $validator->color();
+            }
+        }
+
+        return $attributeScores;
+    }
 }

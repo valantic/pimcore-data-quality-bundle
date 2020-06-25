@@ -3,6 +3,7 @@
 namespace Valantic\DataQualityBundle\Validation;
 
 use Pimcore\Model\DataObject\Concrete;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
@@ -10,8 +11,10 @@ use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
-abstract class AbstractValidateAttribute implements Validatable, Scorable
+abstract class AbstractValidateAttribute implements Validatable, Scorable, Colorable
 {
+    use ColorScoreTrait;
+
     /**
      * @var ValidatorInterface
      */
@@ -39,7 +42,7 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable
 
     /**
      * Violations found during validation.
-     * @var array
+     * @var ConstraintViolationList[]
      */
     protected $violations = [];
 
@@ -82,7 +85,7 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable
             return 0;
         }
 
-        return 1 - (count($this->violations) / count($this->getConstraints()));
+        return 1 - ($this->violations->count() / count($this->getConstraints()));
     }
 
     /**

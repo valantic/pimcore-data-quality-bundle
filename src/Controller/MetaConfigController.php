@@ -43,9 +43,9 @@ class MetaConfigController extends BaseController
             }
             $entries[] = [
                 'classname' => $className,
-                'locales' => $config->getForClass($className)['locales'] ?? [],
-                'threshold_green' => ($config->getForClass($className)['threshold_green'] ?? 0)*100,
-                'threshold_orange' => ($config->getForClass($className)['threshold_orange'] ?? 0)*100,
+                'locales' => $config->getForClass($className)[$config::KEY_LOCALES] ?? [],
+                'threshold_green' => ($config->getForClass($className)[$config::KEY_THRESHOLD_GREEN] ?? 0) * 100,
+                'threshold_orange' => ($config->getForClass($className)[$config::KEY_THRESHOLD_ORANGE] ?? 0) * 100,
             ];
         }
 
@@ -67,7 +67,7 @@ class MetaConfigController extends BaseController
 
         $classNames = [];
         foreach ($this->getClassNames() as $name) {
-            if($reader->isClassConfigured($name)){
+            if ($reader->isClassConfigured($name)) {
                 continue;
             }
             $classNames[] = ['name' => $name];
