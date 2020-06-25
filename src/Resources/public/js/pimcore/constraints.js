@@ -402,6 +402,12 @@ valantic.dataquality.constraints = Class.create({
             },
         });
 
+        const constraintParametersHelper = new Ext.Component({
+            xtype: 'component',
+            autoEl: {}, // will default to creating a DIV
+            html: ''
+        });
+
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
             items: [
@@ -416,7 +422,20 @@ valantic.dataquality.constraints = Class.create({
                     mode: 'local',
                     triggerAction: 'all',
                     width: 400,
+                    listeners: {
+                        // eslint-disable-next-line no-unused-vars
+                        select: function (combo, value, index) {
+                            const constraint = combo.getValue();
+                            const requiredParameters = value.get('required_parameters')
+                            const optionalParameters = value.get('optional_parameters')
+                            const defaultParameter = value.get('default_parameter')
+                            constraintParametersHelper.setHtml(`${constraint} requires the following parameters:<br><code>${JSON.stringify(requiredParameters)}</code>
+<br>further supported parameters include:<br><code>${JSON.stringify(optionalParameters)}</code>
+<br>The default parameters is: <code>${defaultParameter}</code><br>`)
+                        },
+                    },
                 },
+                constraintParametersHelper,
                 {
                     xtype: 'textareafield',
                     fieldLabel: t('valantic_dataquality_config_column_parameters'),
@@ -431,7 +450,7 @@ valantic.dataquality.constraints = Class.create({
         const addDetailWin = new Ext.Window({
             modal: true,
             width: 450,
-            height: 350,
+            height: 500,
             closable: true,
             items: [formPanel],
             buttons: [{

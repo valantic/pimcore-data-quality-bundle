@@ -173,8 +173,13 @@ class ConstraintConfigController extends BaseController
 
         $symfonyNames = $definitions->symfony();
         $constraints = [];
-        foreach ($symfonyNames as $name) {
-            $constraints[] = ['name' => $name];
+        foreach ($symfonyNames as $name => $data) {
+            $constraints[] = [
+                'name' => $name,
+                'default_parameter' => $data['parameters']['default'] ?? false,
+                'required_parameters' => $data['parameters']['required'] ?? [],
+                'optional_parameters' => $data['parameters']['optional'] ?? [],
+            ];
         }
 
         return $this->json(['constraints' => $constraints]);
