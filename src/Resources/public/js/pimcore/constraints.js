@@ -409,7 +409,7 @@ valantic.dataquality.constraints = Class.create({
         const constraintParametersHelper = new Ext.Component({
             xtype: 'component',
             autoEl: {}, // will default to creating a DIV
-            html: ''
+            html: '',
         });
 
         const formPanel = new Ext.form.FormPanel({
@@ -430,16 +430,16 @@ valantic.dataquality.constraints = Class.create({
                         // eslint-disable-next-line no-unused-vars
                         select: function (combo, value, index) {
                             const constraint = combo.getValue();
-                            const requiredParameters = value.get('required_parameters')
-                            const optionalParameters = value.get('optional_parameters')
-                            const defaultParameter = value.get('default_parameter')
+                            const requiredParameters = value.get('required_parameters');
+                            const optionalParameters = value.get('optional_parameters');
+                            const defaultParameter = value.get('default_parameter');
                             // TOOD: i18n
                             constraintParametersHelper.setHtml(`<p style="word-break: break-all;">${t('valantic_dataquality_config_constraint_parameters_text', null, {
                                 constraint,
-                                defaultParameter: defaultParameter ? defaultParameter : ' - ',
+                                defaultParameter: defaultParameter || ' - ',
                                 optionalParameters: JSON.stringify(optionalParameters),
-                                requiredParameters: JSON.stringify(requiredParameters)
-                            })}</p>`)
+                                requiredParameters: JSON.stringify(requiredParameters),
+                            })}</p>`);
                         },
                     },
                 },
@@ -459,17 +459,14 @@ valantic.dataquality.constraints = Class.create({
 
                         const defaultParameter = selectedConstraint.get('default_parameter');
                         const requiredParameters = Object.keys(selectedConstraint.get('required_parameters'));
-                        const optionalParameters = Object.keys(selectedConstraint.get('optional_parameters'));
-
-                        const allParameters = [...requiredParameters, ...optionalParameters];
 
                         const hasDefaultParameter = !!defaultParameter;
                         const hasRequiredParameters = !!requiredParameters.length;
-                        const hasOptionalParameters = !!optionalParameters.length;
 
                         const valueIsEmpty = (!value || !value.trim().length);
 
-                        // if there is/are neither a default parameter nor any required parameters, empty strings are fine
+                        // if there is/are neither a default parameter nor any required parameters,
+                        // empty strings are fine
                         if ((!hasDefaultParameter && !hasRequiredParameters) && valueIsEmpty) {
                             return true;
                         }
@@ -480,29 +477,32 @@ valantic.dataquality.constraints = Class.create({
                             parsedValue = JSON.parse(value);
                             valueIsJson = true;
                         } catch (e) {
+                            //
                         }
 
                         if (hasDefaultParameter && valueIsEmpty) {
                             return t('valantic_dataquality_config_constraint_parameters_invalid_default_missing');
                         }
 
-                        // if the constraint supports a default parameter, the value doesn't have to be JSON
+                        // if the constraint supports a default parameter,
+                        // the value doesn't have to be JSON
                         if (!valueIsJson) {
                             return t('valantic_dataquality_config_constraint_parameters_invalid_not_json');
                         }
-
 
                         const configuredParameters = Object.keys(parsedValue);
 
                         // if the constraint has required parameters, ensure all are configured
                         if (hasRequiredParameters) {
-                            if (requiredParameters.length !== requiredParameters.filter(param => configuredParameters.includes(param)).length) {
+                            const configuredRequiredParameters = requiredParameters
+                                .filter((param) => configuredParameters.includes(param));
+                            if (requiredParameters.length !== configuredRequiredParameters.length) {
                                 return t('valantic_dataquality_config_constraint_parameters_invalid_required_missing');
                             }
                         }
 
                         return true;
-                    }
+                    },
                 },
             ],
         });
@@ -518,6 +518,7 @@ valantic.dataquality.constraints = Class.create({
                 iconCls: 'pimcore_icon_accept',
                 handler: function () {
                     if (!formPanel.getForm().isValid()) {
+                        // eslint-disable-next-line no-alert
                         alert(t('valantic_dataquality_config_constraint_form_invalid'));
                         return;
                     }

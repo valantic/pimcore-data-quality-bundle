@@ -71,7 +71,7 @@ valantic.dataquality.object_view = Class.create({
                             sortable: true,
                             dataIndex: 'scores',
                             renderer: function (value) {
-                                if(Number.isNaN(value)){
+                                if (Number.isNaN(value)) {
                                     return t('valantic_dataquality_view_not_localized_no_score');
                                 }
                                 return formatAsPercentage(value[locale]);

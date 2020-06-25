@@ -249,7 +249,7 @@ valantic.dataquality.meta = Class.create({
             width: 250,
             value: record ? record.get('threshold_green') : 90,
             maxValue: 100,
-            minValue: 0
+            minValue: 0,
         };
         const orangeRange = {
             xtype: 'numberfield',
@@ -259,7 +259,7 @@ valantic.dataquality.meta = Class.create({
             width: 250,
             value: record ? record.get('threshold_orange') : 60,
             maxValue: 100,
-            minValue: 0
+            minValue: 0,
         };
 
         const formPanel = new Ext.form.FormPanel({
