@@ -2,12 +2,12 @@
 
 namespace Valantic\DataQualityBundle\Validation;
 
+use InvalidArgumentException;
 use Pimcore\Model\DataObject\Concrete;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
-use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
+use Pimcore\Model\Element\AbstractElement;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
-class ValidateDataObject implements Validatable, Scorable, MultiScorable
+class ValidateDataObject extends AbstractValidateObject implements MultiScorable
 {
     /**
      * @var Concrete
@@ -15,48 +15,14 @@ class ValidateDataObject implements Validatable, Scorable, MultiScorable
     protected $obj;
 
     /**
-     * @var array
+     * {@inheritDoc}
      */
-    protected $validationConfig;
-
-    /**
-     * @var ConstraintsConfig
-     */
-    protected $constraintsConfig;
-
-    /**
-     * Validators used for this object.
-     * @var ValidatePlainAttribute[]
-     */
-    protected $validators = [];
-
-    /**
-     * @var ClassInformation
-     */
-    protected $classInformation;
-
-    /**
-     * @var MetaConfig
-     */
-    protected $metaConfig;
-
-    /**
-     * Validate an object and all its attributes.
-     * @param ConstraintsConfig $constraintsConfig
-     * @param MetaConfig $metaConfig
-     */
-    public function __construct(ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig)
+    public function setObject(AbstractElement $obj)
     {
-        $this->constraintsConfig = $constraintsConfig;
-        $this->metaConfig = $metaConfig;
-    }
+        if(!($obj instanceof Concrete)){
+            throw new InvalidArgumentException('Please provide a Concrete DataObject.');
+        }
 
-    /**
-     * Set the object to validate.
-     * @param Concrete $obj The object to validate.
-     */
-    public function setObject(Concrete $obj)
-    {
         $this->obj = $obj;
         $this->validationConfig = $this->constraintsConfig->getForObject($obj);
         $this->classInformation = new ClassInformation($this->obj->getClassName());
@@ -140,32 +106,5 @@ class ValidateDataObject implements Validatable, Scorable, MultiScorable
         }
 
         return $attributeScores;
-    }
-
-    /**
-     * Returns a list of all attributes that can be validated i.e. that exist and are configured.
-     * @return array
-     */
-    protected function getValidatableAttributes(): array
-    {
-        return array_intersect($this->getAttributesInConfig(), $this->getAttributesInObject());
-    }
-
-    /**
-     * Returns a list of configured attributes.
-     * @return array
-     */
-    protected function getAttributesInConfig(): array
-    {
-        return array_keys($this->validationConfig);
-    }
-
-    /**
-     * Returns a list of attributes present in the object.
-     * @return array
-     */
-    protected function getAttributesInObject(): array
-    {
-        return array_keys($this->classInformation->getAttributesFlattened());
     }
 }
