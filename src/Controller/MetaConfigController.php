@@ -43,7 +43,9 @@ class MetaConfigController extends BaseController
             }
             $entries[] = [
                 'classname' => $className,
-                'locales' => $config->getForClass($className),
+                'locales' => $config->getForClass($className)['locales'] ?? [],
+                'threshold_green' => ($config->getForClass($className)['threshold_green'] ?? 0)*100,
+                'threshold_orange' => ($config->getForClass($className)['threshold_orange'] ?? 0)*100,
             ];
         }
 
@@ -108,7 +110,9 @@ class MetaConfigController extends BaseController
         return $this->json([
             'status' => $config->addOrUpdate(
                 $request->request->get('classname'),
-                $request->request->get('locales')
+                $request->request->get('locales'),
+                $request->request->getInt('threshold_green'),
+                $request->request->getInt('threshold_orange')
             ),
         ]);
     }

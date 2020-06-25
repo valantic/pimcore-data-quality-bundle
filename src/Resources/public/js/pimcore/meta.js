@@ -24,7 +24,7 @@ valantic.dataquality.meta = Class.create({
             const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('valantic_dataquality_metaconfig_list'),
-                ['classname', 'locales'],
+                ['classname', 'locales', 'threshold_green', 'threshold_orange'],
                 itemsPerPage,
                 {
                     autoLoad: true,
@@ -100,6 +100,20 @@ valantic.dataquality.meta = Class.create({
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return value.join(', ');
                     },
+                },
+                {
+                    text: t('valantic_dataquality_config_column_threshold_green'),
+                    sortable: true,
+                    dataIndex: 'threshold_green',
+                    filter: 'number',
+                    flex: 50,
+                },
+                {
+                    text: t('valantic_dataquality_config_column_threshold_orange'),
+                    sortable: true,
+                    dataIndex: 'threshold_orange',
+                    filter: 'number',
+                    flex: 50,
                 },
             ];
 
@@ -227,9 +241,30 @@ valantic.dataquality.meta = Class.create({
             value: record ? record.get('classname') : null,
         };
 
+        const greenRange = {
+            xtype: 'numberfield',
+            fieldLabel: t('valantic_dataquality_config_column_threshold_green'),
+            name: 'threshold_green',
+            editable: true,
+            width: 250,
+            value: record ? record.get('threshold_green') : 90,
+            maxValue: 100,
+            minValue: 0
+        };
+        const orangeRange = {
+            xtype: 'numberfield',
+            fieldLabel: t('valantic_dataquality_config_column_threshold_orange'),
+            name: 'threshold_orange',
+            editable: true,
+            width: 250,
+            value: record ? record.get('threshold_orange') : 60,
+            maxValue: 100,
+            minValue: 0
+        };
+
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
-            items: [classnameCombo, localeCombo],
+            items: [classnameCombo, localeCombo, greenRange, orangeRange],
         });
 
         const modifyWin = new Ext.Window({
