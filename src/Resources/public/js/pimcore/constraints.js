@@ -429,9 +429,13 @@ valantic.dataquality.constraints = Class.create({
                             const requiredParameters = value.get('required_parameters')
                             const optionalParameters = value.get('optional_parameters')
                             const defaultParameter = value.get('default_parameter')
-                            constraintParametersHelper.setHtml(`${constraint} requires the following parameters:<br><code>${JSON.stringify(requiredParameters)}</code>
-<br>further supported parameters include:<br><code>${JSON.stringify(optionalParameters)}</code>
-<br>The default parameters is: <code>${defaultParameter}</code><br>`)
+                            // TOOD: i18n
+                            constraintParametersHelper.setHtml(`<p style="word-break: break-all;">${t('valantic_dataquality_config_constraint_parameters_text', null, {
+                                constraint,
+                                defaultParameter: defaultParameter ? defaultParameter : ' - ',
+                                optionalParameters: JSON.stringify(optionalParameters),
+                                requiredParameters: JSON.stringify(requiredParameters)
+                            })}</p>`)
                         },
                     },
                 },
