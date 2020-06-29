@@ -103,7 +103,6 @@ valantic.dataquality.object_view = Class.create({
                             const proxy = this.store.getProxy();
                             proxy.extraParams.filterText = input.getValue();
 
-                            // TODO: not yet functional
                             this.store.load();
                         }
                     }.bind(this),

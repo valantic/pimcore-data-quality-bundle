@@ -40,9 +40,15 @@ class ScoreController extends BaseController
 
         $validation->setObject($obj);
         $validation->validate();
+        $filter = $request->get('filterText');
 
         $scores = [];
         foreach ($validation->attributeScores() as $attribute => $score) {
+            if ($filter) {
+                if (stripos($attribute, $filter) === false) {
+                    continue;
+                }
+            }
 
             $scores[] = array_merge_recursive(
                 [
