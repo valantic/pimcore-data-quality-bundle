@@ -172,9 +172,9 @@ class ConstraintConfigController extends BaseController
     {
         $this->checkPermission(self::CONFIG_NAME);
 
-        $symfonyNames = $definitions->symfony();
+        $names = $definitions->all();
         $constraints = [];
-        foreach ($symfonyNames as $name => $data) {
+        foreach ($names as $name => $data) {
             $constraints[] = [
                 'name' => $name,
                 'default_parameter' => $data['parameters']['default'] ?? false,

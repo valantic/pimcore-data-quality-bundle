@@ -4,7 +4,60 @@ namespace Valantic\DataQualityBundle\Repository;
 
 class ConstraintDefinitions
 {
-    public function symfony()
+    /**
+     * @var CustomConstraintParameters[]
+     */
+    protected $customConstraints;
+
+    /**
+     * @param iterable $taggedConstraints
+     */
+    public function __construct(iterable $taggedConstraints)
+    {
+        $customContraints = [];
+        foreach ($taggedConstraints->getIterator() as $taggedConstraint) {
+            if ($taggedConstraint instanceof CustomConstraintParameters) {
+                $customContraints[] = $taggedConstraint;
+            }
+        }
+        $this->customConstraints = $customContraints;
+    }
+
+    /**
+     * All constraints.
+     * @return array
+     */
+    public function all(): array
+    {
+        return array_merge_recursive($this->symfony(), $this->custom());
+    }
+
+    /**
+     * Configuration for custom constraints.
+     * @return array
+     */
+    protected function custom(): array
+    {
+        $definitions = [];
+
+        foreach ($this->customConstraints as $constraint) {
+            $definitions[get_class($constraint)] = [
+                'parameters' => array_filter([
+                    'default' => $constraint->defaultParameter(),
+                    'optional' => $constraint->optionalParameters(),
+                    'required' => $constraint->requiredParameters(),
+                ]),
+            ];
+        }
+
+        return $definitions;
+    }
+
+    /**
+     * Configuration for Symfony 4.4 constraints.
+     * @return array
+     */
+    protected function symfony(): array
     {
         return [
             'Bic' => [

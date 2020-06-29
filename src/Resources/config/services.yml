@@ -34,6 +34,11 @@ services:
     Valantic\DataQualityBundle\Repository\:
         resource: '../../Repository'
 
+    Valantic\DataQualityBundle\Repository\ConstraintDefinitions:
+        arguments:
+            - !tagged_iterator validator.constraint_validator
+
+
     Valantic\DataQualityBundle\Config\V1\Constraints\Reader: ~
 
     Valantic\DataQualityBundle\Config\V1\Constraints\Writer: ~
