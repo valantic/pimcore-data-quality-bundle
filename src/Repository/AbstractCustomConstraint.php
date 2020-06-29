@@ -9,8 +9,15 @@ abstract class AbstractCustomConstraint extends Constraint implements CustomCons
     /**
      * {@inheritDoc}
      */
-    public function defaultParameter(): ?string
+    public function getDefaultOption(): ?string
     {
-        return $this->getDefaultOption();
+        return $this->defaultParameter();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequiredOptions(): array
+    {
+        return array_keys($this->requiredParameters());
     }
 }
