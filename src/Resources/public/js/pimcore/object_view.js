@@ -17,6 +17,19 @@ valantic.dataquality.object_view = Class.create({
 
             const formatAsPercentage = (v) => (!Number.isNaN(v) ? `${(v * 100).toFixed(0)} %` : '');
 
+            const colorStyle = (color) => {
+                if (color === 'green') {
+                    return 'color: #4CAF50; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/approve.svg\') left center no-repeat;';
+                }
+                if (color === 'orange') {
+                    return 'color: #FF9800; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg\') left center no-repeat;';
+                }
+                if (color === 'red') {
+                    return 'color: #F44336; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/delete.svg\') left center no-repeat;';
+                }
+                return '';
+            };
+
             this.store = new Ext.data.Store({
                 model: modelName,
                 sorters: [
@@ -59,7 +72,7 @@ valantic.dataquality.object_view = Class.create({
                                 flex: 1,
                                 renderer: function (value, meta, record) {
                                     // eslint-disable-next-line no-param-reassign
-                                    meta.style = `color: ${record.get('color')};`;
+                                    meta.style = colorStyle(record.get('color'));
                                     return formatAsPercentage(value);
                                 },
                                 align: 'right',
@@ -71,7 +84,7 @@ valantic.dataquality.object_view = Class.create({
                             dataIndex: 'scores',
                             renderer: function (value, meta, record) {
                                 // eslint-disable-next-line no-param-reassign
-                                meta.style = `color: ${record.get('colors')[locale]};`;
+                                meta.style = colorStyle(record.get('colors')[locale]);
                                 if (Number.isNaN(value)) {
                                     return t('valantic_dataquality_view_not_localized_no_score');
                                 }
