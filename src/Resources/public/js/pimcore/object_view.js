@@ -19,13 +19,13 @@ valantic.dataquality.object_view = Class.create({
 
             const colorStyle = (color) => {
                 if (color === 'green') {
-                    return 'color: #4CAF50; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/approve.svg\') left center no-repeat;';
+                    return 'color: #4CAF50; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/approve.svg\') right center no-repeat; padding-right: 30px;';
                 }
                 if (color === 'orange') {
-                    return 'color: #FF9800; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg\') left center no-repeat;';
+                    return 'color: #FF9800; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg\') right center no-repeat; padding-right: 30px;';
                 }
                 if (color === 'red') {
-                    return 'color: #F44336; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/delete.svg\') left center no-repeat;';
+                    return 'color: #F44336; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/delete.svg\') right center no-repeat; padding-right: 30px;';
                 }
                 return '';
             };
@@ -35,6 +35,10 @@ valantic.dataquality.object_view = Class.create({
                 sorters: [
                     {
                         property: 'score',
+                        direction: 'ASC',
+                    },
+                    {
+                        property: 'attribute',
                         direction: 'ASC',
                     },
                 ],
@@ -56,6 +60,7 @@ valantic.dataquality.object_view = Class.create({
                             .filter((item) => !!item)
                             .flatMap((i) => Object.keys(i))
                             .filter((value, index, self) => self.indexOf(value) === index);
+
                         const columns = [
                             {
                                 text: t('valantic_dataquality_view_column_attributename'),
@@ -63,6 +68,11 @@ valantic.dataquality.object_view = Class.create({
                                 dataIndex: 'attribute',
                                 editable: false,
                                 flex: 1,
+                                renderer: function (value, meta, record) {
+                                    // eslint-disable-next-line no-param-reassign
+                                    meta.style = colorStyle(record.get('color'));
+                                    return value;
+                                },
                             },
                             {
                                 text: t('valantic_dataquality_view_column_score'),
