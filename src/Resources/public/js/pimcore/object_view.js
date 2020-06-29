@@ -30,7 +30,7 @@ valantic.dataquality.object_view = Class.create({
                 return '';
             };
 
-            this.store = new Ext.data.Store({
+            this.attributesStore = new Ext.data.Store({
                 model: modelName,
                 sorters: [
                     {
@@ -101,9 +101,29 @@ valantic.dataquality.object_view = Class.create({
                 },
             });
 
+            this.objectStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('valantic_dataquality_score_show'),
+                    extraParams: {
+                        id: this.object.id,
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'object',
+                    },
+                },
+                listeners: {
+                    load: function (store) {
+                        const data = store.getData().getAt(0);
+                        this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')}: ${formatAsPercentage(data.get('score'))}`);
+                    }.bind(this),
+                },
+            });
+
             const plugins = ['pimcore.gridfilters'];
 
-            this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
+            this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.attributesStore);
 
             this.filterField = new Ext.form.TextField({
                 xtype: 'textfield',
@@ -114,10 +134,10 @@ valantic.dataquality.object_view = Class.create({
                     keyup: function (field, key) {
                         if (key.getKey() === key.ENTER || field.getValue().length === 0) {
                             const input = field;
-                            const proxy = this.store.getProxy();
+                            const proxy = this.attributesStore.getProxy();
                             proxy.extraParams.filterText = input.getValue();
 
-                            this.store.load();
+                            this.attributesStore.load();
                         }
                     }.bind(this),
                 },
@@ -144,7 +164,7 @@ valantic.dataquality.object_view = Class.create({
             });
 
             const grid = Ext.create('Ext.grid.Panel', {
-                store: this.store,
+                store: this.attributesStore,
                 columns: [],
                 region: 'center',
                 bbar: this.pagingtoolbar,
@@ -157,7 +177,7 @@ valantic.dataquality.object_view = Class.create({
             });
 
             grid.on('beforerender', function () {
-                this.store.load();
+                this.attributesStore.load();
             }.bind(this));
 
             grid.reference = this;
@@ -172,13 +192,16 @@ valantic.dataquality.object_view = Class.create({
                 layout: 'border',
                 items: [grid],
             });
+
+            this.objectStore.load();
         }
 
         return this.layout;
     },
 
     reload: function () {
-        this.store.reload();
+        this.attributesStore.reload();
+        this.objectStore.reload();
     },
 
 });
