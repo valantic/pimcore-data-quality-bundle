@@ -83,7 +83,7 @@ class Writer extends AbstractWriter
         try {
             $paramsParsed = json_decode($params, true, 512, JSON_THROW_ON_ERROR);
         } catch (Throwable $throwable) {
-            $paramsParsed = null;
+            $paramsParsed = $params;
         }
 
         $raw = $this->reader->getCurrentSection();

@@ -486,6 +486,11 @@ valantic.dataquality.constraints = Class.create({
 
                         // if the constraint supports a default parameter,
                         // the value doesn't have to be JSON
+                        if (hasDefaultParameter && !valueIsEmpty) {
+                            return true;
+                        }
+
+                        // otherwise the value needs to be JSON
                         if (!valueIsJson) {
                             return t('valantic_dataquality_config_constraint_parameters_invalid_not_json');
                         }
