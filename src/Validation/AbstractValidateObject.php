@@ -30,7 +30,7 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
 
     /**
      * Validators used for this object.
-     * @var Validatable[]
+     * @var AbstractValidateAttribute[]
      */
     protected $validators = [];
 
@@ -95,6 +95,7 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
             $attributeScores[$attribute]['colors'] = null;
             $attributeScores[$attribute]['score'] = null;
             $attributeScores[$attribute]['scores'] = null;
+            $attributeScores[$attribute]['value'] = $validator->value();
 
             if ($validator instanceof Scorable) {
                 $attributeScores[$attribute]['score'] = $validator->score();

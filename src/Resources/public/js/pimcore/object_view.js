@@ -11,7 +11,7 @@ valantic.dataquality.object_view = Class.create({
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                     extend: 'Ext.data.Model',
-                    fields: ['attribute', 'score', 'scores', 'color', 'colors'],
+                    fields: ['attribute', 'score', 'scores', 'color', 'colors', 'value'],
                 });
             }
 
@@ -95,6 +95,16 @@ valantic.dataquality.object_view = Class.create({
                                 },
                             },
                             {
+                                text: t('valantic_dataquality_view_column_value'),
+                                sortable: true,
+                                dataIndex: 'value',
+                                editable: false,
+                                flex: 1,
+                                renderer: function (value) {
+                                    return JSON.stringify(value);
+                                },
+                            },
+                            {
                                 text: t('valantic_dataquality_view_column_score'),
                                 sortable: true,
                                 dataIndex: 'score',
@@ -146,7 +156,7 @@ valantic.dataquality.object_view = Class.create({
                 listeners: {
                     load: function (store) {
                         const data = store.getData().getAt(0);
-                        if(!data.get('score')||!data.get('color')){
+                        if (!data.get('score') || !data.get('color')) {
                             return;
                         }
                         this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')}: <span style="color: ${colorMapping(data.get('color'))}">${formatAsPercentage(data.get('score'))}</span>`);

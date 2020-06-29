@@ -26,7 +26,7 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute implements Mu
 
         try {
             foreach ($this->getValidatableLocales() as $locale) {
-                $this->violations[$locale] = $this->validator->validate($this->obj->get($this->attribute, $locale), $this->getConstraints());
+                $this->violations[$locale] = $this->validator->validate($this->value()[$locale], $this->getConstraints());
             }
         } catch (Exception $e) {
             // TODO: emit event
@@ -99,5 +99,19 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute implements Mu
     protected function getValidLocales(): array
     {
         return Tool::getValidLanguages();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function value()
+    {
+        $value = [];
+
+        foreach ($this->getValidatableLocales() as $locale) {
+            $value[$locale] = $this->obj->get($this->attribute, $locale);
+        }
+
+        return $value;
     }
 }

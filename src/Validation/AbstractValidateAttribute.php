@@ -122,4 +122,10 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable, Color
 
         return $constraints;
     }
+
+    /**
+     * Returns the value being validated.
+     * @return mixed
+     */
+    abstract public function value();
 }
