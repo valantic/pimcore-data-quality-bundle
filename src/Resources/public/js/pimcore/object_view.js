@@ -23,7 +23,7 @@ valantic.dataquality.object_view = Class.create({
                     {
                         property: 'score',
                         direction: 'ASC',
-                    }
+                    },
                 ],
                 proxy: {
                     type: 'ajax',
@@ -58,6 +58,7 @@ valantic.dataquality.object_view = Class.create({
                                 editable: false,
                                 flex: 1,
                                 renderer: function (value, meta, record) {
+                                    // eslint-disable-next-line no-param-reassign
                                     meta.style = `color: ${record.get('color')};`;
                                     return formatAsPercentage(value);
                                 },
@@ -69,6 +70,7 @@ valantic.dataquality.object_view = Class.create({
                             sortable: true,
                             dataIndex: 'scores',
                             renderer: function (value, meta, record) {
+                                // eslint-disable-next-line no-param-reassign
                                 meta.style = `color: ${record.get('colors')[locale]};`;
                                 if (Number.isNaN(value)) {
                                     return t('valantic_dataquality_view_not_localized_no_score');
