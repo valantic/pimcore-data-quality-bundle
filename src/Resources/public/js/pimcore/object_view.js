@@ -17,15 +17,35 @@ valantic.dataquality.object_view = Class.create({
 
             const formatAsPercentage = (v) => (!Number.isNaN(v) ? `${(v * 100).toFixed(0)} %` : '');
 
-            const colorStyle = (color) => {
+            const colorMapping = (color) => {
                 if (color === 'green') {
-                    return 'color: #4CAF50; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/approve.svg\') right center no-repeat; padding-right: 30px;';
+                    return '#4CAF50;';
                 }
                 if (color === 'orange') {
-                    return 'color: #FF9800; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg\') right center no-repeat; padding-right: 30px;';
+                    return '#FF9800;';
                 }
                 if (color === 'red') {
-                    return 'color: #F44336; background: url(\'/bundles/pimcoreadmin/img/flat-color-icons/delete.svg\') right center no-repeat; padding-right: 30px;';
+                    return '#F44336;';
+                }
+                return '';
+            };
+
+            const colorIcon = (color) => {
+                if (color === 'green') {
+                    return '/bundles/pimcoreadmin/img/flat-color-icons/approve.svg';
+                }
+                if (color === 'orange') {
+                    return '/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg';
+                }
+                if (color === 'red') {
+                    return '/bundles/pimcoreadmin/img/flat-color-icons/delete.svg';
+                }
+                return '';
+            };
+
+            const cellStyle = (color) => {
+                if (color === 'green' || color === 'orange' || color === 'red') {
+                    return `color: ${colorMapping(color)}; background: url('${colorIcon(color)}') right center no-repeat; padding-right: 30px;`;
                 }
                 return '';
             };
@@ -70,7 +90,7 @@ valantic.dataquality.object_view = Class.create({
                                 flex: 1,
                                 renderer: function (value, meta, record) {
                                     // eslint-disable-next-line no-param-reassign
-                                    meta.style = colorStyle(record.get('color'));
+                                    meta.style = cellStyle(record.get('color'));
                                     return value;
                                 },
                             },
@@ -82,7 +102,7 @@ valantic.dataquality.object_view = Class.create({
                                 flex: 1,
                                 renderer: function (value, meta, record) {
                                     // eslint-disable-next-line no-param-reassign
-                                    meta.style = colorStyle(record.get('color'));
+                                    meta.style = cellStyle(record.get('color'));
                                     return formatAsPercentage(value);
                                 },
                                 align: 'right',
@@ -94,7 +114,7 @@ valantic.dataquality.object_view = Class.create({
                             dataIndex: 'scores',
                             renderer: function (value, meta, record) {
                                 // eslint-disable-next-line no-param-reassign
-                                meta.style = colorStyle(record.get('colors')[locale]);
+                                meta.style = cellStyle(record.get('colors')[locale]);
                                 if (Number.isNaN(value)) {
                                     return t('valantic_dataquality_view_not_localized_no_score');
                                 }
@@ -126,7 +146,10 @@ valantic.dataquality.object_view = Class.create({
                 listeners: {
                     load: function (store) {
                         const data = store.getData().getAt(0);
-                        this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')}: ${formatAsPercentage(data.get('score'))}`);
+                        if(!data.get('score')||!data.get('color')){
+                            return;
+                        }
+                        this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')}: <span style="color: ${colorMapping(data.get('color'))}">${formatAsPercentage(data.get('score'))}</span>`);
                     }.bind(this),
                 },
             });
