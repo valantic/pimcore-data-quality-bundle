@@ -82,7 +82,7 @@ class ScoreController extends BaseController
         $this->checkPermission(self::CONFIG_NAME);
 
         $obj = DataObject::getById($request->query->getInt('id'));
-        if (!$obj) {
+        if (!$obj || !($obj instanceof DataObject\Concrete)) {
             return $this->json([
                 'status' => false,
             ]);
