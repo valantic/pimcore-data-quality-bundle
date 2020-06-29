@@ -21,13 +21,10 @@ valantic.dataquality.object_view = Class.create({
                 model: modelName,
                 sorters: [
                     {
-                        property: 'attribute',
-                        direction: 'ASC',
-                    },
-                    {
                         property: 'score',
-                        direction: 'DESC',
-                    }],
+                        direction: 'ASC',
+                    }
+                ],
                 proxy: {
                     type: 'ajax',
                     url: Routing.generate('valantic_dataquality_score_show'),
@@ -140,7 +137,6 @@ valantic.dataquality.object_view = Class.create({
                     forceFit: true,
                 },
                 stripeRows: true,
-                width: 600, // FIXME: full-width
             });
 
             grid.on('beforerender', function () {
@@ -155,7 +151,6 @@ valantic.dataquality.object_view = Class.create({
                     tooltip: t('valantic_dataquality_pimcore_tab_name'),
                 },
                 iconCls: 'pimcore_material_icon_info pimcore_material_icon',
-                bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: 'border',
                 items: [grid],
