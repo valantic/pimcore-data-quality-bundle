@@ -11,7 +11,7 @@ valantic.dataquality.object_view = Class.create({
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                     extend: 'Ext.data.Model',
-                    fields: ['attribute', 'score', 'scores'],
+                    fields: ['attribute', 'score', 'scores', 'color', 'colors'],
                 });
             }
 
@@ -57,7 +57,8 @@ valantic.dataquality.object_view = Class.create({
                                 dataIndex: 'score',
                                 editable: false,
                                 flex: 1,
-                                renderer: function (value) {
+                                renderer: function (value, meta, record) {
+                                    meta.style = `color: ${record.get('color')};`;
                                     return formatAsPercentage(value);
                                 },
                                 align: 'right',
@@ -67,7 +68,8 @@ valantic.dataquality.object_view = Class.create({
                             text: `${t('valantic_dataquality_view_column_score')} (${locale})`,
                             sortable: true,
                             dataIndex: 'scores',
-                            renderer: function (value) {
+                            renderer: function (value, meta, record) {
+                                meta.style = `color: ${record.get('colors')[locale]};`;
                                 if (Number.isNaN(value)) {
                                     return t('valantic_dataquality_view_not_localized_no_score');
                                 }

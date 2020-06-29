@@ -7,7 +7,7 @@ use Pimcore\Tool;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Throwable;
 
-class ValidateLocalizedAttribute extends AbstractValidateAttribute implements MultiScorable
+class ValidateLocalizedAttribute extends AbstractValidateAttribute implements MultiScorable, MultiColorable
 {
     /**
      * Violations found during validation.
@@ -61,6 +61,25 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute implements Mu
         }
 
         return $scores;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function colors(): array
+    {
+        if (!count($this->getConstraints())) {
+            return [];
+        }
+
+        $scores = $this->scores();
+        $colors = [];
+
+        foreach ($this->getValidatableLocales() as $locale) {
+            $colors[$locale] = $this->calculateColor($scores[$locale]);
+        }
+
+        return $colors;
     }
 
     protected function getValidatableLocales(): array

@@ -35,6 +35,7 @@ class ScoreController extends BaseController
                 'score' => -1,
                 'scores' => [],
                 'attributes' => [],
+                'color' => null,
             ]);
         }
 
