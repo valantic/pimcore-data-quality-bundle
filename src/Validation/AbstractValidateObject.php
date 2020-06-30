@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Valantic\DataQualityBundle\Validation;
-
 
 use Pimcore\Model\Element\AbstractElement;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

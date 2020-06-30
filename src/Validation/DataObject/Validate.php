@@ -47,10 +47,10 @@ class Validate extends AbstractValidateObject implements MultiScorable
             if ($this->classInformation->isLocalizedAttribute($attribute)) {
                 $validator = new LocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
-            if($this->classInformation->isObjectbrickAttribute($attribute)){
+            if ($this->classInformation->isObjectbrickAttribute($attribute)) {
                 $validator = new ObjectBrickAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
-            if($this->classInformation->isFieldcollectionAttribute($attribute)){
+            if ($this->classInformation->isFieldcollectionAttribute($attribute)) {
                 $validator = new FieldCollectionAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if (isset($validator)) {
