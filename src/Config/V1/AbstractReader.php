@@ -54,7 +54,7 @@ abstract class AbstractReader extends Config
     public function getForClass(string $className): array
     {
         try {
-            $className = (new ClassInformation($className))->getClassName();
+            $className = (new ClassInformation($className))->getName();
         } catch (Throwable $throwable) {
             return [];
         }

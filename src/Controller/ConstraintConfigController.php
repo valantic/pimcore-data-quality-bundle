@@ -105,11 +105,14 @@ class ConstraintConfigController extends BaseController
             return $this->json(['attributes' => []]);
         }
 
-        $names = array_diff($attributes, $config->getConfiguredClassAttributes($classData->getClassName()));
+        $names = array_diff($attributes, $config->getConfiguredClassAttributes($classData->getName()));
 
         $attributeNames = [];
         foreach ($names as $name) {
-            $attributeNames[] = ['name' => $name];
+            $attributeNames[] = [
+                'name' => $name,
+                'type' => $classData->getAttributeType($name),
+            ];
         }
 
         return $this->json(['attributes' => $attributeNames]);
