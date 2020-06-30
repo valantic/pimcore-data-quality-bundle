@@ -272,6 +272,7 @@ valantic.dataquality.constraints = Class.create({
             },
             listeners: {
                 cellcontextmenu: this.onDetailContextmenu.bind(this),
+                rowdblclick: this.onAddDetail.bind(this),
             },
         });
 
@@ -393,7 +394,8 @@ valantic.dataquality.constraints = Class.create({
 
         addMainWin.show();
     },
-    onAddDetail: function () {
+    onAddDetail: function (tree, possibleRecord, onlyDefinedIfEdit) {
+        const record = onlyDefinedIfEdit ? possibleRecord : null;
         const constraintsStore = new Ext.data.Store({
             fields: ['name'],
             proxy: {
@@ -404,13 +406,35 @@ valantic.dataquality.constraints = Class.create({
                     rootProperty: 'constraints',
                 },
             },
+            listeners: {
+                load: function () {
+                    if (record) {
+                        // eslint-disable-next-line no-use-before-define
+                        refreshConstraintParametersHelper(record.get('constraint'));
+                    }
+                },
+            },
         });
+
+        constraintsStore.load();
 
         const constraintParametersHelper = new Ext.Component({
             xtype: 'component',
             autoEl: {}, // will default to creating a DIV
             html: '',
         });
+
+        const refreshConstraintParametersHelper = (constraint) => {
+            const requiredParameters = constraintsStore.byValue.get(constraint).get('required_parameters');
+            const optionalParameters = constraintsStore.byValue.get(constraint).get('optional_parameters');
+            const defaultParameter = constraintsStore.byValue.get(constraint).get('default_parameter');
+            constraintParametersHelper.setHtml(`<p style="word-break: break-all;">${t('valantic_dataquality_config_constraint_parameters_text', null, {
+                constraint,
+                defaultParameter: defaultParameter || ' - ',
+                optionalParameters: JSON.stringify(optionalParameters),
+                requiredParameters: JSON.stringify(requiredParameters),
+            })}</p>`);
+        };
 
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
@@ -426,20 +450,10 @@ valantic.dataquality.constraints = Class.create({
                     mode: 'local',
                     triggerAction: 'all',
                     width: 400,
+                    value: record ? record.get('constraint') : null,
                     listeners: {
-                        // eslint-disable-next-line no-unused-vars
-                        select: function (combo, value, index) {
-                            const constraint = combo.getValue();
-                            const requiredParameters = value.get('required_parameters');
-                            const optionalParameters = value.get('optional_parameters');
-                            const defaultParameter = value.get('default_parameter');
-                            // TOOD: i18n
-                            constraintParametersHelper.setHtml(`<p style="word-break: break-all;">${t('valantic_dataquality_config_constraint_parameters_text', null, {
-                                constraint,
-                                defaultParameter: defaultParameter || ' - ',
-                                optionalParameters: JSON.stringify(optionalParameters),
-                                requiredParameters: JSON.stringify(requiredParameters),
-                            })}</p>`);
+                        select: function (combo, value) {
+                            refreshConstraintParametersHelper(combo.getValue(), value);
                         },
                     },
                 },
@@ -451,11 +465,16 @@ valantic.dataquality.constraints = Class.create({
                     editable: true,
                     width: 400,
                     height: 200,
+                    value: record && record.get('args') ? JSON.stringify(record.get('args')) : null,
                     validator: function (value) {
                         if (!formPanel.getValues().constraint) {
                             return true;
                         }
                         const selectedConstraint = formPanel.items.getAt(0).getSelection();
+
+                        if (!selectedConstraint) {
+                            return true;
+                        }
 
                         const defaultParameter = selectedConstraint.get('default_parameter');
                         const requiredParameters = Object.keys(selectedConstraint.get('required_parameters'));
@@ -542,8 +561,8 @@ valantic.dataquality.constraints = Class.create({
                                 // eslint-disable-next-line no-unused-vars
                                 callback: function (records, operation, success) {
                                     const updatedRecord = this.store.data.items
-                                        .filter((record) => record.get('classname') === this.record.get('classname'))
-                                        .filter((record) => record.get('attributename') === this.record.get('attributename'))[0];
+                                        .filter((rec) => rec.get('classname') === this.record.get('classname'))
+                                        .filter((rec) => rec.get('attributename') === this.record.get('attributename'))[0];
 
                                     if (updatedRecord) {
                                         this.showDetail(this.store.getById(updatedRecord.getId()));
