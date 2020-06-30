@@ -183,7 +183,7 @@ abstract class DefinitionInformation
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
                     $attributes = (new ObjectBrickInformation($type))->getAttributesFlattened();
                     foreach ($attributes as $name => $attribute) {
-                        $fieldDefinitions[$type . '.' . $name] = $attribute;
+                        $fieldDefinitions[$fieldDefinition->getName() . '.'.$type . '.' . $name] = $attribute;
                     }
                 }
             }
@@ -208,7 +208,7 @@ abstract class DefinitionInformation
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
                     $attributes = (new FieldCollectionInformation($type))->getAttributesFlattened();
                     foreach ($attributes as $name => $attribute) {
-                        $fieldDefinitions[$type . '.' . $name] = $attribute;
+                        $fieldDefinitions[$fieldDefinition->getName() . '.'.$type . '.' . $name] = $attribute;
                     }
                 }
             }

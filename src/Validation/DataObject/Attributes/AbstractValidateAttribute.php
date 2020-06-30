@@ -48,7 +48,7 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable, Color
 
     /**
      * Violations found during validation.
-     * @var ConstraintViolationList[]
+     * @var array
      */
     protected $violations = [];
 
@@ -98,7 +98,7 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable, Color
             return 0;
         }
 
-        return 1 - ($this->violations->count() / count($this->getConstraints()));
+        return 1 - (count($this->violations) / count($this->getConstraints()));
     }
 
     /**

@@ -6,6 +6,8 @@ use InvalidArgumentException;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\AbstractElement;
 use Valantic\DataQualityBundle\Service\ClassInformation;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidateFieldCollectionAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidateObjectBrickAttribute;
 use Valantic\DataQualityBundle\Validation\MultiScorable;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidateLocalizedAttribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidatePlainAttribute;
@@ -43,6 +45,12 @@ class ValidateDataObject extends AbstractValidateObject implements MultiScorable
             }
             if ($this->classInformation->isLocalizedAttribute($attribute)) {
                 $validator = new ValidateLocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+            }
+            if($this->classInformation->isObjectbrickAttribute($attribute)){
+                $validator = new ValidateObjectBrickAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+            }
+            if($this->classInformation->isFieldcollectionAttribute($attribute)){
+                $validator = new ValidateFieldCollectionAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if (isset($validator)) {
                 $validator->validate();

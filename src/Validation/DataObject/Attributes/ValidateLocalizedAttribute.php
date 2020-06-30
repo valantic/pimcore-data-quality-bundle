@@ -11,12 +11,6 @@ use Valantic\DataQualityBundle\Validation\MultiScorable;
 class ValidateLocalizedAttribute extends AbstractValidateAttribute implements MultiScorable, MultiColorable
 {
     /**
-     * Violations found during validation.
-     * @var []
-     */
-    protected $violations = [];
-
-    /**
      * {@inheritDoc}
      */
     public function validate()
@@ -97,6 +91,10 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute implements Mu
         return $this->metaConfig->getForObject($this->obj)[$this->metaConfig::KEY_LOCALES];
     }
 
+    /**
+     * List of enabled locales.
+     * @return array
+     */
     protected function getValidLocales(): array
     {
         return Tool::getValidLanguages();
