@@ -88,11 +88,6 @@ valantic.dataquality.object_view = Class.create({
                                 dataIndex: 'attribute',
                                 editable: false,
                                 flex: 1,
-                                renderer: function (value, meta, record) {
-                                    // eslint-disable-next-line no-param-reassign
-                                    meta.style = cellStyle(record.get('color'));
-                                    return value;
-                                },
                             },
                             {
                                 text: t('valantic_dataquality_view_column_value'),
@@ -159,7 +154,7 @@ valantic.dataquality.object_view = Class.create({
                         if (!data.get('score') || !data.get('color')) {
                             return;
                         }
-                        this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')}: <span style="color: ${colorMapping(data.get('color'))}">${formatAsPercentage(data.get('score'))}</span>`);
+                        this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${colorMapping(data.get('color'))}">${formatAsPercentage(data.get('score'))}</span>)`);
                     }.bind(this),
                 },
             });
