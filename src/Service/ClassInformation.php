@@ -8,6 +8,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 
 class ClassInformation
 {
+    public const TYPE_PLAIN = 'plain';
+    public const TYPE_LOCALIZED = 'localized';
     /**
      * The class' base name
      * @var string
@@ -47,8 +49,27 @@ class ClassInformation
      */
     public function getAttributesFlattened(): array
     {
-        return array_merge_recursive($this->getLocalizedAttributes(), $this->getPlainAttributes());
+        return array_merge_recursive(
+            $this->getLocalizedAttributes(),
+            $this->getPlainAttributes()
+        );
     }
+
+    /**
+     * Get the type of a class attribute.
+     * @param string $attribute
+     * @return string|null
+     */
+    public function getAttributeType(string $attribute): ?string
+    {
+        if ($this->isPlainAttribute($attribute)) {
+            return self::TYPE_PLAIN;
+        }
+        if ($this->isLocalizedAttribute($attribute)) {
+            return self::TYPE_LOCALIZED;
+        }
+
+        return null;
 
     /**
      * Checks whether $attribute is plain.
@@ -108,7 +129,7 @@ class ClassInformation
     {
         $fieldDefinitions = [];
         foreach ($this->getClassDefinition()->getFieldDefinitions() as $fieldDefinition) {
-            if ($fieldDefinition instanceof Localizedfields) {
+            if ($fieldDefinition instanceof Localizedfields || $fieldDefinition instanceof Fieldcollections || $fieldDefinition instanceof Objectbricks || $fieldDefinition instanceof Classificationstore) {
                 continue;
             }
             $fieldDefinitions[$fieldDefinition->getName()] = $fieldDefinition;
