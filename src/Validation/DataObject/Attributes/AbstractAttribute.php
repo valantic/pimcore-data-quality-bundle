@@ -17,7 +17,7 @@ use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
 use Valantic\DataQualityBundle\Validation\Scorable;
 use Valantic\DataQualityBundle\Validation\Validatable;
 
-abstract class AbstractValidateAttribute implements Validatable, Scorable, Colorable
+abstract class AbstractAttribute implements Validatable, Scorable, Colorable
 {
     use ColorScoreTrait;
 

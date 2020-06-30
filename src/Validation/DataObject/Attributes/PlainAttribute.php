@@ -5,7 +5,7 @@ namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
-class ValidatePlainAttribute extends AbstractValidateAttribute
+class PlainAttribute extends AbstractAttribute
 {
     /**
      * {@inheritDoc}

@@ -7,7 +7,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
-class ValidateObjectBrickAttribute extends AbstractValidateAttribute
+class ObjectBrickAttribute extends AbstractAttribute
 {
     /**
      * {@inheritDoc}

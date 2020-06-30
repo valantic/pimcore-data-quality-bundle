@@ -6,7 +6,7 @@ use Pimcore\Model\DataObject\Fieldcollection;
 use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
-class ValidateFieldCollectionAttribute extends AbstractValidateAttribute
+class FieldCollectionAttribute extends AbstractAttribute
 {
     /**
      * {@inheritDoc}

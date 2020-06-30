@@ -8,7 +8,7 @@ use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Validation\MultiColorable;
 use Valantic\DataQualityBundle\Validation\MultiScorable;
 
-class ValidateLocalizedAttribute extends AbstractValidateAttribute implements MultiScorable, MultiColorable
+class LocalizedAttribute extends AbstractAttribute implements MultiScorable, MultiColorable
 {
     /**
      * {@inheritDoc}

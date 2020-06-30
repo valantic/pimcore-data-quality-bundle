@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Valantic\DataQualityBundle\Validation\DataObject;
+namespace Valantic\DataQualityBundle\Validation;
 
 
 use Pimcore\Model\Element\AbstractElement;
@@ -11,7 +11,7 @@ use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 use Valantic\DataQualityBundle\Validation\Colorable;
 use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractValidateAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
 use Valantic\DataQualityBundle\Validation\MultiColorable;
 use Valantic\DataQualityBundle\Validation\MultiScorable;
 use Valantic\DataQualityBundle\Validation\Scorable;
@@ -38,7 +38,7 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
 
     /**
      * Validators used for this object.
-     * @var AbstractValidateAttribute[]
+     * @var AbstractAttribute[]
      */
     protected $validators = [];
 

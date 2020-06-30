@@ -6,13 +6,14 @@ use InvalidArgumentException;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\AbstractElement;
 use Valantic\DataQualityBundle\Service\ClassInformation;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidateFieldCollectionAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidateObjectBrickAttribute;
+use Valantic\DataQualityBundle\Validation\AbstractValidateObject;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\FieldCollectionAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ObjectBrickAttribute;
 use Valantic\DataQualityBundle\Validation\MultiScorable;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidateLocalizedAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidatePlainAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\LocalizedAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\PlainAttribute;
 
-class ValidateDataObject extends AbstractValidateObject implements MultiScorable
+class Validate extends AbstractValidateObject implements MultiScorable
 {
     /**
      * @var Concrete
@@ -41,16 +42,16 @@ class ValidateDataObject extends AbstractValidateObject implements MultiScorable
         $validators = [];
         foreach ($this->getValidatableAttributes() as $attribute) {
             if ($this->classInformation->isPlainAttribute($attribute)) {
-                $validator = new ValidatePlainAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new PlainAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if ($this->classInformation->isLocalizedAttribute($attribute)) {
-                $validator = new ValidateLocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new LocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if($this->classInformation->isObjectbrickAttribute($attribute)){
-                $validator = new ValidateObjectBrickAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new ObjectBrickAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if($this->classInformation->isFieldcollectionAttribute($attribute)){
-                $validator = new ValidateFieldCollectionAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new FieldCollectionAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if (isset($validator)) {
                 $validator->validate();
