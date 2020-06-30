@@ -13,11 +13,13 @@ abstract class AbstractCustomConstraint extends Constraint implements CustomCons
     {
         return $this->defaultParameter();
     }
+
     /**
-     * {@inheritDoc}
+     * Needs to return an empty array as otherwise it'll be instantiated in ConstraintDefinitions, causing an exception.
+     * @return array
      */
     public function getRequiredOptions(): array
     {
-        return array_keys($this->requiredParameters());
+        return [];
     }
 }

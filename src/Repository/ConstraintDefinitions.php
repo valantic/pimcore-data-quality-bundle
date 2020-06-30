@@ -15,10 +15,14 @@ class ConstraintDefinitions
     public function __construct(iterable $taggedConstraints)
     {
         $customContraints = [];
-        foreach ($taggedConstraints->getIterator() as $taggedConstraint) {
-            if ($taggedConstraint instanceof CustomConstraintParameters) {
-                $customContraints[] = $taggedConstraint;
+        try {
+            foreach ($taggedConstraints->getIterator() as $taggedConstraint) {
+                if ($taggedConstraint instanceof CustomConstraintParameters) {
+                    $customContraints[] = $taggedConstraint;
+                }
             }
+        } catch (\Throwable $throwable) {
+            dd($throwable);
         }
         $this->customConstraints = $customContraints;
     }
