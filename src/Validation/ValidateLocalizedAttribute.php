@@ -2,10 +2,9 @@
 
 namespace Valantic\DataQualityBundle\Validation;
 
-use Exception;
 use Pimcore\Tool;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Throwable;
+use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
 class ValidateLocalizedAttribute extends AbstractValidateAttribute implements MultiScorable, MultiColorable
 {
@@ -28,8 +27,8 @@ class ValidateLocalizedAttribute extends AbstractValidateAttribute implements Mu
             foreach ($this->getValidatableLocales() as $locale) {
                 $this->violations[$locale] = $this->validator->validate($this->value()[$locale], $this->getConstraints());
             }
-        } catch (Exception $e) {
-            // TODO: emit event
+        } catch (Throwable $e) {
+            $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e));
         }
     }
 

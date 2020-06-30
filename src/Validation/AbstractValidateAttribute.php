@@ -3,12 +3,14 @@
 namespace Valantic\DataQualityBundle\Validation;
 
 use Pimcore\Model\DataObject\Concrete;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
+use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Service\ClassInformation;
 
 abstract class AbstractValidateAttribute implements Validatable, Scorable, Colorable
@@ -57,14 +59,20 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable, Color
     protected $metaConfig;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * Validates an attribute of an object.
      *
      * @param Concrete $obj Object to validate
      * @param string $attribute Attribute to validate
      * @param ConstraintsConfig $constraintsConfig
      * @param MetaConfig $metaConfig
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig)
+    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher)
     {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
@@ -74,6 +82,7 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable, Color
         $this->validationConfig = $constraintsConfig->getForObjectAttribute($obj, $attribute);
         $this->classInformation = new ClassInformation($this->obj->getClassName());
         $this->metaConfig = $metaConfig;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -116,7 +125,7 @@ abstract class AbstractValidateAttribute implements Validatable, Scorable, Color
             try {
                 $constraints[] = new $name(...([$params]));
             } catch (Throwable $throwable) {
-                // TODO: emit event
+                $this->eventDispatcher->dispatch(new InvalidConstraintEvent($throwable, $name, $params));
             }
         }
 

@@ -2,7 +2,8 @@
 
 namespace Valantic\DataQualityBundle\Validation;
 
-use Exception;
+use Throwable;
+use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
 class ValidatePlainAttribute extends AbstractValidateAttribute
 {
@@ -17,8 +18,8 @@ class ValidatePlainAttribute extends AbstractValidateAttribute
 
         try {
             $this->violations = $this->validator->validate($this->value(), $this->getConstraints());
-        } catch (Exception $e) {
-            // TODO: emit event
+        } catch (Throwable $e) {
+            $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e));
         }
     }
 

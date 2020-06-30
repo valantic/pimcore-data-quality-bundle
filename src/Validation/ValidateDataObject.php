@@ -36,10 +36,10 @@ class ValidateDataObject extends AbstractValidateObject implements MultiScorable
         $validators = [];
         foreach ($this->getValidatableAttributes() as $attribute) {
             if ($this->classInformation->isPlainAttribute($attribute)) {
-                $validator = new ValidatePlainAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig);
+                $validator = new ValidatePlainAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if ($this->classInformation->isLocalizedAttribute($attribute)) {
-                $validator = new ValidateLocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig);
+                $validator = new ValidateLocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if (isset($validator)) {
                 $validator->validate();
