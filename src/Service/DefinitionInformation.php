@@ -8,6 +8,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 
 abstract class DefinitionInformation
 {
@@ -60,6 +61,7 @@ abstract class DefinitionInformation
             $this->getObjectbrickAttributes(),
             $this->getFieldcollectionAttributes(),
             $this->getClassificationstoreAttributes(),
+            $this->getRelationAttributes(),
             $this->getLocalizedAttributes(),
             $this->getPlainAttributes()
         );
@@ -142,6 +144,16 @@ abstract class DefinitionInformation
     }
 
     /**
+     * Checks whether $attribute is a relation.
+     * @param string $attribute
+     * @return bool
+     */
+    public function isRelationAttribute(string $attribute): bool
+    {
+        return array_key_exists($attribute, $this->getRelationAttributes());
+    }
+
+    /**
      * Get the definition of the class.
      * @return AbstractModel|null
      */
@@ -183,7 +195,7 @@ abstract class DefinitionInformation
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
                     $attributes = (new ObjectBrickInformation($type))->getAttributesFlattened();
                     foreach ($attributes as $name => $attribute) {
-                        $fieldDefinitions[$fieldDefinition->getName() . '.'.$type . '.' . $name] = $attribute;
+                        $fieldDefinitions[$fieldDefinition->getName() . '.' . $type . '.' . $name] = $attribute;
                     }
                 }
             }
@@ -208,7 +220,7 @@ abstract class DefinitionInformation
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
                     $attributes = (new FieldCollectionInformation($type))->getAttributesFlattened();
                     foreach ($attributes as $name => $attribute) {
-                        $fieldDefinitions[$fieldDefinition->getName() . '.'.$type . '.' . $name] = $attribute;
+                        $fieldDefinitions[$fieldDefinition->getName() . '.' . $type . '.' . $name] = $attribute;
                     }
                 }
             }
@@ -237,6 +249,26 @@ abstract class DefinitionInformation
         return $fieldDefinitions;
     }
 
+
+    /**
+     * Returns an array of all relation attributes present in this class keyed by their names.
+     * @return array
+     */
+    protected function getRelationAttributes(): array
+    {
+        $fieldDefinitions = [];
+        foreach ($this->getDefinition()->getFieldDefinitions() as $fieldDefinition) {
+            if ($fieldDefinition instanceof AbstractRelations) {
+                /**
+                 * @var $fieldDefinition AbstractRelations
+                 */
+                $fieldDefinitions[$fieldDefinition->getName()] = $fieldDefinition;
+            }
+        }
+
+        return $fieldDefinitions;
+    }
+
     /**
      * Returns an array of all plain attributes present in this class keyed by their names.
      * @return array
@@ -245,7 +277,7 @@ abstract class DefinitionInformation
     {
         $fieldDefinitions = [];
         foreach ($this->getDefinition()->getFieldDefinitions() as $fieldDefinition) {
-            if ($fieldDefinition instanceof Localizedfields || $fieldDefinition instanceof Fieldcollections || $fieldDefinition instanceof Objectbricks || $fieldDefinition instanceof Classificationstore) {
+            if ($fieldDefinition instanceof Localizedfields || $fieldDefinition instanceof Fieldcollections || $fieldDefinition instanceof Objectbricks || $fieldDefinition instanceof Classificationstore || $fieldDefinition instanceof AbstractRelations) {
                 continue;
             }
             $fieldDefinitions[$fieldDefinition->getName()] = $fieldDefinition;

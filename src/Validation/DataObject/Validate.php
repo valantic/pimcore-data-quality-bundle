@@ -9,6 +9,7 @@ use Valantic\DataQualityBundle\Service\ClassInformation;
 use Valantic\DataQualityBundle\Validation\AbstractValidateObject;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\FieldCollectionAttribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ObjectBrickAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\RelationAttribute;
 use Valantic\DataQualityBundle\Validation\MultiScorable;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\LocalizedAttribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\PlainAttribute;
@@ -52,6 +53,9 @@ class Validate extends AbstractValidateObject implements MultiScorable
             }
             if ($this->classInformation->isFieldcollectionAttribute($attribute)) {
                 $validator = new FieldCollectionAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+            }
+            if ($this->classInformation->isRelationAttribute($attribute)) {
+                $validator = new RelationAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
             }
             if (isset($validator)) {
                 $validator->validate();
