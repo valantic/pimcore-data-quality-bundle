@@ -70,7 +70,7 @@ class Writer extends AbstractWriter
     }
 
     /**
-     * Adds a new config entry for a class-attribute constraint if it does not yet exist.
+     * Adds a new config entry or edits an existing one for a class-attribute constraint if it does not yet exist.
      *
      * @param string $className
      * @param string $attributeName
@@ -78,12 +78,16 @@ class Writer extends AbstractWriter
      * @param string $params
      * @return bool
      */
-    public function addConstraint(string $className, string $attributeName, string $constraint, string $params = ''): bool
+    public function addOrModifyConstraint(string $className, string $attributeName, string $constraint, string $params = null): bool
     {
         try {
             $paramsParsed = json_decode($params, true, 512, JSON_THROW_ON_ERROR);
         } catch (Throwable $throwable) {
             $paramsParsed = $params;
+        }
+
+        if($paramsParsed === ''){
+            $paramsParsed=null;
         }
 
         $raw = $this->reader->getCurrentSection();

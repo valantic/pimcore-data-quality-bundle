@@ -204,7 +204,7 @@ class ConstraintConfigController extends BaseController
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
-            'status' => $config->addConstraint(
+            'status' => $config->addOrModifyConstraint(
                 $request->request->get('classname'),
                 $request->request->get('attributename'),
                 $request->request->get('constraint'),
