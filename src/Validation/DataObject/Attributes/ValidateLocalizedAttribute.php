@@ -1,10 +1,12 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Validation;
+namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Tool;
 use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
+use Valantic\DataQualityBundle\Validation\MultiColorable;
+use Valantic\DataQualityBundle\Validation\MultiScorable;
 
 class ValidateLocalizedAttribute extends AbstractValidateAttribute implements MultiScorable, MultiColorable
 {

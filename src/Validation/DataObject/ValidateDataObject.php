@@ -1,11 +1,14 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Validation;
+namespace Valantic\DataQualityBundle\Validation\DataObject;
 
 use InvalidArgumentException;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\AbstractElement;
 use Valantic\DataQualityBundle\Service\ClassInformation;
+use Valantic\DataQualityBundle\Validation\MultiScorable;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidateLocalizedAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ValidatePlainAttribute;
 
 class ValidateDataObject extends AbstractValidateObject implements MultiScorable
 {
