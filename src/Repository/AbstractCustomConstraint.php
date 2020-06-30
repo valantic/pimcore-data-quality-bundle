@@ -22,4 +22,28 @@ abstract class AbstractCustomConstraint extends Constraint implements CustomCons
     {
         return [];
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function defaultParameter(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function optionalParameters(): ?array
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function requiredParameters(): ?array
+    {
+        return null;
+    }
 }
