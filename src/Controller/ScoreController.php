@@ -27,8 +27,6 @@ class ScoreController extends BaseController
      */
     public function showAction(Request $request, ValidateDataObject $validation): JsonResponse
     {
-        $this->checkPermission(self::CONFIG_NAME);
-
         $obj = DataObject::getById($request->query->getInt('id'));
         if (!$obj) {
             return $this->json([
@@ -81,8 +79,6 @@ class ScoreController extends BaseController
      */
     public function checkAction(Request $request, ConstraintsConfig $constraintsConfig): JsonResponse
     {
-        $this->checkPermission(self::CONFIG_NAME);
-
         $obj = DataObject::getById($request->query->getInt('id'));
         if (!$obj || !($obj instanceof DataObject\Concrete)) {
             return $this->json([
