@@ -47,7 +47,7 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
             },
             success: function (response) {
                 if (JSON.parse(response.responseText).status) {
-                    object.tabbar.add(new valantic.dataquality.object_view(object).getLayout());
+                    object.tabbar.add(new valantic.dataquality.objectView(object).getLayout());
                     pimcore.layout.refresh();
                 }
             },

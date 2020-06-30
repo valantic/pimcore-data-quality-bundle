@@ -1,5 +1,5 @@
-pimcore.registerNS('valantic.dataquality.object_view');
-valantic.dataquality.object_view = Class.create({
+pimcore.registerNS('valantic.dataquality.objectView');
+valantic.dataquality.objectView = Class.create({
 
     initialize: function (object) {
         this.object = object;
