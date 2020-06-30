@@ -109,3 +109,20 @@ As aforementioned, this bundle was written with robustness as a primary goal. He
 - `Valantic\DataQualityBundle\Event\ConstraintFailureEvent`
 - `Valantic\DataQualityBundle\Event\InvalidConfigEvent`
 - `Valantic\DataQualityBundle\Event\InvalidConstraintEvent`
+
+## PHP API
+
+Should you wish to programmatically score objects, you may find the following snippet helpful:
+
+```php
+$validation = new \Valantic\DataQualityBundle\Validation\DataObject\Validate(); // use service injection
+$obj = \Pimcore\Model\DataObject::getById($id);
+$validation->setObject($obj);
+
+$validation->validate();
+
+$validation->attributeScores();
+$validation->score();
+$validation->color();
+$validation->scores();
+```
