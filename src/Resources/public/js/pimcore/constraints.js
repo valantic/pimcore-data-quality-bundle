@@ -24,7 +24,7 @@ valantic.dataquality.constraints = Class.create({
             const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('valantic_dataquality_constraintconfig_list'),
-                ['classname', 'attributename', 'rules_count', 'rules'],
+                ['classname', 'attributename', 'rules_count', 'rules', 'note'],
                 itemsPerPage,
                 {
                     autoLoad: true,
@@ -65,7 +65,7 @@ valantic.dataquality.constraints = Class.create({
             const tbarItems = [
                 {
                     text: t('add'),
-                    handler: this.onAddMain.bind(this),
+                    handler: this.onModifyMain.bind(this),
                     iconCls: 'pimcore_icon_add',
                 },
                 '->',
@@ -100,6 +100,14 @@ valantic.dataquality.constraints = Class.create({
                     renderer: Ext.util.Format.htmlEncode,
                 },
                 {
+                    text: t('valantic_dataquality_config_column_note'),
+                    sortable: true,
+                    dataIndex: 'note',
+                    filter: 'string',
+                    flex: 200,
+                    renderer: Ext.util.Format.htmlEncode,
+                },
+                {
                     text: t('valantic_dataquality_config_column_rules_count'),
                     sortable: true,
                     dataIndex: 'rules_count',
@@ -129,6 +137,7 @@ valantic.dataquality.constraints = Class.create({
                     rowclick: function (grid, record, tr, rowIndex, e, eOpts) {
                         this.showDetail(record);
                     }.bind(this),
+                    rowdblclick: this.onModifyMain.bind(this),
                     cellcontextmenu: this.onMainContextmenu.bind(this),
                 },
             });
@@ -272,7 +281,7 @@ valantic.dataquality.constraints = Class.create({
             },
             listeners: {
                 cellcontextmenu: this.onDetailContextmenu.bind(this),
-                rowdblclick: this.onAddDetail.bind(this),
+                rowdblclick: this.onModifyDetail.bind(this),
             },
         });
 
@@ -281,7 +290,7 @@ valantic.dataquality.constraints = Class.create({
             items: [
                 {
                     text: t('add'),
-                    handler: this.onAddDetail.bind(this),
+                    handler: this.onModifyDetail.bind(this),
                     iconCls: 'pimcore_icon_add',
                 },
             ],
@@ -295,7 +304,8 @@ valantic.dataquality.constraints = Class.create({
         this.detailView.updateLayout();
     },
 
-    onAddMain: function () {
+    onModifyMain: function (tree, possibleRecord, onlyDefinedIfEdit) {
+        const record = onlyDefinedIfEdit ? possibleRecord : null;
         const classesStore = new Ext.data.Store({
             fields: ['name'],
             proxy: {
@@ -334,6 +344,7 @@ valantic.dataquality.constraints = Class.create({
             mode: 'local',
             triggerAction: 'all',
             width: 250,
+            value: record ? record.get('attributename') : null,
         });
 
         const classnameCombo = {
@@ -347,6 +358,7 @@ valantic.dataquality.constraints = Class.create({
             mode: 'local',
             triggerAction: 'all',
             width: 250,
+            value: record ? record.get('classname') : null,
             listeners: {
                 // eslint-disable-next-line no-unused-vars
                 select: function (combo, value, index) {
@@ -359,16 +371,24 @@ valantic.dataquality.constraints = Class.create({
                 },
             },
         };
-
+        const noteTextare = {
+            xtype: 'textareafield',
+            fieldLabel: t('valantic_dataquality_config_column_note'),
+            name: 'note',
+            editable: true,
+            width: 250,
+            height: 100,
+            value: record ? record.get('note') : null,
+        };
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
-            items: [classnameCombo, attributenameCombo],
+            items: [classnameCombo, attributenameCombo, noteTextare],
         });
 
         const addMainWin = new Ext.Window({
             modal: true,
             width: 300,
-            height: 200,
+            height: 300,
             closable: true,
             items: [formPanel],
             buttons: [{
@@ -394,7 +414,7 @@ valantic.dataquality.constraints = Class.create({
 
         addMainWin.show();
     },
-    onAddDetail: function (tree, possibleRecord, onlyDefinedIfEdit) {
+    onModifyDetail: function (tree, possibleRecord, onlyDefinedIfEdit) {
         const record = onlyDefinedIfEdit ? possibleRecord : null;
         const constraintsStore = new Ext.data.Store({
             fields: ['name'],

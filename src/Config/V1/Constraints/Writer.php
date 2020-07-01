@@ -5,7 +5,7 @@ namespace Valantic\DataQualityBundle\Config\V1\Constraints;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
 
-class Writer extends AbstractWriter
+class Writer extends AbstractWriter implements ConstraintKeys
 {
     /**
      * {@inheritDoc}
@@ -41,7 +41,7 @@ class Writer extends AbstractWriter
         if (!$this->reader->isClassConfigured($className)) {
             $raw[$className] = [];
         }
-        $raw[$className][$attributeName] = [];
+        $raw[$className][$attributeName] = [self::KEY_NOTE => null, self::KEY_RULES => []];
 
         return $this->writeConfig($raw);
     }
@@ -86,19 +86,19 @@ class Writer extends AbstractWriter
             $paramsParsed = $params;
         }
 
-        if($paramsParsed === ''){
-            $paramsParsed=null;
+        if ($paramsParsed === '') {
+            $paramsParsed = null;
         }
 
         $raw = $this->reader->getCurrentSection();
 
-        $raw[$className][$attributeName][$constraint] = $paramsParsed;
+        $raw[$className][$attributeName][self::KEY_RULES][$constraint] = $paramsParsed;
 
         return $this->writeConfig($raw);
     }
 
     /**
-     * Adds a new config entry for a class-attribute constraint if it does not yet exist.
+     * Deletes a class-attribute constraint.
      *
      * @param string $className
      * @param string $attributeName
@@ -116,7 +116,47 @@ class Writer extends AbstractWriter
             return true;
         }
 
-        unset($raw[$className][$attributeName][$constraint]);
+        unset($raw[$className][$attributeName][self::KEY_RULES][$constraint]);
+
+        return $this->writeConfig($raw);
+    }
+
+    /**
+     * Adds a new config entry or edits an existing one for a class-attribute note if it does not yet exist.
+     *
+     * @param string $className
+     * @param string $attributeName
+     * @param string|null $note
+     * @return bool
+     */
+    public function addOrModifyNote(string $className, string $attributeName, string $note = null): bool
+    {
+        $raw = $this->reader->getCurrentSection();
+
+        $raw[$className][$attributeName][self::KEY_NOTE] = $note;
+
+        return $this->writeConfig($raw);
+    }
+
+    /**
+     * Deletes a class-attribute note.
+     *
+     * @param string $className
+     * @param string $attributeName
+     * @return bool
+     */
+    public function deleteNote(string $className, string $attributeName): bool
+    {
+        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
+            return true;
+        }
+
+        $raw = $this->reader->getCurrentSection();
+        if (!$this->reader->isClassConfigured($className)) {
+            return true;
+        }
+
+        $raw[$className][$attributeName][self::KEY_NOTE] = null;
 
         return $this->writeConfig($raw);
     }

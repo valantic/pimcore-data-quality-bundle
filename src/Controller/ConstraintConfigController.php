@@ -16,6 +16,7 @@ use Valantic\DataQualityBundle\Service\ClassInformation;
  */
 class ConstraintConfigController extends BaseController
 {
+    // TODO: save note
     /**
      * Returns the config for the admin editor.
      *
@@ -37,24 +38,25 @@ class ConstraintConfigController extends BaseController
 
         $entries = [];
         foreach ($config->getConfiguredClasses() as $className) {
-            foreach ($config->getForClass($className) as $attribute => $rules) {
-                $transformedRules = [];
-                foreach ($rules as $constraint => $args) {
-                    $transformedRules[] = [
-                        'constraint' => $constraint,
-                        'args' => $args,
-                    ];
-                }
+            foreach ($config->getConfiguredClassAttributes($className) as $attribute) {
                 if ($filter) {
                     if (stripos($className, $filter) === false && stripos($attribute, $filter) === false) {
                         continue;
                     }
+                }
+                $transformedRules = [];
+                foreach ($config->getRulesForClassAttribute($className, $attribute) as $constraint => $args) {
+                    $transformedRules[] = [
+                        'constraint' => $constraint,
+                        'args' => $args,
+                    ];
                 }
                 $entries[] = [
                     'classname' => $className,
                     'attributename' => $attribute,
                     'rules' => $transformedRules,
                     'rules_count' => count($transformedRules),
+                    'note' => $config->getNoteForClassAttribute($className, $attribute),
                 ];
             }
         }
@@ -134,9 +136,13 @@ class ConstraintConfigController extends BaseController
 
         return $this->json([
             'status' => $config->addClassAttribute(
-                $request->request->get('classname'),
-                $request->request->get('attributename')
-            ),
+                    $request->request->get('classname'),
+                    $request->request->get('attributename')
+                ) && $config->addOrModifyNote(
+                    $request->request->get('classname'),
+                    $request->request->get('attributename'),
+                    $request->request->get('note'),
+                ),
         ]);
     }
 

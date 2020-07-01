@@ -83,7 +83,7 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
         $this->obj = $obj;
         $this->attribute = $attribute;
         $this->constraintsConfig = $constraintsConfig;
-        $this->validationConfig = $constraintsConfig->getForObjectAttribute($obj, $attribute);
+        $this->validationConfig = $constraintsConfig->getRulesForObjectAttribute($obj, $attribute);
         $this->classInformation = new ClassInformation($this->obj->getClassName());
         $this->metaConfig = $metaConfig;
         $this->eventDispatcher = $eventDispatcher;

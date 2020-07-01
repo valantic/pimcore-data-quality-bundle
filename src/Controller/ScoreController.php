@@ -25,7 +25,7 @@ class ScoreController extends BaseController
      *
      * @return JsonResponse
      */
-    public function showAction(Request $request, Validate $validation): JsonResponse
+    public function showAction(Request $request, Validate $validation, ConstraintsConfig $config): JsonResponse
     {
         $obj = DataObject::getById($request->query->getInt('id'));
         if (!$obj) {
@@ -52,6 +52,7 @@ class ScoreController extends BaseController
             $scores[] = array_merge_recursive(
                 [
                     'attribute' => $attribute,
+                    'note' => $config->getNoteForObjectAttribute($obj, $attribute),
                 ],
                 $score
             );
