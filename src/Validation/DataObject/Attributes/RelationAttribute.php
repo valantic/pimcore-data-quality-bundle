@@ -2,6 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
@@ -28,6 +29,9 @@ class RelationAttribute extends AbstractAttribute
      */
     public function value()
     {
+        /**
+         * @var $relation AbstractRelations
+         */
         $relation = $this->obj->get($this->attribute);
 
         if (is_object($relation)) {
