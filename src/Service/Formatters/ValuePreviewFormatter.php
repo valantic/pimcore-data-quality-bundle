@@ -19,8 +19,10 @@ class ValuePreviewFormatter extends ValueFormatter
         }
 
         $primaryLanguage = Tool::getValidLanguages()[0];
-        if (array_key_exists($primaryLanguage, $output)) {
+        if (array_key_exists($primaryLanguage, $output) && !empty($output[$primaryLanguage])) {
             return $this->shorten($output[$primaryLanguage], $threshold);
+        } elseif (array_key_exists($primaryLanguage, $output) && empty($output[$primaryLanguage]) && count(array_values(array_filter($output))) > 0) {
+            return $this->shorten(array_values(array_filter($output))[0], $threshold);
         }
 
         return $this->shorten(implode(', ', $output), $threshold);
