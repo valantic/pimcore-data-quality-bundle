@@ -2,8 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Controller;
 
-use Pimcore\Model\DataObject;
-use Pimcore\Tool;
+use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,7 +34,8 @@ class ScoreController extends BaseController
      */
     public function showAction(Request $request, Validate $validation, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, ValueFormatter $valueFormatter, ValuePreviewFormatter $valuePreviewFormatter): JsonResponse
     {
-        $obj = DataObject::getById($request->query->getInt('id'));
+        $obj = Concrete::getById($request->query->getInt('id'));
+
         if (!$obj) {
             return $this->json([
                 'score' => -1,
@@ -95,8 +95,8 @@ class ScoreController extends BaseController
      */
     public function checkAction(Request $request, ConstraintsConfig $constraintsConfig): JsonResponse
     {
-        $obj = DataObject::getById($request->query->getInt('id'));
-        if (!$obj || !($obj instanceof DataObject\Concrete)) {
+        $obj = Concrete::getById($request->query->getInt('id'));
+        if (!$obj || !($obj instanceof Concrete)) {
             return $this->json([
                 'status' => false,
             ]);
