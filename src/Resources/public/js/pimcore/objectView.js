@@ -114,7 +114,7 @@ valantic.dataquality.objectView = Class.create({
                                 sortable: true,
                                 dataIndex: 'score',
                                 editable: false,
-                                flex: 1,
+                                flex: 0,
                                 renderer: function (value, meta, record) {
                                     // eslint-disable-next-line no-param-reassign
                                     meta.style = cellStyle(record.get('color'));
@@ -136,7 +136,7 @@ valantic.dataquality.objectView = Class.create({
                                 return formatAsPercentage(value[locale]);
                             },
                             editable: false,
-                            flex: 1,
+                            flex: 0,
                             align: 'right',
                         });
                         scoredLocales.forEach((locale) => columns.push(localeColumn(locale)));
