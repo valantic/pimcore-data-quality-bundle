@@ -11,7 +11,7 @@ valantic.dataquality.objectView = Class.create({
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                     extend: 'Ext.data.Model',
-                    fields: ['attribute', 'score', 'scores', 'color', 'colors', 'value', 'note'],
+                    fields: ['attribute', 'score', 'scores', 'color', 'colors', 'value', 'note', 'type'],
                 });
             }
 
@@ -88,6 +88,9 @@ valantic.dataquality.objectView = Class.create({
                                 dataIndex: 'attribute',
                                 editable: false,
                                 flex: 1,
+                                renderer: function (value, meta, record) {
+                                    return `${value} (${record.get('type')})`;
+                                },
                             },
                             {
                                 text: t('valantic_dataquality_view_column_note'),

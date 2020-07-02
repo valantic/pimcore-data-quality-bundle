@@ -6,6 +6,7 @@ use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Valantic\DataQualityBundle\Service\ClassInformation;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
@@ -22,10 +23,12 @@ class ScoreController extends BaseController
      *
      * @param Request $request
      * @param Validate $validation
+     * @param ConstraintsConfig $constraintsConfig
+     * @param MetaConfig $metaConfig
      *
      * @return JsonResponse
      */
-    public function showAction(Request $request, Validate $validation, ConstraintsConfig $config): JsonResponse
+    public function showAction(Request $request, Validate $validation, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig): JsonResponse
     {
         $obj = DataObject::getById($request->query->getInt('id'));
         if (!$obj) {
@@ -36,6 +39,8 @@ class ScoreController extends BaseController
                 'color' => null,
             ]);
         }
+
+        $classInformation = new ClassInformation(get_class($obj));
 
         $validation->setObject($obj);
         $validation->validate();
@@ -52,11 +57,13 @@ class ScoreController extends BaseController
             $scores[] = array_merge_recursive(
                 [
                     'attribute' => $attribute,
-                    'note' => $config->getNoteForObjectAttribute($obj, $attribute),
+                    'note' => $constraintsConfig->getNoteForObjectAttribute($obj, $attribute),
+                    'type' => $classInformation->getAttributeType($attribute),
                 ],
                 $score
             );
         }
+
 
         return $this->json([
             'object' => [

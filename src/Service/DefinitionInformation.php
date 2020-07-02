@@ -17,6 +17,7 @@ abstract class DefinitionInformation
     public const TYPE_OBJECTBRICK = 'objectbrick';
     public const TYPE_FIELDCOLLECTION = 'fieldcollection';
     public const TYPE_CLASSIFICATIONSTORE = 'classificationstore';
+    public const TYPE_RELATION = 'relation';
 
     /**
      * The class' base name
@@ -88,6 +89,9 @@ abstract class DefinitionInformation
         }
         if ($this->isClassificationstoreAttribute($attribute)) {
             return self::TYPE_CLASSIFICATIONSTORE;
+        }
+        if ($this->isRelationAttribute($attribute)) {
+            return self::TYPE_RELATION;
         }
 
         return null;
