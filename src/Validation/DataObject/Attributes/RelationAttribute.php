@@ -32,10 +32,11 @@ class RelationAttribute extends AbstractAttribute
         /**
          * @var $relation AbstractRelations
          */
-        $relation = $this->obj->get($this->attribute);
 
-        if (is_object($relation)) {
-            return $relation->getId();
+        try {
+            $relation = $this->valueInherited($this->obj, null);
+        } catch (Throwable $throwable) {
+            return [];
         }
 
         $ids = [];

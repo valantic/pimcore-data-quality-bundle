@@ -143,4 +143,20 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
      * @return mixed
      */
     abstract public function value();
+
+    /**
+     * Traverses the inheritance tree until a value has been found.
+     * @param Concrete $obj
+     * @param string|null $locale
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function valueInherited(Concrete $obj, ?string $locale = null)
+    {
+        if (!$obj->getParentId() || !($obj->getParent() instanceof Concrete) || $obj->get($this->attribute, $locale)) {
+            return $obj->get($this->attribute, $locale);
+        }
+
+        return $this->valueInherited($obj->getParent(), $locale);
+    }
 }

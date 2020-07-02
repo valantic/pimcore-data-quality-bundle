@@ -2,6 +2,8 @@
 
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Tool;
 use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
@@ -108,9 +110,14 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
         $value = [];
 
         foreach ($this->getValidatableLocales() as $locale) {
-            $value[$locale] = $this->obj->get($this->attribute, $locale);
+            try {
+                $value[$locale] = $this->valueInherited($this->obj, $locale);
+            } catch (Throwable $throwable) {
+                continue;
+            }
         }
 
         return $value;
     }
+
 }
