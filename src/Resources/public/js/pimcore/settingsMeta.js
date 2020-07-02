@@ -131,9 +131,6 @@ valantic.dataquality.settings_meta = Class.create({
             });
 
             const layoutConf = {
-                tabConfig: {
-                    tooltip: t('valantic_dataquality_config_meta_tooltip'),
-                },
                 items: [this.grid],
                 layout: 'border',
             };

@@ -142,9 +142,6 @@ valantic.dataquality.settings_constraints = Class.create({
             });
 
             const layoutConf = {
-                tabConfig: {
-                    tooltip: t('valantic_dataquality_config_constraints_tooltip'),
-                },
                 items: [this.grid, this.detailView],
                 layout: 'border',
             };
