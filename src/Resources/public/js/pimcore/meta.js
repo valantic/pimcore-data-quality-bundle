@@ -146,6 +146,7 @@ valantic.dataquality.meta = Class.create({
                 iconCls: 'pimcore_nav_icon_object',
                 items: [this.grid],
                 layout: 'border',
+                closable: true,
             };
 
             layoutConf.title = t('valantic_dataquality_config_meta_tooltip');

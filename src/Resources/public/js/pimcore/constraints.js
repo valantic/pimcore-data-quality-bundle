@@ -157,6 +157,7 @@ valantic.dataquality.constraints = Class.create({
                 iconCls: 'pimcore_nav_icon_object',
                 items: [this.grid, this.detailView],
                 layout: 'border',
+                closable: true,
             };
 
             layoutConf.title = t('valantic_dataquality_config_constraints_tooltip');
