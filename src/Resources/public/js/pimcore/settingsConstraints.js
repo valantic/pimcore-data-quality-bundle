@@ -1,17 +1,8 @@
-pimcore.registerNS('valantic.dataquality.constraints');
-valantic.dataquality.constraints = Class.create({
+pimcore.registerNS('valantic.dataquality.settings_constraints');
+valantic.dataquality.settings_constraints = Class.create({
 
-    // eslint-disable-next-line no-unused-vars
-    initialize: function (element, type) {
-        const tabPanel = Ext.getCmp('pimcore_panel_tabs');
-        tabPanel.add(this.getLayout());
-        tabPanel.setActiveTab(this.getLayout());
-
-        this.getLayout().on('destroy', function () {
-            pimcore.globalmanager.remove('valantic_dataquality_constraints');
-        });
-
-        pimcore.layout.refresh();
+    initialize: function (parent) {
+        this.parent = parent;
     },
 
     activate: function () {
@@ -154,10 +145,8 @@ valantic.dataquality.constraints = Class.create({
                 tabConfig: {
                     tooltip: t('valantic_dataquality_config_constraints_tooltip'),
                 },
-                iconCls: 'pimcore_nav_icon_object',
                 items: [this.grid, this.detailView],
                 layout: 'border',
-                closable: true,
             };
 
             layoutConf.title = t('valantic_dataquality_config_constraints_tooltip');

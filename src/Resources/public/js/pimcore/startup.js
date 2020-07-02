@@ -14,25 +14,13 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
         const menu = pimcore.globalmanager.get('layout_toolbar').marketingMenu;
 
         menu.add({
-            text: t('valantic_dataquality_config_constraints_tooltip'),
-            iconCls: 'pimcore_nav_icon_object',
-            handler: function () {
-                try {
-                    pimcore.globalmanager.get('valantic_dataquality_constraints').activate();
-                } catch (e) {
-                    pimcore.globalmanager.add('valantic_dataquality_constraints', new valantic.dataquality.constraints());
-                }
-            },
-        });
-
-        menu.add({
-            text: t('valantic_dataquality_config_meta_tooltip'),
+            text: t('valantic_dataquality_config_settings'),
             iconCls: 'pimcore_nav_icon_properties',
             handler: function () {
                 try {
-                    pimcore.globalmanager.get('valantic_dataquality_meta').activate();
+                    pimcore.globalmanager.get('valantic_dataquality_settings').activate();
                 } catch (e) {
-                    pimcore.globalmanager.add('valantic_dataquality_meta', new valantic.dataquality.meta());
+                    pimcore.globalmanager.add('valantic_dataquality_settings', new valantic.dataquality.settings());
                 }
             },
         });

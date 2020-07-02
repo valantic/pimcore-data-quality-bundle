@@ -1,17 +1,8 @@
-pimcore.registerNS('valantic.dataquality.meta');
-valantic.dataquality.meta = Class.create({
+pimcore.registerNS('valantic.dataquality.settings_meta');
+valantic.dataquality.settings_meta = Class.create({
 
-    // eslint-disable-next-line no-unused-vars
-    initialize: function (element, type) {
-        const tabPanel = Ext.getCmp('pimcore_panel_tabs');
-        tabPanel.add(this.getLayout());
-        tabPanel.setActiveTab(this.getLayout());
-
-        this.getLayout().on('destroy', function () {
-            pimcore.globalmanager.remove('valantic_dataquality_meta');
-        });
-
-        pimcore.layout.refresh();
+    initialize: function (parent) {
+        this.parent = parent;
     },
 
     activate: function () {
@@ -143,10 +134,8 @@ valantic.dataquality.meta = Class.create({
                 tabConfig: {
                     tooltip: t('valantic_dataquality_config_meta_tooltip'),
                 },
-                iconCls: 'pimcore_nav_icon_object',
                 items: [this.grid],
                 layout: 'border',
-                closable: true,
             };
 
             layoutConf.title = t('valantic_dataquality_config_meta_tooltip');

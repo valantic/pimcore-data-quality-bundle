@@ -25,9 +25,10 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
     public function getJsPaths(): array
     {
         return [
-            '/bundles/valanticdataquality/js/pimcore/constraints.js',
-            '/bundles/valanticdataquality/js/pimcore/meta.js',
             '/bundles/valanticdataquality/js/pimcore/objectView.js',
+            '/bundles/valanticdataquality/js/pimcore/settingsConstraints.js',
+            '/bundles/valanticdataquality/js/pimcore/settingsMeta.js',
+            '/bundles/valanticdataquality/js/pimcore/settings.js',
             '/bundles/valanticdataquality/js/pimcore/startup.js',
         ];
     }
