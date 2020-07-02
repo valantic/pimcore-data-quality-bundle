@@ -116,6 +116,26 @@ valantic.dataquality.objectView = Class.create({
                         flex: 1,
                     },
                     {
+                        xtype: 'actioncolumn',
+                        menuText: t('details'),
+                        width: 30,
+                        items: [
+                            {
+                                tooltip: t('details'),
+                                icon: '/bundles/pimcoreadmin/img/flat-color-icons/questions.svg',
+                                getClass: function (v, metadata, record) {
+                                    if (!record.get('note') || record.get('note').length === 0) {
+                                        // eslint-disable-next-line no-param-reassign
+                                        metadata.style += 'display:none;';
+                                    }
+                                },
+                                handler: function (gridRef, rowIndex, colIndex, item, e, record) {
+                                    Ext.Msg.alert(record.get('label'), record.get('note'), Ext.emptyFn);
+                                },
+                            },
+                        ],
+                    },
+                    {
                         text: t('valantic_dataquality_view_column_value'),
                         sortable: true,
                         dataIndex: 'value_preview',
@@ -129,17 +149,16 @@ valantic.dataquality.objectView = Class.create({
                         items: [
                             {
                                 tooltip: t('details'),
-                                icon: '/bundles/pimcoreadmin/img/flat-color-icons/info.svg',
-                                handler: function (grid, rowIndex) {
-                                    const row = grid.store.data.items[rowIndex];
-                                    let value = row.get('value');
+                                icon: '/bundles/pimcoreadmin/img/flat-color-icons/view_details.svg',
+                                handler: function (gridRef, rowIndex, colIndex, item, e, record) {
+                                    let value = record.get('value');
                                     if (Array.isArray(value)) {
                                         value = `<ul>${value.map((v) => `<li>${v}</li>`).join('')}</ul>`;
                                     }
                                     if ((typeof value === 'object' && value !== null)) {
                                         value = `<dl>${Object.keys(value).map((k) => `<dt>${k}</dt><dd>${value[k]}</dd>`).join('')}</dl>`;
                                     }
-                                    Ext.Msg.alert(row.get('label'), value, Ext.emptyFn);
+                                    Ext.Msg.alert(record.get('label'), value, Ext.emptyFn);
                                 },
                             },
                         ],
@@ -278,6 +297,13 @@ valantic.dataquality.objectView = Class.create({
         this.detailView.removeAll();
         if (data.length > 0) {
             this.detailView.add(detailsGrid);
+        }
+        if (rec.get('note')) {
+            this.detailView.add(new Ext.Component({
+                xtype: 'component',
+                autoEl: {}, // will default to creating a DIV
+                html: `<p style="padding: 0 10px">${rec.get('note')}</p>`,
+            }));
         }
         this.detailView.updateLayout();
     },
