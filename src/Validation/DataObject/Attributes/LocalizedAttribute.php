@@ -88,7 +88,7 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
      */
     protected function getLocalesInConfig(): array
     {
-        return $this->metaConfig->getForObject($this->obj)[$this->metaConfig::KEY_LOCALES];
+        return $this->safeArray($this->metaConfig->getForObject($this->obj), $this->metaConfig::KEY_LOCALES);
     }
 
     /**
