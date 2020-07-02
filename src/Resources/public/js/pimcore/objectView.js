@@ -103,7 +103,10 @@ valantic.dataquality.objectView = Class.create({
                                 editable: false,
                                 flex: 1,
                                 renderer: function (value) {
-                                    return JSON.stringify(value);
+                                    if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+                                        return JSON.stringify(value);
+                                    }
+                                    return value;
                                 },
                             },
                             {
