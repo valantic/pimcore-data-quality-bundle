@@ -29,11 +29,10 @@ class RelationAttribute extends AbstractAttribute
      */
     public function value()
     {
-        /**
-         * @var $relation AbstractRelations
-         */
-
         try {
+            /**
+             * @var $relation AbstractRelations
+             */
             $relation = $this->valueInherited($this->obj, null);
         } catch (Throwable $throwable) {
             return [];

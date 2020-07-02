@@ -4,7 +4,6 @@ namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
