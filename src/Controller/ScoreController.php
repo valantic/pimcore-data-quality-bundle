@@ -3,10 +3,13 @@
 namespace Valantic\DataQualityBundle\Controller;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Valantic\DataQualityBundle\Service\ClassInformation;
+use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
+use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
+use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
@@ -25,10 +28,12 @@ class ScoreController extends BaseController
      * @param Validate $validation
      * @param ConstraintsConfig $constraintsConfig
      * @param MetaConfig $metaConfig
+     * @param ValueFormatter $valueFormatter
+     * @param ValuePreviewFormatter $valuePreviewFormatter
      *
      * @return JsonResponse
      */
-    public function showAction(Request $request, Validate $validation, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig): JsonResponse
+    public function showAction(Request $request, Validate $validation, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, ValueFormatter $valueFormatter, ValuePreviewFormatter $valuePreviewFormatter): JsonResponse
     {
         $obj = DataObject::getById($request->query->getInt('id'));
         if (!$obj) {
@@ -46,22 +51,25 @@ class ScoreController extends BaseController
         $validation->validate();
         $filter = $request->get('filterText');
 
+
         $scores = [];
         foreach ($validation->attributeScores() as $attribute => $score) {
-            if ($filter) {
-                if (stripos($attribute, $filter) === false) {
-                    continue;
-                }
+            if ($filter && stripos($attribute, $filter) === false) {
+                continue;
             }
 
-            $scores[] = array_merge_recursive(
+            $scores[] = array_merge(
                 [
                     'attribute' => $attribute,
-                    'label' => $classInformation->getAttributeLabel($attribute)??$attribute,
+                    'label' => $classInformation->getAttributeLabel($attribute) ?? $attribute,
                     'note' => $constraintsConfig->getNoteForObjectAttribute($obj, $attribute),
                     'type' => $classInformation->getAttributeType($attribute),
                 ],
-                $score
+                $score,
+                [
+                    'value' => $valueFormatter->format($score['value']),
+                    'value_preview' => $valuePreviewFormatter->format($score['value']),
+                ]
             );
         }
 

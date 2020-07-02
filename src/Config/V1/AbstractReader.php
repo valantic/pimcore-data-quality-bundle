@@ -5,7 +5,7 @@ namespace Valantic\DataQualityBundle\Config\V1;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Valantic\DataQualityBundle\Service\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Throwable;
 
 abstract class AbstractReader extends Config

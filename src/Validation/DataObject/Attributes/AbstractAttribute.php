@@ -11,7 +11,7 @@ use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
-use Valantic\DataQualityBundle\Service\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Valantic\DataQualityBundle\Validation\Colorable;
 use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
 use Valantic\DataQualityBundle\Validation\Scorable;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Service;
+namespace Valantic\DataQualityBundle\Service\Information;
 
 use Pimcore\Model\DataObject\Fieldcollection\Definition\Listing;
 

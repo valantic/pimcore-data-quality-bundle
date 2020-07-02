@@ -1,9 +1,8 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Service;
+namespace Valantic\DataQualityBundle\Service\Information;
 
 use InvalidArgumentException;
-use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Pimcore\Model\DataObject\ClassDefinition;

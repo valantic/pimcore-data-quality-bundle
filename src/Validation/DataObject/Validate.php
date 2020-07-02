@@ -5,7 +5,7 @@ namespace Valantic\DataQualityBundle\Validation\DataObject;
 use InvalidArgumentException;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\AbstractElement;
-use Valantic\DataQualityBundle\Service\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Valantic\DataQualityBundle\Validation\AbstractValidateObject;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\FieldCollectionAttribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ObjectBrickAttribute;

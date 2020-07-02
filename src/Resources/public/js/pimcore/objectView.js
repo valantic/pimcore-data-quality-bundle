@@ -90,24 +90,40 @@ valantic.dataquality.objectView = Class.create({
                                 flex: 1,
                             },
                             {
+                                text: t('valantic_dataquality_view_column_value'),
+                                sortable: true,
+                                dataIndex: 'value_preview',
+                                editable: false,
+                                flex: 1,
+                            },
+                            {
+                                xtype: 'actioncolumn',
+                                menuText: t('details'),
+                                width: 30,
+                                items: [
+                                    {
+                                        tooltip: t('details'),
+                                        icon: '/bundles/pimcoreadmin/img/flat-color-icons/info.svg',
+                                        handler: function (grid, rowIndex) {
+                                            const row = grid.store.data.items[rowIndex];
+                                            let value = row.get('value');
+                                            if (Array.isArray(value)) {
+                                                value = `<ul>${value.map((v) => `<li>${v}</li>`).join('')}</ul>`;
+                                            }
+                                            if ((typeof value === 'object' && value !== null)) {
+                                                value = `<dl>${Object.keys(value).map((k) => `<dt>${k}</dt><dd>${value[k]}</dd>`).join('')}</dl>`;
+                                            }
+                                            Ext.Msg.alert(row.get('label'), value, Ext.emptyFn);
+                                        },
+                                    },
+                                ],
+                            },
+                            {
                                 text: t('valantic_dataquality_view_column_note'),
                                 sortable: true,
                                 dataIndex: 'note',
                                 editable: false,
                                 flex: 1,
-                            },
-                            {
-                                text: t('valantic_dataquality_view_column_value'),
-                                sortable: true,
-                                dataIndex: 'value',
-                                editable: false,
-                                flex: 1,
-                                renderer: function (value) {
-                                    if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
-                                        return JSON.stringify(value);
-                                    }
-                                    return value;
-                                },
                             },
                             {
                                 text: t('valantic_dataquality_view_column_score'),

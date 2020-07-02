@@ -9,7 +9,7 @@ use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
-use Valantic\DataQualityBundle\Service\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 
 /**
  * @Route("/admin/valantic/data-quality/constraint-config")
@@ -38,10 +38,8 @@ class ConstraintConfigController extends BaseController
         $entries = [];
         foreach ($config->getConfiguredClasses() as $className) {
             foreach ($config->getConfiguredClassAttributes($className) as $attribute) {
-                if ($filter) {
-                    if (stripos($className, $filter) === false && stripos($attribute, $filter) === false) {
-                        continue;
-                    }
+                if ($filter && stripos($className, $filter) === false && stripos($attribute, $filter) === false) {
+                    continue;
                 }
                 $transformedRules = [];
                 foreach ($config->getRulesForClassAttribute($className, $attribute) as $constraint => $args) {
