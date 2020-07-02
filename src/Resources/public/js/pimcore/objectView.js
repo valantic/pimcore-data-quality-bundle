@@ -295,7 +295,7 @@ valantic.dataquality.objectView = Class.create({
             this.detailView.add(new Ext.Component({
                 xtype: 'component',
                 autoEl: {}, // will default to creating a DIV
-                html: `<p style="padding: 0 10px">${rec.get('note')}</p>`,
+                html: `<div style="padding: 10px"><div style="position: relative; padding: .75rem 1.25rem; margin-bottom: 1rem; border-radius: .25rem; color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb;">${rec.get('note')}</div></div>`,
             }));
         }
         this.detailView.updateLayout();
