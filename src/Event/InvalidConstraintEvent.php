@@ -2,7 +2,6 @@
 
 namespace Valantic\DataQualityBundle\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Throwable;
 
 class InvalidConstraintEvent extends Event
@@ -35,6 +34,8 @@ class InvalidConstraintEvent extends Event
         $this->name = $name;
         $this->params = $params;
         $this->throwable = $throwable;
+
+        parent::__construct();
     }
 
     /**
@@ -59,5 +60,13 @@ class InvalidConstraintEvent extends Event
     public function getThrowable(): Throwable
     {
         return $this->throwable;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function logMessage(): string
+    {
+        return sprintf("Constraint %s with parameters %s failed to execute.\nMessage: %s\nTrace: %s", $this->getName(), json_encode($this->getParams()), $this->getThrowable()->getMessage(), $this->getThrowable()->getTraceAsString());
     }
 }

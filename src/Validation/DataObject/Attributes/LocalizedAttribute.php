@@ -26,7 +26,7 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
                 $this->violations[$locale] = $this->validator->validate($this->value()[$locale], $this->getConstraints());
             }
         } catch (Throwable $e) {
-            $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e));
+            $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
         }
     }
 

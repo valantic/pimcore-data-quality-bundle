@@ -11,22 +11,6 @@ class PlainAttribute extends AbstractAttribute
     /**
      * {@inheritDoc}
      */
-    public function validate()
-    {
-        if (!$this->classInformation->isPlainAttribute($this->attribute)) {
-            return;
-        }
-
-        try {
-            $this->violations = $this->validator->validate($this->value(), $this->getConstraints());
-        } catch (Throwable $e) {
-            $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function value()
     {
         try {

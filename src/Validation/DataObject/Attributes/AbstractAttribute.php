@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
+use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Valantic\DataQualityBundle\Shared\SafeArray;
@@ -157,5 +158,17 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
         }
 
         return $this->valueInherited($obj->getParent(), $locale);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function validate()
+    {
+        try {
+            $this->violations = $this->validator->validate($this->value(), $this->getConstraints());
+        } catch (Throwable $e) {
+            $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
+        }
     }
 }
