@@ -46,4 +46,14 @@ abstract class AbstractCustomConstraint extends Constraint implements CustomCons
     {
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getLabel(): string
+    {
+        $parts = explode('\\', get_class($this));
+
+        return array_pop($parts);
+    }
 }

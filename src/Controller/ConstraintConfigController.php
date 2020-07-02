@@ -186,6 +186,7 @@ class ConstraintConfigController extends BaseController
         foreach ($names as $name => $data) {
             $constraints[] = [
                 'name' => $name,
+                'label' => $data['label'] ?? $name,
                 'default_parameter' => $data['parameters']['default'] ?? false,
                 'required_parameters' => $data['parameters']['required'] ?? [],
                 'optional_parameters' => $data['parameters']['optional'] ?? [],

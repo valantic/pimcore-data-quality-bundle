@@ -33,7 +33,7 @@ class ConstraintDefinitions
      */
     public function all(): array
     {
-        return array_merge_recursive($this->symfony(), $this->custom());
+        return array_merge_recursive($this->custom(), $this->symfony());
     }
 
     /**
@@ -46,6 +46,7 @@ class ConstraintDefinitions
 
         foreach ($this->customConstraints as $constraint) {
             $definitions[get_class($constraint)] = [
+                'label' => $constraint->getLabel(),
                 'parameters' => array_filter([
                     'default' => $constraint->defaultParameter(),
                     'optional' => $constraint->optionalParameters(),

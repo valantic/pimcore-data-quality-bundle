@@ -417,7 +417,7 @@ valantic.dataquality.constraints = Class.create({
     onModifyDetail: function (tree, possibleRecord, onlyDefinedIfEdit) {
         const record = onlyDefinedIfEdit ? possibleRecord : null;
         const constraintsStore = new Ext.data.Store({
-            fields: ['name'],
+            fields: ['name', 'label'],
             proxy: {
                 type: 'ajax',
                 url: Routing.generate('valantic_dataquality_constraintconfig_listconstraints'),
@@ -464,7 +464,7 @@ valantic.dataquality.constraints = Class.create({
                     fieldLabel: t('valantic_dataquality_config_column_constraint'),
                     name: 'constraint',
                     editable: true,
-                    displayField: 'name',
+                    displayField: 'label',
                     valueField: 'name',
                     store: constraintsStore,
                     mode: 'local',

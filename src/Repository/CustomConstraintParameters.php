@@ -21,4 +21,10 @@ interface CustomConstraintParameters
      * @return array|null
      */
     public function requiredParameters(): ?array;
+
+    /**
+     * Returns a human-readable name of the constraint.
+     * @return string
+     */
+    public function getLabel(): string;
 }
