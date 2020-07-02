@@ -15,41 +15,6 @@ valantic.dataquality.objectView = Class.create({
                 });
             }
 
-            const formatAsPercentage = (v) => (!Number.isNaN(v) ? `${(v * 100).toFixed(0)} %` : '');
-
-            const colorMapping = (color) => {
-                if (color === 'green') {
-                    return '#4CAF50;';
-                }
-                if (color === 'orange') {
-                    return '#FF9800;';
-                }
-                if (color === 'red') {
-                    return '#F44336;';
-                }
-                return '';
-            };
-
-            const colorIcon = (color) => {
-                if (color === 'green') {
-                    return '/bundles/pimcoreadmin/img/flat-color-icons/approve.svg';
-                }
-                if (color === 'orange') {
-                    return '/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg';
-                }
-                if (color === 'red') {
-                    return '/bundles/pimcoreadmin/img/flat-color-icons/delete.svg';
-                }
-                return '';
-            };
-
-            const cellStyle = (color) => {
-                if (color === 'green' || color === 'orange' || color === 'red') {
-                    return `color: ${colorMapping(color)}; background: url('${colorIcon(color)}') right center no-repeat; padding-right: 30px;`;
-                }
-                return '';
-            };
-
             this.attributesStore = new Ext.data.Store({
                 model: modelName,
                 sorters: [
@@ -73,93 +38,6 @@ valantic.dataquality.objectView = Class.create({
                         rootProperty: 'attributes',
                     },
                 },
-                listeners: {
-                    load: function (store) {
-                        const scoredLocales = store.getData().items
-                            .map((item) => item.get('scores'))
-                            .filter((item) => !!item)
-                            .flatMap((i) => Object.keys(i))
-                            .filter((value, index, self) => self.indexOf(value) === index);
-
-                        const columns = [
-                            {
-                                text: t('valantic_dataquality_view_column_attributename'),
-                                sortable: true,
-                                dataIndex: 'label',
-                                editable: false,
-                                flex: 1,
-                            },
-                            {
-                                text: t('valantic_dataquality_view_column_value'),
-                                sortable: true,
-                                dataIndex: 'value_preview',
-                                editable: false,
-                                flex: 1,
-                            },
-                            {
-                                xtype: 'actioncolumn',
-                                menuText: t('details'),
-                                width: 30,
-                                items: [
-                                    {
-                                        tooltip: t('details'),
-                                        icon: '/bundles/pimcoreadmin/img/flat-color-icons/info.svg',
-                                        handler: function (grid, rowIndex) {
-                                            const row = grid.store.data.items[rowIndex];
-                                            let value = row.get('value');
-                                            if (Array.isArray(value)) {
-                                                value = `<ul>${value.map((v) => `<li>${v}</li>`).join('')}</ul>`;
-                                            }
-                                            if ((typeof value === 'object' && value !== null)) {
-                                                value = `<dl>${Object.keys(value).map((k) => `<dt>${k}</dt><dd>${value[k]}</dd>`).join('')}</dl>`;
-                                            }
-                                            Ext.Msg.alert(row.get('label'), value, Ext.emptyFn);
-                                        },
-                                    },
-                                ],
-                            },
-                            {
-                                text: t('valantic_dataquality_view_column_note'),
-                                sortable: true,
-                                dataIndex: 'note',
-                                editable: false,
-                                flex: 1,
-                            },
-                            {
-                                text: t('valantic_dataquality_view_column_score'),
-                                sortable: true,
-                                dataIndex: 'score',
-                                editable: false,
-                                flex: 0,
-                                renderer: function (value, meta, record) {
-                                    // eslint-disable-next-line no-param-reassign
-                                    meta.style = cellStyle(record.get('color'));
-                                    return formatAsPercentage(value);
-                                },
-                                align: 'right',
-                            },
-                        ];
-                        const localeColumn = (locale) => ({
-                            text: `${t('valantic_dataquality_view_column_score')} (${locale})`,
-                            sortable: true,
-                            dataIndex: 'scores',
-                            renderer: function (value, meta, record) {
-                                if (!value[locale] || Number.isNaN(value[locale])) {
-                                    return '';
-                                }
-                                // eslint-disable-next-line no-param-reassign
-                                meta.style = cellStyle(record.get('colors')[locale]);
-                                return formatAsPercentage(value[locale]);
-                            },
-                            editable: false,
-                            flex: 0,
-                            align: 'right',
-                        });
-                        scoredLocales.forEach((locale) => columns.push(localeColumn(locale)));
-                        // eslint-disable-next-line no-use-before-define
-                        grid.setColumns(columns);
-                    },
-                },
             });
 
             this.objectStore = new Ext.data.Store({
@@ -180,7 +58,7 @@ valantic.dataquality.objectView = Class.create({
                         if (!data.get('score') || !data.get('color')) {
                             return;
                         }
-                        this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${colorMapping(data.get('color'))}">${formatAsPercentage(data.get('score'))}</span>)`);
+                        this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${this.colorMapping(data.get('color'))}">${this.formatAsPercentage(data.get('score'))}</span>)`);
                     }.bind(this),
                 },
             });
@@ -229,7 +107,64 @@ valantic.dataquality.objectView = Class.create({
 
             const grid = Ext.create('Ext.grid.Panel', {
                 store: this.attributesStore,
-                columns: [],
+                columns: [
+                    {
+                        text: t('valantic_dataquality_view_column_attributename'),
+                        sortable: true,
+                        dataIndex: 'label',
+                        editable: false,
+                        flex: 1,
+                    },
+                    {
+                        text: t('valantic_dataquality_view_column_value'),
+                        sortable: true,
+                        dataIndex: 'value_preview',
+                        editable: false,
+                        flex: 1,
+                    },
+                    {
+                        xtype: 'actioncolumn',
+                        menuText: t('details'),
+                        width: 30,
+                        items: [
+                            {
+                                tooltip: t('details'),
+                                icon: '/bundles/pimcoreadmin/img/flat-color-icons/info.svg',
+                                handler: function (grid, rowIndex) {
+                                    const row = grid.store.data.items[rowIndex];
+                                    let value = row.get('value');
+                                    if (Array.isArray(value)) {
+                                        value = `<ul>${value.map((v) => `<li>${v}</li>`).join('')}</ul>`;
+                                    }
+                                    if ((typeof value === 'object' && value !== null)) {
+                                        value = `<dl>${Object.keys(value).map((k) => `<dt>${k}</dt><dd>${value[k]}</dd>`).join('')}</dl>`;
+                                    }
+                                    Ext.Msg.alert(row.get('label'), value, Ext.emptyFn);
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        text: t('valantic_dataquality_view_column_note'),
+                        sortable: true,
+                        dataIndex: 'note',
+                        editable: false,
+                        flex: 1,
+                    },
+                    {
+                        text: t('valantic_dataquality_view_column_score'),
+                        sortable: true,
+                        dataIndex: 'score',
+                        editable: false,
+                        flex: 0,
+                        renderer: function (value, meta, record) {
+                            // eslint-disable-next-line no-param-reassign
+                            meta.style = this.cellStyle(record.get('color'));
+                            return this.formatAsPercentage(value);
+                        }.bind(this),
+                        align: 'right',
+                    },
+                ],
                 region: 'center',
                 bbar: this.pagingtoolbar,
                 tbar: tbar,
@@ -238,6 +173,11 @@ valantic.dataquality.objectView = Class.create({
                     forceFit: true,
                 },
                 stripeRows: true,
+                listeners: {
+                    rowclick: function (recordGrid, record) {
+                        this.showDetail(record);
+                    }.bind(this),
+                },
             });
 
             grid.on('beforerender', function () {
@@ -245,6 +185,14 @@ valantic.dataquality.objectView = Class.create({
             }.bind(this));
 
             grid.reference = this;
+
+            this.detailView = new Ext.Panel({
+                region: 'east',
+                minWidth: 350,
+                width: 350,
+                split: true,
+                layout: 'fit',
+            });
 
             this.layout = new Ext.Panel({
                 title: t('valantic_dataquality_pimcore_tab_name'),
@@ -254,7 +202,7 @@ valantic.dataquality.objectView = Class.create({
                 iconCls: 'pimcore_material_icon_info pimcore_material_icon',
                 border: false,
                 layout: 'border',
-                items: [grid],
+                items: [grid, this.detailView],
             });
 
             this.objectStore.load();
@@ -268,4 +216,106 @@ valantic.dataquality.objectView = Class.create({
         this.objectStore.reload();
     },
 
+    showDetail: function (rec) {
+        const data = [];
+        Object.keys(rec.data.scores)
+            .forEach((locale) => data.push({
+                locale,
+                score: rec.data.scores[locale],
+                color: rec.data.colors[locale],
+            }));
+        const store = new Ext.data.Store({
+            proxy: {
+                type: 'memory',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'scores',
+                },
+            },
+            autoDestroy: true,
+            data: data,
+            sorters: [
+                {
+                    property: 'score',
+                    direction: 'ASC',
+                },
+            ],
+        });
+
+        const detailsGrid = new Ext.grid.GridPanel({
+            store: store,
+            title: t('valantic_dataquality_view_locales_for', null, { name: rec.get('label') }),
+            columns: [
+                {
+                    text: t('valantic_dataquality_view_column_locale'),
+                    sortable: true,
+                    dataIndex: 'locale',
+                    editable: false,
+                    flex: 1,
+                },
+                {
+                    text: t('valantic_dataquality_view_column_score'),
+                    sortable: true,
+                    dataIndex: 'score',
+                    editable: false,
+                    flex: 1,
+                    renderer: function (value, meta, record) {
+                        // eslint-disable-next-line no-param-reassign
+                        meta.style = this.cellStyle(record.get('color'));
+                        return this.formatAsPercentage(value);
+                    }.bind(this),
+                    align: 'right',
+                },
+            ],
+            columnLines: true,
+            stripeRows: true,
+            autoScroll: true,
+            viewConfig: {
+                forceFit: true,
+            },
+        });
+
+        this.detailView.removeAll();
+        if (data.length > 0) {
+            this.detailView.add(detailsGrid);
+        }
+        this.detailView.updateLayout();
+    },
+
+    formatAsPercentage: function (v) {
+        return (!Number.isNaN(v) ? `${(v * 100).toFixed(0)} %` : '');
+    },
+
+    colorMapping: function (color) {
+        if (color === 'green') {
+            return '#4CAF50;';
+        }
+        if (color === 'orange') {
+            return '#FF9800;';
+        }
+        if (color === 'red') {
+            return '#F44336;';
+        }
+        return '';
+    },
+
+    colorIcon: function (color) {
+        if (color === 'green') {
+            return '/bundles/pimcoreadmin/img/flat-color-icons/approve.svg';
+        }
+        if (color === 'orange') {
+            return '/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg';
+        }
+        if (color === 'red') {
+            return '/bundles/pimcoreadmin/img/flat-color-icons/delete.svg';
+        }
+        return '';
+    },
+
+    cellStyle: function (color) {
+        if (color === 'green' || color === 'orange' || color === 'red') {
+            return `color: ${this.colorMapping(color)}; background: url('${this.colorIcon(color)}') right center no-repeat; padding-right: 30px;`;
+        }
+        return '';
+    },
 });
