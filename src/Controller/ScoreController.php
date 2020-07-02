@@ -52,13 +52,13 @@ class ScoreController extends BaseController
         $filter = $request->get('filterText');
 
 
-        $scores = [];
+        $attributes = [];
         foreach ($validation->attributeScores() as $attribute => $score) {
             if ($filter && stripos($attribute, $filter) === false) {
                 continue;
             }
 
-            $scores[] = array_merge(
+            $attributes[] = array_merge(
                 [
                     'attribute' => $attribute,
                     'label' => $classInformation->getAttributeLabel($attribute) ?? $attribute,
@@ -79,7 +79,7 @@ class ScoreController extends BaseController
                 'color' => $validation->color(),
                 'scores' => $validation->scores(),
             ],
-            'attributes' => $scores,
+            'attributes' => $attributes,
         ]);
     }
 
