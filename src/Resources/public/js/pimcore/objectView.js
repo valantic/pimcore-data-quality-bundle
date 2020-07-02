@@ -164,13 +164,6 @@ valantic.dataquality.objectView = Class.create({
                         ],
                     },
                     {
-                        text: t('valantic_dataquality_view_column_note'),
-                        sortable: true,
-                        dataIndex: 'note',
-                        editable: false,
-                        flex: 1,
-                    },
-                    {
                         text: t('valantic_dataquality_view_column_score'),
                         sortable: true,
                         dataIndex: 'score',
