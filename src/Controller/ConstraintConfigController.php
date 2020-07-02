@@ -16,7 +16,6 @@ use Valantic\DataQualityBundle\Service\ClassInformation;
  */
 class ConstraintConfigController extends BaseController
 {
-    // TODO: save note
     /**
      * Returns the config for the admin editor.
      *
