@@ -102,7 +102,7 @@ class ConstraintConfigController extends BaseController
 
         try {
             $classData = new ClassInformation($request->query->get('classname'));
-            $attributes = array_keys($classData->getAttributesFlattened());
+            $attributes = array_keys($classData->getAllAttributes());
         } catch (Throwable $throwable) {
             return $this->json(['attributes' => []]);
         }

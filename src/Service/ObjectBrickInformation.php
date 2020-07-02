@@ -2,27 +2,23 @@
 
 namespace Valantic\DataQualityBundle\Service;
 
-use Pimcore\Model\AbstractModel;
-use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\Objectbrick\Definition\Listing;
 
 class ObjectBrickInformation extends DefinitionInformation
 {
-
     /**
-     * Get the definition of the class.
-     * @return Definition|null
+     * {@inheritDoc}}
      */
-    protected function getDefinition(): ?AbstractModel
+    protected function setDefinition(): void
     {
         $definitions = (new Listing())->load();
 
         foreach ($definitions as $definition) {
             if ($definition->getKey() === $this->getName()) {
-                return $definition;
+                $this->definition = $definition;
+
+                return;
             }
         }
-
-        return null;
     }
 }

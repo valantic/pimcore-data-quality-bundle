@@ -87,7 +87,7 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
      */
     protected function getAttributesInObject(): array
     {
-        return array_keys($this->classInformation->getAttributesFlattened());
+        return array_keys($this->classInformation->getAllAttributes());
     }
 
     /**

@@ -2,18 +2,15 @@
 
 namespace Valantic\DataQualityBundle\Service;
 
-use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\ClassDefinition;
 
 class ClassInformation extends DefinitionInformation
 {
-
     /**
-     * Get the definition of the class.
-     * @return ClassDefinition|null
+     * {@inheritDoc}}
      */
-    protected function getDefinition(): ?AbstractModel
+    protected function setDefinition(): void
     {
-        return ClassDefinition::getByName($this->name);
+        $this->definition= ClassDefinition::getByName($this->name);
     }
 }

@@ -4,6 +4,9 @@ namespace Valantic\DataQualityBundle\Service;
 
 use InvalidArgumentException;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
+use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
@@ -26,6 +29,51 @@ abstract class DefinitionInformation
     protected $name;
 
     /**
+     * @var ClassDefinition|FieldcollectionDefinition|ObjectbrickDefinition
+     */
+    protected $definition;
+
+    /**
+     * @var array Holds all localized attributes.
+     */
+    protected $localizedAttributes = [];
+
+    /**
+     * @var array Holds all objectbrick attributes.
+     */
+    protected $objectbrickAttributes = [];
+
+    /**
+     * @var array Holds all fieldcollection attributes.
+     */
+    protected $fieldcollectionAttributes = [];
+
+    /**
+     * @var array Holds all classificationstore attributes.
+     */
+    protected $classificationstoreAttributes = [];
+
+    /**
+     * @var array Holds all relation attributes.
+     */
+    protected $relationAttributes = [];
+
+    /**
+     * @var array Holds all plain attributes.
+     */
+    protected $plainAttributes = [];
+
+    /**
+     * @var ObjectBrickInformation[] Holds all objectbrick class information objects.
+     */
+    protected $objectbrickInformationInstances = [];
+
+    /**
+     * @var FieldCollectionInformation[] Holds all fieldcollection class information objects.
+     */
+    protected $fieldcollectionInformationInstances = [];
+
+    /**
      * Instantiate a new object to retrieve information about $name.
      * @param string $name
      * @throws InvalidArgumentException
@@ -38,9 +86,12 @@ abstract class DefinitionInformation
         }
         $this->name = $name;
 
-        if (!$this->getDefinition()) {
+        $this->setDefinition();
+        if (!$this->definition) {
             throw new InvalidArgumentException();
         }
+
+        $this->findAllAttributes();
     }
 
     /**
@@ -56,15 +107,15 @@ abstract class DefinitionInformation
      * Returns an array of all attributes present in this class keyed by their names.
      * @return array
      */
-    public function getAttributesFlattened(): array
+    public function getAllAttributes(): array
     {
         return array_merge_recursive(
-            $this->getObjectbrickAttributes(),
-            $this->getFieldcollectionAttributes(),
-            $this->getClassificationstoreAttributes(),
-            $this->getRelationAttributes(),
-            $this->getLocalizedAttributes(),
-            $this->getPlainAttributes()
+            $this->objectbrickAttributes,
+            $this->fieldcollectionAttributes,
+            $this->classificationstoreAttributes,
+            $this->relationAttributes,
+            $this->localizedAttributes,
+            $this->plainAttributes
         );
     }
 
@@ -98,13 +149,23 @@ abstract class DefinitionInformation
     }
 
     /**
+     * Checks whether $attribute is an attribute.
+     * @param string $attribute
+     * @return bool
+     */
+    public function isAttribute(string $attribute): bool
+    {
+        return array_key_exists($attribute, $this->getAllAttributes());
+    }
+
+    /**
      * Checks whether $attribute is plain.
      * @param string $attribute
      * @return bool
      */
     public function isPlainAttribute(string $attribute): bool
     {
-        return array_key_exists($attribute, $this->getPlainAttributes());
+        return array_key_exists($attribute, $this->plainAttributes);
     }
 
     /**
@@ -114,7 +175,7 @@ abstract class DefinitionInformation
      */
     public function isLocalizedAttribute(string $attribute): bool
     {
-        return array_key_exists($attribute, $this->getLocalizedAttributes());
+        return array_key_exists($attribute, $this->localizedAttributes);
     }
 
     /**
@@ -124,7 +185,7 @@ abstract class DefinitionInformation
      */
     public function isObjectbrickAttribute(string $attribute): bool
     {
-        return array_key_exists($attribute, $this->getObjectbrickAttributes());
+        return array_key_exists($attribute, $this->objectbrickAttributes);
     }
 
     /**
@@ -134,7 +195,7 @@ abstract class DefinitionInformation
      */
     public function isFieldcollectionAttribute(string $attribute): bool
     {
-        return array_key_exists($attribute, $this->getFieldcollectionAttributes());
+        return array_key_exists($attribute, $this->fieldcollectionAttributes);
     }
 
     /**
@@ -144,7 +205,7 @@ abstract class DefinitionInformation
      */
     public function isClassificationstoreAttribute(string $attribute): bool
     {
-        return array_key_exists($attribute, $this->getClassificationstoreAttributes());
+        return array_key_exists($attribute, $this->classificationstoreAttributes);
     }
 
     /**
@@ -154,23 +215,34 @@ abstract class DefinitionInformation
      */
     public function isRelationAttribute(string $attribute): bool
     {
-        return array_key_exists($attribute, $this->getRelationAttributes());
+        return array_key_exists($attribute, $this->relationAttributes);
     }
 
     /**
-     * Get the definition of the class.
-     * @return AbstractModel|null
+     * Set the definition of the class.
+     * @return void
      */
-    abstract protected function getDefinition(): ?AbstractModel;
+    abstract protected function setDefinition(): void;
+
+    protected function findAllAttributes()
+    {
+        $this->findLocalizedAttributes();
+        $this->findObjectbrickAttributes();
+        $this->findFieldcollectionAttributes();
+        $this->findClassificationstoreAttributes();
+        $this->findRelationAttributes();
+        $this->findPlainAttributes();
+    }
 
     /**
-     * Returns an array of all localized attributes present in this class keyed by their names.
+     * Finds all localized attributes present in this class keyed by their names
+     * and saves them in the corresponding property..
      * @return array
      */
-    protected function getLocalizedAttributes(): array
+    protected function findLocalizedAttributes(): void
     {
         $fieldDefinitions = [];
-        foreach ($this->getDefinition()->getFieldDefinitions() as $fieldDefinition) {
+        foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Localizedfields) {
                 /**
                  * @var $fieldDefinition Localizedfields
@@ -181,23 +253,26 @@ abstract class DefinitionInformation
             }
         }
 
-        return $fieldDefinitions;
+        $this->localizedAttributes = $fieldDefinitions;
     }
 
     /**
-     * Returns an array of all objectbrick attributes present in this class keyed by their names.
-     * @return array
+     * Finds all objectbrick attributes present in this class keyed by their names
+     * and saves them in the corresponding property..
+     * @return void
      */
-    protected function getObjectbrickAttributes(): array
+    protected function findObjectbrickAttributes(): void
     {
         $fieldDefinitions = [];
-        foreach ($this->getDefinition()->getFieldDefinitions() as $fieldDefinition) {
+        foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Objectbricks) {
                 /**
                  * @var $fieldDefinition Objectbricks
                  */
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
-                    $attributes = (new ObjectBrickInformation($type))->getAttributesFlattened();
+                    $information = (new ObjectBrickInformation($type));
+                    $this->objectbrickInformationInstances[$fieldDefinition->getName() . '.' . $type] = $information;
+                    $attributes = $information->getAllAttributes();
                     foreach ($attributes as $name => $attribute) {
                         $fieldDefinitions[$fieldDefinition->getName() . '.' . $type . '.' . $name] = $attribute;
                     }
@@ -206,23 +281,26 @@ abstract class DefinitionInformation
         }
 
 
-        return $fieldDefinitions;
+        $this->objectbrickAttributes = $fieldDefinitions;
     }
 
     /**
-     * Returns an array of all fieldcollection attributes present in this class keyed by their names.
-     * @return array
+     * Finds all fieldcollection attributes present in this class keyed by their names
+     * and saves them in the corresponding property..
+     * @return void
      */
-    protected function getFieldcollectionAttributes(): array
+    protected function findFieldcollectionAttributes(): void
     {
         $fieldDefinitions = [];
-        foreach ($this->getDefinition()->getFieldDefinitions() as $fieldDefinition) {
+        foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Fieldcollections) {
                 /**
                  * @var $fieldDefinition Fieldcollections
                  */
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
-                    $attributes = (new FieldCollectionInformation($type))->getAttributesFlattened();
+                    $information = (new FieldCollectionInformation($type));
+                    $this->fieldcollectionInformationInstances[$fieldDefinition->getName() . '.' . $type] = $information;
+                    $attributes = $information->getAllAttributes();
                     foreach ($attributes as $name => $attribute) {
                         $fieldDefinitions[$fieldDefinition->getName() . '.' . $type . '.' . $name] = $attribute;
                     }
@@ -230,17 +308,18 @@ abstract class DefinitionInformation
             }
         }
 
-        return $fieldDefinitions;
+        $this->fieldcollectionAttributes = $fieldDefinitions;
     }
 
     /**
-     * Returns an array of all classificationstore attributes present in this class keyed by their names.
-     * @return array
+     * Finds all classificationstore attributes present in this class keyed by their names
+     * and saves them in the corresponding property..
+     * @return void
      */
-    protected function getClassificationstoreAttributes(): array
+    protected function findClassificationstoreAttributes(): void
     {
         $fieldDefinitions = [];
-        foreach ($this->getDefinition()->getFieldDefinitions() as $fieldDefinition) {
+        foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Classificationstore) {
                 /**
                  * @var $fieldDefinition Classificationstore
@@ -250,18 +329,19 @@ abstract class DefinitionInformation
             }
         }
 
-        return $fieldDefinitions;
+        $this->classificationstoreAttributes = $fieldDefinitions;
     }
 
 
     /**
-     * Returns an array of all relation attributes present in this class keyed by their names.
-     * @return array
+     * Finds all relation attributes present in this class keyed by their names
+     * and saves them in the corresponding property..
+     * @return void
      */
-    protected function getRelationAttributes(): array
+    protected function findRelationAttributes(): void
     {
         $fieldDefinitions = [];
-        foreach ($this->getDefinition()->getFieldDefinitions() as $fieldDefinition) {
+        foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof AbstractRelations) {
                 /**
                  * @var $fieldDefinition AbstractRelations
@@ -270,23 +350,62 @@ abstract class DefinitionInformation
             }
         }
 
-        return $fieldDefinitions;
+        $this->relationAttributes = $fieldDefinitions;
     }
 
     /**
-     * Returns an array of all plain attributes present in this class keyed by their names.
-     * @return array
+     * Finds all plain attributes present in this class keyed by their names
+     * and saves them in the corresponding property..
+     * @return void
      */
-    protected function getPlainAttributes(): array
+    protected function findPlainAttributes(): void
     {
         $fieldDefinitions = [];
-        foreach ($this->getDefinition()->getFieldDefinitions() as $fieldDefinition) {
+        foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Localizedfields || $fieldDefinition instanceof Fieldcollections || $fieldDefinition instanceof Objectbricks || $fieldDefinition instanceof Classificationstore || $fieldDefinition instanceof AbstractRelations) {
                 continue;
             }
             $fieldDefinitions[$fieldDefinition->getName()] = $fieldDefinition;
         }
 
-        return $fieldDefinitions;
+        $this->plainAttributes = $fieldDefinitions;
     }
+
+    /**
+     * If available, return the label for this attribute.
+     * @param string $attribute
+     * @return string
+     */
+    public function getAttributeLabel(string $attribute): string
+    {
+        if (!$this->isAttribute($attribute)) {
+            return '';
+        }
+        if ($this->isLocalizedAttribute($attribute) || $this->isPlainAttribute($attribute) || $this->isRelationAttribute($attribute)) {
+            return sprintf('%s', $this->getAllAttributes()[$attribute]->getTitle());
+        }
+        if ($this->isObjectbrickAttribute($attribute)) {
+            $parts = explode('.', $attribute);
+
+            return sprintf(
+                '%s > %s > %s',
+                $this->definition->getFieldDefinition($parts[0])->getTitle(),
+                $this->objectbrickInformationInstances[$parts[0] . '.' . $parts[1]]->definition->getTitle(),
+                $this->objectbrickAttributes[$attribute]->getTitle()
+            );
+        }
+        if ($this->isFieldcollectionAttribute($attribute)) {
+            $parts = explode('.', $attribute);
+
+            return sprintf(
+                '%s > %s > %s',
+                $this->definition->getFieldDefinition($parts[0])->getTitle(),
+                $this->fieldcollectionInformationInstances[$parts[0] . '.' . $parts[1]]->definition->getTitle(),
+                $this->fieldcollectionAttributes[$attribute]->getTitle()
+            );
+        }
+
+        return $attribute;
+    }
+
 }

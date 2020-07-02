@@ -57,13 +57,13 @@ class ScoreController extends BaseController
             $scores[] = array_merge_recursive(
                 [
                     'attribute' => $attribute,
+                    'label' => $classInformation->getAttributeLabel($attribute)??$attribute,
                     'note' => $constraintsConfig->getNoteForObjectAttribute($obj, $attribute),
                     'type' => $classInformation->getAttributeType($attribute),
                 ],
                 $score
             );
         }
-
 
         return $this->json([
             'object' => [
