@@ -105,9 +105,9 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
         $attributeScores = [];
         foreach ($this->validators as $attribute => $validator) {
             $attributeScores[$attribute]['color'] = null;
-            $attributeScores[$attribute]['colors'] = null;
+            $attributeScores[$attribute]['colors'] = [];
             $attributeScores[$attribute]['score'] = null;
-            $attributeScores[$attribute]['scores'] = null;
+            $attributeScores[$attribute]['scores'] = [];
             $attributeScores[$attribute]['value'] = $validator->value();
 
             if ($validator instanceof Scorable) {

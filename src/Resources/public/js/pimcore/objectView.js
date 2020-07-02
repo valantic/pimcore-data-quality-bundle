@@ -125,11 +125,11 @@ valantic.dataquality.objectView = Class.create({
                             sortable: true,
                             dataIndex: 'scores',
                             renderer: function (value, meta, record) {
+                                if (!value[locale] || Number.isNaN(value[locale])) {
+                                    return '';
+                                }
                                 // eslint-disable-next-line no-param-reassign
                                 meta.style = cellStyle(record.get('colors')[locale]);
-                                if (Number.isNaN(value)) {
-                                    return t('valantic_dataquality_view_not_localized_no_score');
-                                }
                                 return formatAsPercentage(value[locale]);
                             },
                             editable: false,
