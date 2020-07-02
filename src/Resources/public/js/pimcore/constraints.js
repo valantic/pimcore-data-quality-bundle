@@ -562,8 +562,7 @@ valantic.dataquality.constraints = Class.create({
                 iconCls: 'pimcore_icon_accept',
                 handler: function () {
                     if (!formPanel.getForm().isValid()) {
-                        // eslint-disable-next-line no-alert
-                        alert(t('valantic_dataquality_config_constraint_form_invalid'));
+                        Ext.Msg.alert('', t('valantic_dataquality_config_constraint_form_invalid'), Ext.emptyFn);
                         return;
                     }
                     const values = formPanel.getForm().getFieldValues();
