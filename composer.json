@@ -3,8 +3,12 @@
     "description": "Data quality score for Pimcore",
     "type": "pimcore-bundle",
     "require": {
+        "php": "^7.3",
         "pimcore/pimcore": "^6.6",
         "symfony/validator": "^4.4"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^5.1"
     },
     "license": "proprietary",
     "authors": [
@@ -18,11 +22,24 @@
             "Valantic\\DataQualityBundle\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Valantic\\DataQualityBundle\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "pimcore": {
             "bundles": [
                 "Valantic\\DataQualityBundle\\ValanticDataQualityBundle"
             ]
+        }
+    },
+    "scripts": {
+        "test": "./vendor/bin/simple-phpunit tests/"
+    },
+    "config": {
+        "platform": {
+            "php": "7.3"
         }
     }
 }

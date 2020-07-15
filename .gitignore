@@ -1,3 +1,4 @@
 vendor/
 node_modules/
 .DS_STORE
+.phpunit.result.cache
