@@ -2,6 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
+use Exception;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validation;
@@ -12,6 +13,7 @@ use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SafeArray;
 use Valantic\DataQualityBundle\Validation\Colorable;
 use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
@@ -77,8 +79,9 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
      * @param ConstraintsConfig $constraintsConfig
      * @param MetaConfig $metaConfig
      * @param EventDispatcherInterface $eventDispatcher
+     * @param DefinitionInformationFactory $definitionInformationFactory
      */
-    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher)
+    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory)
     {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
@@ -86,9 +89,9 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
         $this->attribute = $attribute;
         $this->constraintsConfig = $constraintsConfig;
         $this->validationConfig = $constraintsConfig->getRulesForObjectAttribute($obj, $attribute);
-        $this->classInformation = new ClassInformation($this->obj->getClassName());
         $this->metaConfig = $metaConfig;
         $this->eventDispatcher = $eventDispatcher;
+        $this->classInformation = $definitionInformationFactory->make($this->obj->getClassName());
     }
 
     /**
@@ -149,7 +152,7 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
      * @param Concrete $obj
      * @param string|null $locale
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     protected function valueInherited(Concrete $obj, ?string $locale = null)
     {

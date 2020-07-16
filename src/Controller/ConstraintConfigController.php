@@ -9,7 +9,7 @@ use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
-use Valantic\DataQualityBundle\Service\Information\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 
 /**
  * @Route("/admin/valantic/data-quality/constraint-config")
@@ -86,10 +86,11 @@ class ConstraintConfigController extends BaseController
      *
      * @param Request $request
      * @param ConfigReader $config
+     * @param DefinitionInformationFactory $definitionInformationFactory
      *
      * @return JsonResponse
      */
-    public function listAttributesAction(Request $request, ConfigReader $config): JsonResponse
+    public function listAttributesAction(Request $request, ConfigReader $config, DefinitionInformationFactory $definitionInformationFactory): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
 
@@ -98,19 +99,19 @@ class ConstraintConfigController extends BaseController
         }
 
         try {
-            $classData = new ClassInformation($request->query->get('classname'));
-            $attributes = array_keys($classData->getAllAttributes());
+            $classInformation = $definitionInformationFactory->make($request->query->get('classname'));
+            $attributes = array_keys($classInformation->getAllAttributes());
         } catch (Throwable $throwable) {
             return $this->json(['attributes' => []]);
         }
 
-        $names = array_diff($attributes, $config->getConfiguredClassAttributes($classData->getName()));
+        $names = array_diff($attributes, $config->getConfiguredClassAttributes($classInformation->getName()));
 
         $attributeNames = [];
         foreach ($names as $name) {
             $attributeNames[] = [
                 'name' => $name,
-                'type' => $classData->getAttributeType($name),
+                'type' => $classInformation->getAttributeType($name),
             ];
         }
 

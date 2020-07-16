@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\Colorable;
 use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
@@ -51,16 +52,23 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
     protected $eventDispatcher;
 
     /**
+     * @var DefinitionInformationFactory
+     */
+    protected $definitionInformationFactory;
+
+    /**
      * Validate an object and all its attributes.
      * @param ConstraintsConfig $constraintsConfig
      * @param MetaConfig $metaConfig
      * @param EventDispatcherInterface $eventDispatcher
+     * @param DefinitionInformationFactory $definitionInformationFactory
      */
-    public function __construct(ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory)
     {
         $this->constraintsConfig = $constraintsConfig;
         $this->metaConfig = $metaConfig;
         $this->eventDispatcher = $eventDispatcher;
+        $this->definitionInformationFactory = $definitionInformationFactory;
     }
 
     /**

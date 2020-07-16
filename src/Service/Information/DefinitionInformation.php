@@ -73,11 +73,40 @@ abstract class DefinitionInformation
     protected $fieldcollectionInformationInstances = [];
 
     /**
-     * Instantiate a new object to retrieve information about $name.
-     * @param string $name
-     * @throws InvalidArgumentException
+     * @var ClassInformation
      */
-    public function __construct(string $name)
+    protected $classInformation;
+
+    /**
+     * @var FieldCollectionInformation
+     */
+    protected $fieldCollectionInformation;
+
+    /**
+     * @var ObjectBrickInformation
+     */
+    protected $objectBrickInformation;
+
+    /**
+     * @param ClassInformation $classInformation
+     * @param FieldCollectionInformation $fieldCollectionInformation
+     * @param ObjectBrickInformation $objectBrickInformation
+     * @param string $name
+     */
+    public function make(ClassInformation $classInformation, FieldCollectionInformation $fieldCollectionInformation, ObjectBrickInformation $objectBrickInformation, string $name)
+    {
+        $this->classInformation = $classInformation;
+        $this->fieldCollectionInformation = $fieldCollectionInformation;
+        $this->objectBrickInformation = $objectBrickInformation;
+
+        $this->setName($name);
+    }
+
+    /**
+     * Set the name and pre-load data.
+     * @param string $name
+     */
+    protected function setName(string $name)
     {
         if (strpos($name, '\\') !== false) {
             $nameParts = explode('\\', $name);
@@ -85,10 +114,11 @@ abstract class DefinitionInformation
         }
         $this->name = $name;
 
-        $this->setDefinition();
-        if (!$this->definition) {
-            throw new InvalidArgumentException();
+        $definition = $this->getDefinition();
+        if (!$definition) {
+            throw new InvalidArgumentException('Failed to load definition');
         }
+        $this->definition = $definition;
 
         $this->findAllAttributes();
     }
@@ -218,10 +248,10 @@ abstract class DefinitionInformation
     }
 
     /**
-     * Set the definition of the class.
-     * @return void
+     * Get the definition of the class.
+     * @return null|ClassDefinition|FieldcollectionDefinition|ObjectbrickDefinition
      */
-    abstract protected function setDefinition(): void;
+    abstract public function getDefinition();
 
     protected function findAllAttributes()
     {
@@ -269,7 +299,8 @@ abstract class DefinitionInformation
                  * @var $fieldDefinition Objectbricks
                  */
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
-                    $information = (new ObjectBrickInformation($type));
+                    $this->objectBrickInformation->setName($type);
+                    $information = clone $this->objectBrickInformation;
                     $this->objectbrickInformationInstances[$fieldDefinition->getName() . '.' . $type] = $information;
                     $attributes = $information->getAllAttributes();
                     foreach ($attributes as $name => $attribute) {
@@ -297,7 +328,8 @@ abstract class DefinitionInformation
                  * @var $fieldDefinition Fieldcollections
                  */
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
-                    $information = (new FieldCollectionInformation($type));
+                    $this->fieldCollectionInformation->setName($type);
+                    $information = clone $this->fieldCollectionInformation;
                     $this->fieldcollectionInformationInstances[$fieldDefinition->getName() . '.' . $type] = $information;
                     $attributes = $information->getAllAttributes();
                     foreach ($attributes as $name => $attribute) {
