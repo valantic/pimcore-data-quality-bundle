@@ -7,6 +7,15 @@ use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaReader;
+use Valantic\DataQualityBundle\Config\V1\Meta\Writer as MetaWriter;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsReader;
+use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConstraintsWriter;
+use Valantic\DataQualityBundle\Service\Information\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
+use Valantic\DataQualityBundle\Service\Information\FieldCollectionInformation;
+use Valantic\DataQualityBundle\Service\Information\ObjectBrickInformation;
 
 abstract class AbstractTestCase extends KernelTestCase
 {
@@ -58,5 +67,53 @@ abstract class AbstractTestCase extends KernelTestCase
     protected function getAttributeFieldcollectionDefinition(): FieldcollectionDefinition
     {
         return unserialize(base64_decode('Tzo1MToiUGltY29yZVxNb2RlbFxEYXRhT2JqZWN0XEZpZWxkY29sbGVjdGlvblxEZWZpbml0aW9uIjo3OntzOjM6ImtleSI7czoxMDoiQXR0cmlidXRlcyI7czoxMToicGFyZW50Q2xhc3MiO3M6MDoiIjtzOjIwOiJpbXBsZW1lbnRzSW50ZXJmYWNlcyI7czowOiIiO3M6NToidGl0bGUiO3M6NToiQXR0cnMiO3M6NToiZ3JvdXAiO3M6MDoiIjtzOjE3OiJsYXlvdXREZWZpbml0aW9ucyI7Tzo1MzoiUGltY29yZVxNb2RlbFxEYXRhT2JqZWN0XENsYXNzRGVmaW5pdGlvblxMYXlvdXRcUGFuZWwiOjE4OntzOjk6ImZpZWxkdHlwZSI7czo1OiJwYW5lbCI7czoxMDoibGFiZWxXaWR0aCI7aToxMDA7czo2OiJsYXlvdXQiO047czo2OiJib3JkZXIiO2I6MDtzOjQ6Im5hbWUiO047czo0OiJ0eXBlIjtOO3M6NjoicmVnaW9uIjtOO3M6NToidGl0bGUiO047czo1OiJ3aWR0aCI7TjtzOjY6ImhlaWdodCI7TjtzOjExOiJjb2xsYXBzaWJsZSI7YjowO3M6OToiY29sbGFwc2VkIjtiOjA7czo5OiJib2R5U3R5bGUiO047czo4OiJkYXRhdHlwZSI7czo2OiJsYXlvdXQiO3M6MTE6InBlcm1pc3Npb25zIjtOO3M6NjoiY2hpbGRzIjthOjE6e2k6MDtPOjUzOiJQaW1jb3JlXE1vZGVsXERhdGFPYmplY3RcQ2xhc3NEZWZpbml0aW9uXExheW91dFxQYW5lbCI6MTg6e3M6OToiZmllbGR0eXBlIjtzOjU6InBhbmVsIjtzOjEwOiJsYWJlbFdpZHRoIjtpOjEwMDtzOjY6ImxheW91dCI7TjtzOjY6ImJvcmRlciI7YjowO3M6NDoibmFtZSI7czo2OiJMYXlvdXQiO3M6NDoidHlwZSI7TjtzOjY6InJlZ2lvbiI7TjtzOjU6InRpdGxlIjtzOjA6IiI7czo1OiJ3aWR0aCI7TjtzOjY6ImhlaWdodCI7TjtzOjExOiJjb2xsYXBzaWJsZSI7YjowO3M6OToiY29sbGFwc2VkIjtiOjA7czo5OiJib2R5U3R5bGUiO3M6MDoiIjtzOjg6ImRhdGF0eXBlIjtzOjY6ImxheW91dCI7czoxMToicGVybWlzc2lvbnMiO047czo2OiJjaGlsZHMiO2E6Mjp7aTowO086NTE6IlBpbWNvcmVcTW9kZWxcRGF0YU9iamVjdFxDbGFzc0RlZmluaXRpb25cRGF0YVxJbnB1dCI6MjU6e3M6OToiZmllbGR0eXBlIjtzOjU6ImlucHV0IjtzOjU6IndpZHRoIjtOO3M6MTI6ImRlZmF1bHRWYWx1ZSI7TjtzOjE1OiJxdWVyeUNvbHVtblR5cGUiO3M6NzoidmFyY2hhciI7czoxMDoiY29sdW1uVHlwZSI7czo3OiJ2YXJjaGFyIjtzOjEyOiJjb2x1bW5MZW5ndGgiO2k6MTkwO3M6MTA6InBocGRvY1R5cGUiO3M6Njoic3RyaW5nIjtzOjU6InJlZ2V4IjtzOjA6IiI7czo2OiJ1bmlxdWUiO2I6MDtzOjEzOiJzaG93Q2hhckNvdW50IjtiOjA7czo0OiJuYW1lIjtzOjEzOiJhdHRyaWJ1dGVfa2V5IjtzOjU6InRpdGxlIjtzOjQ6ImF0X2siO3M6NzoidG9vbHRpcCI7czowOiIiO3M6OToibWFuZGF0b3J5IjtiOjA7czoxMToibm90ZWRpdGFibGUiO2I6MDtzOjU6ImluZGV4IjtiOjA7czo2OiJsb2NrZWQiO2I6MDtzOjU6InN0eWxlIjtzOjA6IiI7czoxMToicGVybWlzc2lvbnMiO047czo4OiJkYXRhdHlwZSI7czo0OiJkYXRhIjtzOjEyOiJyZWxhdGlvblR5cGUiO2I6MDtzOjk6ImludmlzaWJsZSI7YjowO3M6MTU6InZpc2libGVHcmlkVmlldyI7YjowO3M6MTM6InZpc2libGVTZWFyY2giO2I6MDtzOjIxOiJkZWZhdWx0VmFsdWVHZW5lcmF0b3IiO3M6MDoiIjt9aToxO086NTE6IlBpbWNvcmVcTW9kZWxcRGF0YU9iamVjdFxDbGFzc0RlZmluaXRpb25cRGF0YVxJbnB1dCI6MjU6e3M6OToiZmllbGR0eXBlIjtzOjU6ImlucHV0IjtzOjU6IndpZHRoIjtOO3M6MTI6ImRlZmF1bHRWYWx1ZSI7TjtzOjE1OiJxdWVyeUNvbHVtblR5cGUiO3M6NzoidmFyY2hhciI7czoxMDoiY29sdW1uVHlwZSI7czo3OiJ2YXJjaGFyIjtzOjEyOiJjb2x1bW5MZW5ndGgiO2k6MTkwO3M6MTA6InBocGRvY1R5cGUiO3M6Njoic3RyaW5nIjtzOjU6InJlZ2V4IjtzOjA6IiI7czo2OiJ1bmlxdWUiO2I6MDtzOjEzOiJzaG93Q2hhckNvdW50IjtiOjA7czo0OiJuYW1lIjtzOjE1OiJhdHRyaWJ1dGVfdmFsdWUiO3M6NToidGl0bGUiO3M6MTU6ImF0dHJpYnV0ZV92YWx1ZSI7czo3OiJ0b29sdGlwIjtzOjA6IiI7czo5OiJtYW5kYXRvcnkiO2I6MDtzOjExOiJub3RlZGl0YWJsZSI7YjowO3M6NToiaW5kZXgiO2I6MDtzOjY6ImxvY2tlZCI7YjowO3M6NToic3R5bGUiO3M6MDoiIjtzOjExOiJwZXJtaXNzaW9ucyI7TjtzOjg6ImRhdGF0eXBlIjtzOjQ6ImRhdGEiO3M6MTI6InJlbGF0aW9uVHlwZSI7YjowO3M6OToiaW52aXNpYmxlIjtiOjA7czoxNToidmlzaWJsZUdyaWRWaWV3IjtiOjA7czoxMzoidmlzaWJsZVNlYXJjaCI7YjowO3M6MjE6ImRlZmF1bHRWYWx1ZUdlbmVyYXRvciI7czowOiIiO319czo2OiJsb2NrZWQiO2I6MDtzOjQ6Imljb24iO3M6MDoiIjt9fXM6NjoibG9ja2VkIjtiOjA7czo0OiJpY29uIjtOO31zOjE5OiIAKgBmaWVsZERlZmluaXRpb25zIjthOjI6e3M6MTM6ImF0dHJpYnV0ZV9rZXkiO3I6NDE7czoxNToiYXR0cmlidXRlX3ZhbHVlIjtyOjY3O319'));
+    }
+
+    protected function getMetaReader(): MetaReader
+    {
+        return new MetaReader($this->createMock(EventDispatcher::class), $this->getInformationFactory());
+    }
+
+    protected function getMetaWriter(): MetaWriter
+    {
+        return new MetaWriter($this->getMetaReader(), $this->createMock(EventDispatcher::class));
+    }
+
+
+    protected function getConstraintsReader(): ConstraintsReader
+    {
+        return new ConstraintsReader($this->createMock(EventDispatcher::class), $this->getInformationFactory());
+    }
+
+    protected function getConstraintsWriter(): ConstraintsWriter
+    {
+        return new ConstraintsWriter($this->getConstraintsReader(), $this->createMock(EventDispatcher::class));
+    }
+
+    protected function getInformationFactory(): DefinitionInformationFactory
+    {
+        $classInformationStub = $this->getMockBuilder(ClassInformation::class)
+            ->onlyMethods(['getDefinition'])
+            ->getMock();
+        $classInformationStub->method('getDefinition')
+            ->willReturn($this->getProductClassDefinition());
+
+        $fieldCollectionInformationStub = $this->getMockBuilder(FieldCollectionInformation::class)
+            ->onlyMethods(['getDefinition'])
+            ->getMock();
+        $fieldCollectionInformationStub
+            ->method('getDefinition')
+            ->willReturn($this->getAttributeFieldcollectionDefinition());
+
+        $objectBrickInformationStub = $this->getMockBuilder(ObjectBrickInformation::class)
+            ->onlyMethods(['getDefinition'])
+            ->getMock();
+        $objectBrickInformationStub
+            ->method('getDefinition')
+            ->willReturn($this->getBarcodeObjectbrickDefinition());
+
+        $definitionInformationFactory = new DefinitionInformationFactory($classInformationStub, $fieldCollectionInformationStub, $objectBrickInformationStub);
+
+        return $definitionInformationFactory;
     }
 }

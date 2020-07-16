@@ -1,7 +1,8 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Tests;
+namespace Valantic\DataQualityBundle\Tests\Bundle;
 
+use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 use Valantic\DataQualityBundle\ValanticDataQualityBundle;
 
 class BundleTest extends AbstractTestCase

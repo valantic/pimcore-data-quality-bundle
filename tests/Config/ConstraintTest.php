@@ -2,14 +2,9 @@
 
 namespace Valantic\DataQualityBundle\Tests\Config;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Valantic\DataQualityBundle\Config\V1\Constraints\ConstraintKeys;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Writer;
-use Valantic\DataQualityBundle\Service\Information\ClassInformation;
-use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
-use Valantic\DataQualityBundle\Service\Information\FieldCollectionInformation;
-use Valantic\DataQualityBundle\Service\Information\ObjectBrickInformation;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class ConstraintTest extends AbstractTestCase
@@ -42,37 +37,10 @@ class ConstraintTest extends AbstractTestCase
 
     protected function setUp(): void
     {
-        $classInformationStub = $this->getMockBuilder(ClassInformation::class)
-            ->onlyMethods(['getDefinition'])
-            ->getMock();
-        $classInformationStub->method('getDefinition')
-            ->willReturn($this->getProductClassDefinition());
-
-        $fieldCollectionInformationStub = $this->getMockBuilder(FieldCollectionInformation::class)
-            ->onlyMethods(['getDefinition'])
-            ->getMock();
-        $fieldCollectionInformationStub
-            ->method('getDefinition')
-            ->willReturn($this->getAttributeFieldcollectionDefinition());
-
-        $objectBrickInformationStub = $this->getMockBuilder(ObjectBrickInformation::class)
-            ->onlyMethods(['getDefinition'])
-            ->getMock();
-        $objectBrickInformationStub
-            ->method('getDefinition')
-            ->willReturn($this->getBarcodeObjectbrickDefinition());
-
-        $definitionInformationFactory = new DefinitionInformationFactory($classInformationStub, $fieldCollectionInformationStub, $objectBrickInformationStub);
-
         $this->deleteConfig();
 
-        $this->reader = new Reader($this->createMock(EventDispatcher::class), $definitionInformationFactory);
-        $this->writer = new Writer($this->reader, $this->createMock(EventDispatcher::class));
-    }
-
-    protected function tearDown(): void
-    {
-        self::cleanUp();
+        $this->reader = $this->getConstraintsReader();
+        $this->writer = $this->getConstraintsWriter();
     }
 
     public function testReaderInstantiated()
