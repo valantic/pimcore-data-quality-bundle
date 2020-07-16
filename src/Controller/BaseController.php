@@ -9,7 +9,19 @@ abstract class BaseController extends AdminController
 {
     public const CONFIG_NAME = 'plugin_valantic_dataquality_config';
 
-    protected function getClassNames():array{
+    protected function checkPermission($permission)
+    {
+        if (defined('PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK')) {
+            if (PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK) {
+                return;
+            }
+        }
+
+        parent::checkPermission($permission);
+    }
+
+    public function getClassNames(): array
+    {
         $classesList = new ClassDefinitionListing();
         $classesList->setOrderKey('name');
         $classesList->setOrder('asc');

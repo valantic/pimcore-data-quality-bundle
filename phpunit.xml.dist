@@ -18,6 +18,7 @@
         <const name="PIMCORE_LOG_DIRECTORY" value="./tests/tmp/logs"/>
         <const name="PIMCORE_PROJECT_ROOT" value="./tests/tmp/project"/>
         <const name="PIMCORE_SYMFONY_CACHE_DIRECTORY" value="./tests/tmp/cache/symfony"/>
+        <const name="PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK" value="true"/>
         <server name="KERNEL_CLASS" value="Valantic\DataQualityBundle\Tests\Kernel"/>
     </php>
 
