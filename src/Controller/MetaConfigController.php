@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Config\V1\Meta\Writer as ConfigWriter;
-use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 
 /**
  * @Route("/admin/valantic/data-quality/meta-config")
@@ -22,15 +21,11 @@ class MetaConfigController extends BaseController
      *
      * @param Request $request
      * @param ConfigReader $config
-     * @param ConfigWriter $writer
-     *
      * @return JsonResponse
      */
-    public function listAction(Request $request, ConfigReader $config, ConfigWriter $writer): JsonResponse
+    public function listAction(Request $request, ConfigReader $config): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
-
-        $writer->ensureConfigExists();
 
         $filter = $request->get('filterText');
 
@@ -107,10 +102,14 @@ class MetaConfigController extends BaseController
      */
     public function modifyAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname'))) {
+            return $this->json(['status' => false]);
+        }
+
         return $this->json([
             'status' => $config->update(
                 $request->request->get('classname'),
-                $request->request->get('locales'),
+                $request->request->get('locales', []),
                 $request->request->getInt('threshold_green'),
                 $request->request->getInt('threshold_orange')
             ),
@@ -129,6 +128,10 @@ class MetaConfigController extends BaseController
      */
     public function deleteAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname'))) {
+            return $this->json(['status' => false]);
+        }
+
         return $this->json([
             'status' => $config->delete($request->request->get('classname')),
         ]);
