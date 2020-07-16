@@ -4,3 +4,5 @@ node_modules/
 .idea/
 .phpunit.result.cache
 out/
+tests/tmp/
+var/cache/

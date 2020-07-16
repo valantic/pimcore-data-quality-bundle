@@ -5,16 +5,25 @@ namespace Valantic\DataQualityBundle\Tests;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Container;
 
-abstract class AbstractTestCase extends \PHPUnit\Framework\TestCase
+abstract class AbstractTestCase extends KernelTestCase
 {
     public const CONFIG_FULL = 'config_full.yml';
     public const CONFIG_CORRUPT = 'config_corrupt.yml';
     public const CONFIG_EMPTY = 'config_empty.yml';
     public const CONFIG_STRING = 'config_string.yml';
 
+    /**
+     * @var Container
+     */
+    protected static $container;
+
     public static function setUpBeforeClass(): void
     {
+        $kernel = self::bootKernel();
+        self::$container = $kernel->getContainer();
         static::cleanUp();
     }
 
