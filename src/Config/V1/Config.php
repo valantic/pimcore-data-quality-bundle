@@ -2,6 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Config\V1;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Exception\ExceptionInterface as YamlException;
 use Symfony\Component\Yaml\Yaml;
 use Valantic\DataQualityBundle\Event\InvalidConfigEvent;
@@ -14,6 +15,11 @@ abstract class Config
     protected const CONFIG_SECTION_CONSTRAINTS = 'constraints';
 
     protected const CONFIG_SECTION_META = 'meta';
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * The identifier (a const starting with CONFIG_SECTION_) for the current config section.

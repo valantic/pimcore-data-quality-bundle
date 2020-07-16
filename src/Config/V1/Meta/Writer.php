@@ -2,6 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Config\V1\Meta;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
 
 class Writer extends AbstractWriter implements MetaKeys
@@ -17,10 +18,12 @@ class Writer extends AbstractWriter implements MetaKeys
     /**
      * Write the bundle's config file.
      * @param Reader $reader
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(Reader $reader)
+    public function __construct(Reader $reader, EventDispatcherInterface $eventDispatcher)
     {
         $this->reader = $reader;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**

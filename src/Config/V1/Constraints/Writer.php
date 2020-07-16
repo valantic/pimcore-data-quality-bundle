@@ -2,6 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Config\V1\Constraints;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
 
@@ -18,10 +19,12 @@ class Writer extends AbstractWriter implements ConstraintKeys
     /**
      * Write the bundle's config file.
      * @param Reader $reader
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(Reader $reader)
+    public function __construct(Reader $reader, EventDispatcherInterface $eventDispatcher)
     {
         $this->reader = $reader;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
