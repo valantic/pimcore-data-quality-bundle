@@ -22,7 +22,7 @@ class ConstraintDefinitions
                 }
             }
         } catch (\Throwable $throwable) {
-            dd($throwable);
+
         }
         $this->customConstraints = $customContraints;
     }
