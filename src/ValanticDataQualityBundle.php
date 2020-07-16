@@ -13,6 +13,7 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     protected function getComposerPackageName(): string
     {
@@ -37,6 +38,7 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
      * {@inheritdoc}
      *
      * @return InstallerInterface|null
+     * @codeCoverageIgnore Can't be executed in testing
      */
     public function getInstaller()
     {

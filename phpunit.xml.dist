@@ -23,6 +23,11 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory>./src</directory>
+            <exclude>
+                <directory>./src/DependencyInjection</directory>
+                <directory>./src/Installer</directory>
+                <directory>./src/Migrations</directory>
+            </exclude>
         </whitelist>
     </filter>
 
