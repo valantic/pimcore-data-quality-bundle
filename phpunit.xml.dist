@@ -12,6 +12,7 @@
         <ini name="intl.error_level" value="0"/>
         <ini name="memory_limit" value="-1"/>
         <const name="PIMCORE_CONFIGURATION_DIRECTORY" value="./tests/tmp"/>
+        <const name="PIMCORE_CLASS_DIRECTORY" value="./tests/fixtures"/>
     </php>
 
     <testsuites>

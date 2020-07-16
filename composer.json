@@ -5,7 +5,8 @@
     "require": {
         "php": "^7.3",
         "pimcore/pimcore": "^6.6",
-        "symfony/validator": "^4.4"
+        "symfony/validator": "^4.4",
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.2"
