@@ -36,19 +36,24 @@ abstract class AbstractTestCase extends KernelTestCase
         static::cleanUp();
     }
 
+    protected function tearDown(): void
+    {
+        self::cleanUp();
+    }
+
     protected static function cleanUp()
     {
-        array_map('unlink', array_filter((array)glob(__DIR__ . '/tmp/*') ?: []));
+        array_map('unlink', array_filter((array)glob(__DIR__ . '/scratch/*') ?: []));
     }
 
     protected function activateConfig(string $name)
     {
-        copy(__DIR__ . '/fixtures/' . $name, __DIR__ . '/tmp/valantic_dataquality_config.yml');
+        copy(__DIR__ . '/fixtures/' . $name, __DIR__ . '/scratch/valantic_dataquality_config.yml');
     }
 
     protected function deleteConfig()
     {
-        $name = __DIR__ . '/tmp/valantic_dataquality_config.yml';
+        $name = __DIR__ . '/scratch/valantic_dataquality_config.yml';
         if (file_exists($name)) {
             unlink($name);
         }
