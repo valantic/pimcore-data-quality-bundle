@@ -59,14 +59,11 @@ class Writer extends AbstractWriter implements ConstraintKeys
      */
     public function removeClassAttribute(string $className, string $attributeName): bool
     {
-        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
+        if (!$this->reader->isClassConfigured($className) || !$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
         $raw = $this->reader->getCurrentSection();
-        if (!$this->reader->isClassConfigured($className)) {
-            return true;
-        }
         unset($raw[$className][$attributeName]);
 
         return $this->writeConfig($raw);
@@ -110,14 +107,11 @@ class Writer extends AbstractWriter implements ConstraintKeys
      */
     public function deleteConstraint(string $className, string $attributeName, string $constraint): bool
     {
-        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
+        if (!$this->reader->isClassConfigured($className) || !$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
         $raw = $this->reader->getCurrentSection();
-        if (!$this->reader->isClassConfigured($className)) {
-            return true;
-        }
 
         unset($raw[$className][$attributeName][self::KEY_RULES][$constraint]);
 
@@ -150,14 +144,11 @@ class Writer extends AbstractWriter implements ConstraintKeys
      */
     public function deleteNote(string $className, string $attributeName): bool
     {
-        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
+        if (!$this->reader->isClassConfigured($className) || !$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
         $raw = $this->reader->getCurrentSection();
-        if (!$this->reader->isClassConfigured($className)) {
-            return true;
-        }
 
         $raw[$className][$attributeName][self::KEY_NOTE] = null;
 
