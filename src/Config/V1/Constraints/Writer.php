@@ -57,7 +57,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string $attributeName
      * @return bool
      */
-    public function removeClassAttribute(string $className, string $attributeName): bool
+    public function deleteClassAttribute(string $className, string $attributeName): bool
     {
         if (!$this->reader->isClassConfigured($className) || !$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
@@ -70,7 +70,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
     }
 
     /**
-     * Adds a new config entry or edits an existing one for a class-attribute constraint if it does not yet exist.
+     * Adds a new config entry or edits an existing one for a class-attribute rule if it does not yet exist.
      *
      * @param string $className
      * @param string $attributeName
@@ -78,7 +78,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string $params
      * @return bool
      */
-    public function addOrModifyConstraint(string $className, string $attributeName, string $constraint, string $params = null): bool
+    public function modifyRule(string $className, string $attributeName, string $constraint, string $params = null): bool
     {
         try {
             $paramsParsed = json_decode($params, true, 512, JSON_THROW_ON_ERROR);
@@ -98,14 +98,14 @@ class Writer extends AbstractWriter implements ConstraintKeys
     }
 
     /**
-     * Deletes a class-attribute constraint.
+     * Deletes a class-attribute rule.
      *
      * @param string $className
      * @param string $attributeName
      * @param string $constraint
      * @return bool
      */
-    public function deleteConstraint(string $className, string $attributeName, string $constraint): bool
+    public function deleteRule(string $className, string $attributeName, string $constraint): bool
     {
         if (!$this->reader->isClassConfigured($className) || !$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
@@ -126,7 +126,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string|null $note
      * @return bool
      */
-    public function addOrModifyNote(string $className, string $attributeName, string $note = null): bool
+    public function modifyNote(string $className, string $attributeName, string $note = null): bool
     {
         $raw = $this->reader->getCurrentSection();
 

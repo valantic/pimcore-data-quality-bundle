@@ -136,7 +136,7 @@ class ConstraintConfigController extends BaseController
             'status' => $config->addClassAttribute(
                     $request->request->get('classname'),
                     $request->request->get('attributename')
-                ) && $config->addOrModifyNote(
+                ) && $config->modifyNote(
                     $request->request->get('classname'),
                     $request->request->get('attributename'),
                     $request->request->get('note'),
@@ -159,7 +159,7 @@ class ConstraintConfigController extends BaseController
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
-            'status' => $config->removeClassAttribute(
+            'status' => $config->deleteClassAttribute(
                 $request->request->get('classname'),
                 $request->request->get('attributename')
             ),
@@ -209,7 +209,7 @@ class ConstraintConfigController extends BaseController
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
-            'status' => $config->addOrModifyConstraint(
+            'status' => $config->modifyRule(
                 $request->request->get('classname'),
                 $request->request->get('attributename'),
                 $request->request->get('constraint'),
@@ -233,7 +233,7 @@ class ConstraintConfigController extends BaseController
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
-            'status' => $config->deleteConstraint(
+            'status' => $config->deleteRule(
                 $request->request->get('classname'),
                 $request->request->get('attributename'),
                 $request->request->get('constraint')

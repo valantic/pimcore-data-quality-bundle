@@ -35,7 +35,7 @@ class Writer extends AbstractWriter implements MetaKeys
      * @param int $thresholdOrange
      * @return bool
      */
-    public function addOrUpdate(string $className, array $locales = [], int $thresholdGreen = 0, int $thresholdOrange = 0): bool
+    public function update(string $className, array $locales = [], int $thresholdGreen = 0, int $thresholdOrange = 0): bool
     {
         $raw = $this->reader->getCurrentSection();
         if (!$this->reader->isClassConfigured($className)) {

@@ -108,7 +108,7 @@ class MetaConfigController extends BaseController
     public function modifyAction(Request $request, ConfigWriter $config): JsonResponse
     {
         return $this->json([
-            'status' => $config->addOrUpdate(
+            'status' => $config->update(
                 $request->request->get('classname'),
                 $request->request->get('locales'),
                 $request->request->getInt('threshold_green'),

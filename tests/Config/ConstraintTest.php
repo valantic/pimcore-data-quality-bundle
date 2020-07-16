@@ -151,12 +151,12 @@ class ConstraintTest extends AbstractTestCase
     {
         $this->assertNull($this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->addOrModifyNote($this->className, $this->attributeName, 'lorem'));
+        $this->assertTrue($this->writer->modifyNote($this->className, $this->attributeName, 'lorem'));
         $this->assertSame('lorem', $this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
         $this->assertArrayHasKey(ConstraintKeys::KEY_NOTE, $this->reader->getForClass($this->className)[$this->attributeName]);
         $this->assertSame('lorem', $this->reader->getForClass($this->className)[$this->attributeName][ConstraintKeys::KEY_NOTE]);
 
-        $this->assertTrue($this->writer->addOrModifyNote($this->className, $this->attributeName, 'ipsum'));
+        $this->assertTrue($this->writer->modifyNote($this->className, $this->attributeName, 'ipsum'));
         $this->assertSame('ipsum', $this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
 
 
@@ -211,7 +211,7 @@ class ConstraintTest extends AbstractTestCase
         $this->assertTrue($this->reader->isClassConfigured($this->className));
         $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->removeClassAttribute($this->className, $this->attributeName));
+        $this->assertTrue($this->writer->deleteClassAttribute($this->className, $this->attributeName));
 
         $this->assertFalse($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
     }
@@ -220,51 +220,51 @@ class ConstraintTest extends AbstractTestCase
     {
         $this->assertFalse($this->reader->isClassConfigured($this->className));
 
-        $this->assertTrue($this->writer->removeClassAttribute($this->className, $this->attributeName));
+        $this->assertTrue($this->writer->deleteClassAttribute($this->className, $this->attributeName));
 
         $this->assertFalse($this->reader->isClassConfigured($this->className));
     }
 
-    public function testSimpleConstraint()
+    public function testSimpleRule()
     {
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintName));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName));
 
         $this->assertCount(1, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
         $this->assertNull($this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
-    public function testConstraintEmptyStringParams()
+    public function testRuleEmptyStringParams()
     {
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintName, ''));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, ''));
         $this->assertNull($this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
-    public function testConstraintScalarParams()
+    public function testRuleScalarParams()
     {
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintName, $this->constraintParams));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, $this->constraintParams));
         $this->assertSame($this->constraintParams, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
     public function testConstraintArrayParams()
     {
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
         $this->assertSame($this->constraintParamsOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintNameOther]);
     }
 
-    public function testMultipleConstraints()
+    public function testMultipleRules()
     {
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
 
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
 
 
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeNameOther, $this->constraintName, json_encode($this->constraintParams)));
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeNameOther, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeNameOther, $this->constraintName, json_encode($this->constraintParams)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeNameOther, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
 
         $this->assertCount(2, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertCount(2, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
@@ -276,33 +276,33 @@ class ConstraintTest extends AbstractTestCase
         $this->assertArrayHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
     }
 
-    public function testDeleteConstraints()
+    public function testDeleteRules()
     {
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
 
         $this->assertArrayHasKey($this->constraintName, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertArrayHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertCount(2, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->deleteConstraint($this->className, $this->attributeName, $this->constraintName));
-        $this->assertTrue($this->writer->deleteConstraint($this->className, $this->attributeName, $this->constraintNameOther));
+        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));
+        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintNameOther));
 
         $this->assertArrayNotHasKey($this->constraintName, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertArrayNotHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
     }
 
-    public function testDeleteUnknownConstraints()
+    public function testDeleteUnknownRules()
     {
-        $this->assertTrue($this->writer->addOrModifyConstraint($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
-        $this->assertTrue($this->writer->deleteConstraint($this->className, $this->attributeName, $this->constraintName));
-        $this->assertTrue($this->writer->deleteConstraint($this->className, $this->attributeName, $this->constraintName));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
+        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));
+        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));
 
-        $this->assertTrue($this->writer->deleteConstraint($this->className, $this->attributeName, $this->constraintNameOther));
+        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintNameOther));
 
-        $this->assertTrue($this->writer->deleteConstraint($this->className, $this->attributeNameOther, $this->constraintNameOther));
+        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeNameOther, $this->constraintNameOther));
     }
 }

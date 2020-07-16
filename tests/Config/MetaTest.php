@@ -121,7 +121,7 @@ class MetaTest extends AbstractTestCase
 
     public function testWriteToMissingConfigFile()
     {
-        $this->assertTrue($this->writer->addOrUpdate($this->className, ['a', 'b'], 80, 50));
+        $this->assertTrue($this->writer->update($this->className, ['a', 'b'], 80, 50));
         $this->assertSame([
             'locales' => [
                 'a',
@@ -136,7 +136,7 @@ class MetaTest extends AbstractTestCase
     {
         $this->activateConfig(self::CONFIG_CORRUPT);
 
-        $this->assertTrue($this->writer->addOrUpdate($this->className, ['a', 'b'], 80, 50));
+        $this->assertTrue($this->writer->update($this->className, ['a', 'b'], 80, 50));
         $this->assertSame([
             'locales' => [
                 'a',
@@ -151,7 +151,7 @@ class MetaTest extends AbstractTestCase
     {
         $this->activateConfig(self::CONFIG_STRING);
 
-        $this->assertTrue($this->writer->addOrUpdate($this->className, ['a', 'b'], 80, 50));
+        $this->assertTrue($this->writer->update($this->className, ['a', 'b'], 80, 50));
         $this->assertSame([
             'locales' => [
                 'a',
@@ -168,33 +168,33 @@ class MetaTest extends AbstractTestCase
 
         $this->assertCount(2, $this->reader->getConfiguredClasses());
 
-        $this->writer->addOrUpdate($this->className, ['a', 'b'], 80, 50);
+        $this->writer->update($this->className, ['a', 'b'], 80, 50);
 
         $this->assertCount(3, $this->reader->getConfiguredClasses());
     }
 
     public function testWriteUpdates()
     {
-        $this->writer->addOrUpdate($this->className, [], 80, 0);
+        $this->writer->update($this->className, [], 80, 0);
         $this->assertSame(0.8, $this->reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
 
-        $this->writer->addOrUpdate($this->className, [], 70, 0);
-        $this->writer->addOrUpdate($this->className, [], 50, 70);
+        $this->writer->update($this->className, [], 70, 0);
+        $this->writer->update($this->className, [], 50, 70);
         $this->assertSame(0.5, $this->reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
 
-        $this->writer->addOrUpdate($this->className, [], 0, 0);
+        $this->writer->update($this->className, [], 0, 0);
         $this->assertSame([], $this->reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
 
-        $this->writer->addOrUpdate($this->className, ['a'], 0, 0);
+        $this->writer->update($this->className, ['a'], 0, 0);
         $this->assertSame(['a'], $this->reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
 
-        $this->writer->addOrUpdate($this->className, ['b'], 0, 0);
+        $this->writer->update($this->className, ['b'], 0, 0);
         $this->assertSame(['b'], $this->reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
     }
 
     public function testDeleteEntry()
     {
-        $this->writer->addOrUpdate($this->className, [], 80, 0);
+        $this->writer->update($this->className, [], 80, 0);
         $this->assertTrue($this->reader->isClassConfigured($this->className));
 
         $this->assertTrue($this->writer->delete($this->className));
