@@ -22,7 +22,7 @@ class BundleTest extends AbstractTestCase
         $this->assertIsArray($this->bundle->getJsPaths());
 
         $prefix = '/bundles/valanticdataquality';
-        $basepath = __DIR__ . '/../src/Resources/public';
+        $basepath = __DIR__ . '/../../src/Resources/public';
 
         foreach ($this->bundle->getJsPaths() as $path) {
             $this->assertFileExists($basepath . str_replace($prefix, '', $path));
