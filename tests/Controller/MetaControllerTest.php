@@ -5,6 +5,7 @@ namespace Valantic\DataQualityBundle\Tests\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Valantic\DataQualityBundle\Config\V1\Meta\MetaKeys;
 use Valantic\DataQualityBundle\Controller\MetaConfigController;
+use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class MetaControllerTest extends AbstractTestCase
@@ -217,5 +218,27 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
+    }
+
+    public function testLocalesList()
+    {
+        $this->activateConfig(self::CONFIG_EMPTY);
+        $locales = ['de', 'en'];
+
+        $localesList = $this->createMock(LocalesList::class);
+        $localesList->method('all')->willReturn($locales);
+
+        $response = $this->controller->listLocalesAction($localesList);
+
+        $this->assertJson($response->getContent());
+        $decoded = json_decode($response->getContent(), true);
+
+        $this->assertArrayHasKey('locales', $decoded);
+        $this->assertSameSize($locales, $decoded['locales']);
+
+        foreach ($decoded['locales'] as $entry) {
+            $this->assertArrayHasKey('locale', $entry);
+            $this->assertTrue(in_array($entry['locale'], $locales), $entry['locale']);
+        }
     }
 }

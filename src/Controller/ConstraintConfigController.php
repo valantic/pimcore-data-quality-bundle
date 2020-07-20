@@ -23,15 +23,12 @@ class ConstraintConfigController extends BaseController
      *
      * @param Request $request
      * @param ConfigReader $config
-     * @param ConfigWriter $writer
      *
      * @return JsonResponse
      */
-    public function listAction(Request $request, ConfigReader $config, ConfigWriter $writer): JsonResponse
+    public function listAction(Request $request, ConfigReader $config): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
-
-        $writer->ensureConfigExists();
 
         $filter = $request->get('filterText');
 
@@ -130,6 +127,10 @@ class ConstraintConfigController extends BaseController
      */
     public function addAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
+            return $this->json(['status' => false]);
+        }
+
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
@@ -156,6 +157,10 @@ class ConstraintConfigController extends BaseController
      */
     public function deleteAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
+            return $this->json(['status' => false]);
+        }
+
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
@@ -206,6 +211,10 @@ class ConstraintConfigController extends BaseController
      */
     public function addConstraintAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
+            return $this->json(['status' => false]);
+        }
+
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
@@ -230,6 +239,10 @@ class ConstraintConfigController extends BaseController
      */
     public function deleteConstraintAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
+            return $this->json(['status' => false]);
+        }
+
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
