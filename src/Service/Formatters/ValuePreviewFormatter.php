@@ -36,10 +36,10 @@ class ValuePreviewFormatter extends ValueFormatter
         $primaryLanguage = $this->localesList->all()[0];
         if (array_key_exists($primaryLanguage, $output) && !empty($output[$primaryLanguage])) {
             return $this->shorten($output[$primaryLanguage], $threshold);
-        } elseif (array_key_exists($primaryLanguage, $output) && empty($output[$primaryLanguage]) && count(array_values(array_filter($output))) > 0) {
+        } elseif (array_key_exists($primaryLanguage, $output) && empty($output[$primaryLanguage]) && count(array_filter($output)) > 0) {
             return $this->shorten(array_values(array_filter($output))[0], $threshold);
         }
 
-        return $this->shorten(implode(', ', array_values(array_filter($output))), $threshold);
+        return $this->shorten(implode(', ', array_filter($output)), $threshold);
     }
 }
