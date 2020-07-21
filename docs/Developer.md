@@ -90,7 +90,7 @@ public function requiredParameters(): ?array
 }
 ```
 
-Please note: this bundle was written with robustness as a primary goal. Hence, if your constraint or validator throws an exception, it will not be counted towards the score. Instead use standard Symfony Validator violations (`$this->context->buildViolation(...)`) to report a failing constraint.
+**Please note: this bundle was written with robustness as a primary goal. Hence, if your constraint or validator throws an exception, it will not be counted towards the score. Instead use standard Symfony Validator violations (`$this->context->buildViolation(...)`) to report a failing constraint.**
 
 Your validator needs to be tagged with `validator.constraint_validator` for it to be picked up the service container and the bundle.
 
@@ -112,6 +112,11 @@ As aforementioned, this bundle was written with robustness as a primary goal. He
 
 ## PHP API
 
+**Please note: this bundle was written with robustness as a primary goal. Hence, these methods will not throw an exception on failure, instead the writers return a boolean and the readers an empty array or null (generally speaking; please always check the methods signature for its return type.)**
+
+
+### Scoring
+
 Should you wish to programmatically score objects, you may find the following snippet helpful:
 
 ```php
@@ -125,4 +130,48 @@ $validation->attributeScores();
 $validation->score();
 $validation->color();
 $validation->scores();
+```
+
+### Configuration
+
+Should you wish to programmatically modify the bundle's configuration, you may find these methods helpful:
+
+```php
+// You may use Symfony's autowiring for dependency injection (recommended) to access these services.
+function(
+    Valantic\DataQualityBundle\Config\V1\Meta\Reader $metaReader,
+    Valantic\DataQualityBundle\Config\V1\Meta\Writer $metaWriter,
+    Valantic\DataQualityBundle\Config\V1\Constraints\Reader $constraintsReader,
+    Valantic\DataQualityBundle\Config\V1\Constraints\Writer $constraintsWriter
+)
+{
+    $metaReader->getConfiguredClasses();
+    $metaReader->getForClass('ClassName');
+    $metaReader->isClassConfigured('ClassName');
+    $metaReader->getForObject(new \Pimcore\Model\DataObject\Concrete());
+    $metaReader->isObjectConfigured(new \Pimcore\Model\DataObject\Concrete());
+
+    $metaWriter->addOrUpdate('ClassName', ['de', 'en'], 80, 70);
+    $metaWriter->delete('ClassName');
+
+    $constraintsReader->getConfiguredClasses();
+    $constraintsReader->getForClass('ClassName');
+    $constraintsReader->isClassConfigured('ClassName');
+    $constraintsReader->getConfiguredClassAttributes('ClassName');
+    $constraintsReader->isClassAttributeConfigured('ClassName', 'attribute');
+    $constraintsReader->getNoteForClassAttribute('ClassName', 'attribute');
+    $constraintsReader->getRulesForClassAttribute('ClassName', 'attribute');
+    $constraintsReader->getForObject(new \Pimcore\Model\DataObject\Concrete());
+    $constraintsReader->isObjectConfigured(new \Pimcore\Model\DataObject\Concrete());
+    $constraintsReader->getNoteForObjectAttribute(new \Pimcore\Model\DataObject\Concrete(), 'attribute');
+    $constraintsReader->getRulesForObjectAttribute(new \Pimcore\Model\DataObject\Concrete(), 'attribute');
+   
+    $constraintsWriter->addClassAttribute('ClassName', 'attribute');
+    $constraintsWriter->removeClassAttribute('ClassName', 'attribute');
+    $constraintsWriter->addOrModifyConstraint('ClassName', 'attribute', 'Length', 3);
+    $constraintsWriter->deleteConstraint('ClassName', 'attribute', 'Length');
+    $constraintsWriter->addOrModifyNote('ClassName', 'attribute', 'lorem ipsum');
+    $constraintsWriter->deleteNote('ClassName', 'attribute');
+
+}
 ```
