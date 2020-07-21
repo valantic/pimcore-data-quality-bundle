@@ -15,7 +15,8 @@
         "symfony/http-foundation": "^4.4",
         "symfony/routing": "^4.4",
         "symfony/dependency-injection": "^4.4",
-        "symfony/framework-bundle": "^4.4"
+        "symfony/framework-bundle": "^4.4",
+        "infection/infection": "^0.16.4"
     },
     "license": "proprietary",
     "authors": [
@@ -42,7 +43,11 @@
         }
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit"
+        "test": "./vendor/bin/phpunit",
+        "infection": [
+            "Composer\\Config::disableProcessTimeout",
+            "./vendor/bin/infection --only-covered"
+        ]
     },
     "config": {
         "platform": {

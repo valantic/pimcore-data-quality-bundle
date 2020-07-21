@@ -41,6 +41,8 @@
 
     <logging>
         <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
-        <log type="coverage-html" target="out/coverage" showUncoveredFiles="false"/>
+        <log type="coverage-html" target="out/coverage/html" showUncoveredFiles="false"/>
+        <log type="coverage-clover" target="out/coverage/coverage-xml/index.xml" showUncoveredFiles="false"/>
+        <log type="junit" target="out/coverage/junit.xml" showUncoveredFiles="false"/>
     </logging>
 </phpunit>
