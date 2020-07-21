@@ -173,7 +173,7 @@ valantic.dataquality.objectView = Class.create({
                                         value = `<ul>${value.map((v) => `<li>${v}</li>`).join('')}</ul>`;
                                     }
                                     if ((typeof value === 'object' && value !== null)) {
-                                        value = `<dl>${Object.keys(value).map((k) => `<dt>${k}</dt><dd>${value[k]}</dd>`).join('')}</dl>`;
+                                        value = `<div>${Object.keys(value).map((k) => `<h4>${k}</h4><p>${value[k]}</p>`).join('')}</div>`;
                                     }
                                     Ext.Msg.alert(record.get('label'), value, Ext.emptyFn);
                                 },
