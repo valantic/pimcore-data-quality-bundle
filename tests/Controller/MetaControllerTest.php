@@ -238,7 +238,7 @@ class MetaControllerTest extends AbstractTestCase
 
         foreach ($decoded['locales'] as $entry) {
             $this->assertArrayHasKey('locale', $entry);
-            $this->assertTrue(in_array($entry['locale'], $locales), $entry['locale']);
+            $this->assertContains($entry['locale'], $locales, $entry['locale']);
         }
     }
 }

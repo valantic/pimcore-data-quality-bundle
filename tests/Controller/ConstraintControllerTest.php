@@ -72,7 +72,7 @@ class ConstraintControllerTest extends AbstractTestCase
             $this->assertIsInt($entry['rules_count']);
             $this->assertGreaterThanOrEqual(0, $entry['rules_count']);
 
-            $this->assertTrue(in_array($entry['classname'], $this->controller->getClassNames(), true), $entry['classname']);
+            $this->assertContains($entry['classname'], $this->controller->getClassNames(), $entry['classname']);
         }
     }
 

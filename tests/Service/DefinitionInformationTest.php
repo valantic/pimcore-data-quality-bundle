@@ -61,7 +61,7 @@ class DefinitionInformationTest extends AbstractTestCase
     {
         foreach ($this->definitionInformation->getAllAttributes() as $attribute => $data) {
             $this->assertIsString($this->definitionInformation->getAttributeType($attribute), $attribute);
-            $this->assertTrue(in_array($this->definitionInformation->getAttributeType($attribute), [
+            $this->assertContains($this->definitionInformation->getAttributeType($attribute), [
                 DefinitionInformation::TYPE_PLAIN,
                 DefinitionInformation::TYPE_RELATION,
                 DefinitionInformation::TYPE_LOCALIZED,
@@ -69,7 +69,7 @@ class DefinitionInformationTest extends AbstractTestCase
                 DefinitionInformation::TYPE_FIELDCOLLECTION,
                 DefinitionInformation::TYPE_CLASSIFICATIONSTORE,
                 DefinitionInformation::TYPE_RELATION,
-            ], true), $attribute);
+            ], $attribute);
         }
     }
 

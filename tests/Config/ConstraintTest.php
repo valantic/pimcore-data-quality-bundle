@@ -27,7 +27,7 @@ class ConstraintTest extends AbstractTestCase
 
     protected $constraintParams = 3;
 
-    protected $classNameOther = 'OtherClass';
+    protected $classNameOther = 'OtherNamespace\\OtherClass';
 
     protected $attributeNameOther = 'other.attribute';
 

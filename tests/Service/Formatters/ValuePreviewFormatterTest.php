@@ -64,4 +64,34 @@ class ValuePreviewFormatterTest extends AbstractTestCase
         $this->assertSame('', $this->formatter->format($text));
     }
 
+    public function testLength()
+    {
+        $text = 'abcde';
+        $textRepeated = str_repeat($text, 100);
+        $this->assertStringStartsWith($text, $this->formatter->format($textRepeated));
+        $this->assertStringEndsWith(' […]', $this->formatter->format($textRepeated));
+        $this->assertTrue(strlen($textRepeated) > strlen($this->formatter->format($textRepeated)));
+        $this->assertSame(50 + 6, strlen($this->formatter->format($textRepeated)));
+    }
+
+    public function testLengthExact()
+    {
+        $text = 'a';
+        $textRepeated = str_repeat($text, 50);
+        $this->assertSame($textRepeated, $this->formatter->format($textRepeated));
+    }
+
+
+    public function testLengthOneoff()
+    {
+        $text = 'a';
+
+        $textRepeated = str_repeat($text, 49);
+        $this->assertStringEndsNotWith(' […]', $this->formatter->format($textRepeated));
+        $this->assertSame($textRepeated, $this->formatter->format($textRepeated));
+
+        $textRepeated = str_repeat($text, 51);
+        $this->assertStringEndsWith(' […]', $this->formatter->format($textRepeated));
+        $this->assertNotSame($textRepeated, $this->formatter->format($textRepeated));
+    }
 }
