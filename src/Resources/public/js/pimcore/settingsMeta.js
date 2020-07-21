@@ -6,8 +6,7 @@ valantic.dataquality.settings_meta = Class.create({
     },
 
     activate: function () {
-        const tabPanel = Ext.getCmp('pimcore_panel_tabs');
-        tabPanel.activate(this.getLayout());
+        this.getLayout();
     },
 
     getLayout: function () {

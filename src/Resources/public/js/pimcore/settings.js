@@ -1,15 +1,15 @@
 pimcore.registerNS('valantic.dataquality.settings');
 valantic.dataquality.settings = Class.create({
 
-    initialize: function () {
+    initialize: function (payload) {
         if (!this.panel) {
             const settingsContainerItems = [];
 
-            const configMeta = new valantic.dataquality.settings_meta(this);
-            const configConstraints = new valantic.dataquality.settings_constraints(this);
+            this.configMeta = new valantic.dataquality.settings_meta(this);
+            this.configConstraints = new valantic.dataquality.settings_constraints(this);
 
-            settingsContainerItems.push(configConstraints.getLayout());
-            settingsContainerItems.push(configMeta.getLayout());
+            settingsContainerItems.push(this.configConstraints.getLayout());
+            settingsContainerItems.push(this.configMeta.getLayout());
 
             this.settingsContainer = new Ext.TabPanel({
                 activeTab: 0,
@@ -33,18 +33,41 @@ valantic.dataquality.settings = Class.create({
             tabPanel.setActiveItem('valantic_dataquality_settings');
 
             this.panel.on('destroy', function () {
-                pimcore.globalmanager.remove('reports_settings');
+                pimcore.globalmanager.remove('valantic_dataquality_settings');
             });
 
             pimcore.layout.refresh();
         }
 
+        this.processPayload(payload);
+
         return this.panel;
     },
 
-    activate: function () {
+    activate: function (payload) {
         const tabPanel = Ext.getCmp('pimcore_panel_tabs');
         tabPanel.setActiveItem('valantic_dataquality_settings');
+        this.processPayload(payload);
+    },
+
+    processPayload(payload) {
+        if (!payload) {
+            return;
+        }
+        if (payload.tab) {
+            if (payload.tab === 'constraints') {
+                this.settingsContainer.setActiveTab(0);
+                if (payload.filter) {
+                    console.log(this.configConstraints);
+                    this.configConstraints.filterField.setValue(payload.filter);
+                    this.configConstraints.doFilter();
+                    this.configConstraints.doFilter();
+                }
+            }
+            if (payload.tab === 'meta') {
+                this.settingsContainer.setActiveTab(1);
+            }
+        }
     },
 
 });

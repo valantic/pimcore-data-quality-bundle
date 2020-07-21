@@ -91,6 +91,23 @@ valantic.dataquality.objectView = Class.create({
                     iconCls: 'pimcore_icon_reload',
                     handler: this.reload.bind(this),
                 },
+                {
+                    text: t('configure'),
+                    iconCls: 'pimcore_icon_properties',
+                    handler: function () {
+                        try {
+                            pimcore.globalmanager.get('valantic_dataquality_settings').activate({
+                                tab: 'constraints',
+                                filter: this.object.data.general.o_className,
+                            });
+                        } catch (e) {
+                            pimcore.globalmanager.add('valantic_dataquality_settings', new valantic.dataquality.settings({
+                                tab: 'constraints',
+                                filter: this.object.data.general.o_className,
+                            }));
+                        }
+                    }.bind(this),
+                },
                 '->',
                 {
                     text: `${t('filter')}/${t('search')}`,

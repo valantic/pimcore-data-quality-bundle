@@ -18,9 +18,9 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
             iconCls: 'pimcore_nav_icon_properties',
             handler: function () {
                 try {
-                    pimcore.globalmanager.get('valantic_dataquality_settings').activate();
+                    pimcore.globalmanager.get('valantic_dataquality_settings').activate({});
                 } catch (e) {
-                    pimcore.globalmanager.add('valantic_dataquality_settings', new valantic.dataquality.settings());
+                    pimcore.globalmanager.add('valantic_dataquality_settings', new valantic.dataquality.settings({}));
                 }
             },
         });

@@ -6,8 +6,7 @@ valantic.dataquality.settings_constraints = Class.create({
     },
 
     activate: function () {
-        const tabPanel = Ext.getCmp('pimcore_panel_tabs');
-        tabPanel.activate(this.getLayout());
+        this.getLayout();
     },
 
     getLayout: function () {
@@ -41,11 +40,7 @@ valantic.dataquality.settings_constraints = Class.create({
                 listeners: {
                     keyup: function (field, key) {
                         if (key.getKey() === key.ENTER || field.getValue().length === 0) {
-                            const input = field;
-                            const proxy = this.store.getProxy();
-                            proxy.extraParams.filterText = input.getValue();
-
-                            this.store.load();
+                            this.doFilter();
                         }
                     }.bind(this),
                 },
@@ -156,6 +151,13 @@ valantic.dataquality.settings_constraints = Class.create({
         }
 
         return this.layout;
+    },
+
+    doFilter() {
+        const proxy = this.store.getProxy();
+        proxy.extraParams.filterText = this.filterField.getValue();
+
+        this.store.load();
     },
 
     // eslint-disable-next-line no-unused-vars
