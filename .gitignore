@@ -1,3 +1,9 @@
 vendor/
 node_modules/
 .DS_STORE
+.idea/
+.phpunit.result.cache
+out/
+tests/tmp/
+var/cache/
+infection.log

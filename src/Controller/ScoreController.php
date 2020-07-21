@@ -8,10 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
 use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
-use Valantic\DataQualityBundle\Service\Information\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
-use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 
 /**
  * @Route("/admin/valantic/data-quality/score")
@@ -26,13 +25,13 @@ class ScoreController extends BaseController
      * @param Request $request
      * @param Validate $validation
      * @param ConstraintsConfig $constraintsConfig
-     * @param MetaConfig $metaConfig
+     * @param DefinitionInformationFactory $definitionInformationFactory
      * @param ValueFormatter $valueFormatter
      * @param ValuePreviewFormatter $valuePreviewFormatter
      *
      * @return JsonResponse
      */
-    public function showAction(Request $request, Validate $validation, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, ValueFormatter $valueFormatter, ValuePreviewFormatter $valuePreviewFormatter): JsonResponse
+    public function showAction(Request $request, Validate $validation, ConstraintsConfig $constraintsConfig, DefinitionInformationFactory $definitionInformationFactory, ValueFormatter $valueFormatter, ValuePreviewFormatter $valuePreviewFormatter): JsonResponse
     {
         $obj = Concrete::getById($request->query->getInt('id'));
 
@@ -45,7 +44,7 @@ class ScoreController extends BaseController
             ]);
         }
 
-        $classInformation = new ClassInformation(get_class($obj));
+        $classInformation = $definitionInformationFactory->make(get_class($obj));
 
         $validation->setObject($obj);
         $validation->validate();

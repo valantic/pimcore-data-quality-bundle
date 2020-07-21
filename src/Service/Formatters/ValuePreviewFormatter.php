@@ -3,9 +3,24 @@
 namespace Valantic\DataQualityBundle\Service\Formatters;
 
 use Pimcore\Tool;
+use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 
 class ValuePreviewFormatter extends ValueFormatter
 {
+    /**
+     * @var LocalesList
+     */
+    protected $localesList;
+
+    /**
+     * ValuePreviewFormatter constructor.
+     * @param LocalesList $localesList
+     */
+    public function __construct(LocalesList $localesList)
+    {
+        $this->localesList = $localesList;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -18,13 +33,13 @@ class ValuePreviewFormatter extends ValueFormatter
             return $this->shorten($output, $threshold);
         }
 
-        $primaryLanguage = Tool::getValidLanguages()[0];
+        $primaryLanguage = $this->localesList->all()[0];
         if (array_key_exists($primaryLanguage, $output) && !empty($output[$primaryLanguage])) {
             return $this->shorten($output[$primaryLanguage], $threshold);
-        } elseif (array_key_exists($primaryLanguage, $output) && empty($output[$primaryLanguage]) && count(array_values(array_filter($output))) > 0) {
+        } elseif (array_key_exists($primaryLanguage, $output) && empty($output[$primaryLanguage]) && count(array_filter($output)) > 0) {
             return $this->shorten(array_values(array_filter($output))[0], $threshold);
         }
 
-        return $this->shorten(implode(', ', $output), $threshold);
+        return $this->shorten(implode(', ', array_filter($output)), $threshold);
     }
 }

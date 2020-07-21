@@ -3,8 +3,20 @@
     "description": "Data quality score for Pimcore",
     "type": "pimcore-bundle",
     "require": {
+        "php": "^7.3",
         "pimcore/pimcore": "^6.6",
-        "symfony/validator": "^4.4"
+        "symfony/validator": "^4.4",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.2",
+        "symfony/config": "^4.4",
+        "symfony/http-kernel": "^4.4",
+        "symfony/http-foundation": "^4.4",
+        "symfony/routing": "^4.4",
+        "symfony/dependency-injection": "^4.4",
+        "symfony/framework-bundle": "^4.4",
+        "infection/infection": "^0.16.4"
     },
     "license": "proprietary",
     "authors": [
@@ -18,11 +30,28 @@
             "Valantic\\DataQualityBundle\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Valantic\\DataQualityBundle\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "pimcore": {
             "bundles": [
                 "Valantic\\DataQualityBundle\\ValanticDataQualityBundle"
             ]
+        }
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit",
+        "infection": [
+            "Composer\\Config::disableProcessTimeout",
+            "./vendor/bin/infection --only-covered"
+        ]
+    },
+    "config": {
+        "platform": {
+            "php": "7.3"
         }
     }
 }

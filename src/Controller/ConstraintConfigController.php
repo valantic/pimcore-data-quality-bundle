@@ -9,7 +9,7 @@ use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
-use Valantic\DataQualityBundle\Service\Information\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 
 /**
  * @Route("/admin/valantic/data-quality/constraint-config")
@@ -23,15 +23,12 @@ class ConstraintConfigController extends BaseController
      *
      * @param Request $request
      * @param ConfigReader $config
-     * @param ConfigWriter $writer
      *
      * @return JsonResponse
      */
-    public function listAction(Request $request, ConfigReader $config, ConfigWriter $writer): JsonResponse
+    public function listAction(Request $request, ConfigReader $config): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
-
-        $writer->ensureConfigExists();
 
         $filter = $request->get('filterText');
 
@@ -86,10 +83,11 @@ class ConstraintConfigController extends BaseController
      *
      * @param Request $request
      * @param ConfigReader $config
+     * @param DefinitionInformationFactory $definitionInformationFactory
      *
      * @return JsonResponse
      */
-    public function listAttributesAction(Request $request, ConfigReader $config): JsonResponse
+    public function listAttributesAction(Request $request, ConfigReader $config, DefinitionInformationFactory $definitionInformationFactory): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
 
@@ -98,19 +96,19 @@ class ConstraintConfigController extends BaseController
         }
 
         try {
-            $classData = new ClassInformation($request->query->get('classname'));
-            $attributes = array_keys($classData->getAllAttributes());
+            $classInformation = $definitionInformationFactory->make($request->query->get('classname'));
+            $attributes = array_keys($classInformation->getAllAttributes());
         } catch (Throwable $throwable) {
             return $this->json(['attributes' => []]);
         }
 
-        $names = array_diff($attributes, $config->getConfiguredClassAttributes($classData->getName()));
+        $names = array_diff($attributes, $config->getConfiguredClassAttributes($classInformation->getName()));
 
         $attributeNames = [];
         foreach ($names as $name) {
             $attributeNames[] = [
                 'name' => $name,
-                'type' => $classData->getAttributeType($name),
+                'type' => $classInformation->getAttributeType($name),
             ];
         }
 
@@ -129,13 +127,17 @@ class ConstraintConfigController extends BaseController
      */
     public function addAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
+            return $this->json(['status' => false]);
+        }
+
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
             'status' => $config->addClassAttribute(
                     $request->request->get('classname'),
                     $request->request->get('attributename')
-                ) && $config->addOrModifyNote(
+                ) && $config->modifyNote(
                     $request->request->get('classname'),
                     $request->request->get('attributename'),
                     $request->request->get('note'),
@@ -155,10 +157,14 @@ class ConstraintConfigController extends BaseController
      */
     public function deleteAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
+            return $this->json(['status' => false]);
+        }
+
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
-            'status' => $config->removeClassAttribute(
+            'status' => $config->deleteClassAttribute(
                 $request->request->get('classname'),
                 $request->request->get('attributename')
             ),
@@ -205,10 +211,14 @@ class ConstraintConfigController extends BaseController
      */
     public function addConstraintAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
+            return $this->json(['status' => false]);
+        }
+
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
-            'status' => $config->addOrModifyConstraint(
+            'status' => $config->modifyRule(
                 $request->request->get('classname'),
                 $request->request->get('attributename'),
                 $request->request->get('constraint'),
@@ -229,10 +239,14 @@ class ConstraintConfigController extends BaseController
      */
     public function deleteConstraintAction(Request $request, ConfigWriter $config): JsonResponse
     {
+        if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
+            return $this->json(['status' => false]);
+        }
+
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
-            'status' => $config->deleteConstraint(
+            'status' => $config->deleteRule(
                 $request->request->get('classname'),
                 $request->request->get('attributename'),
                 $request->request->get('constraint')

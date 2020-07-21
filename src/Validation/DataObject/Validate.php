@@ -32,7 +32,7 @@ class Validate extends AbstractValidateObject implements MultiScorable
 
         $this->obj = $obj;
         $this->validationConfig = $this->constraintsConfig->getForObject($obj);
-        $this->classInformation = new ClassInformation($this->obj->getClassName());
+        $this->classInformation = $this->definitionInformationFactory->make($this->obj->getClassName());
     }
 
     /**
@@ -43,19 +43,19 @@ class Validate extends AbstractValidateObject implements MultiScorable
         $validators = [];
         foreach ($this->getValidatableAttributes() as $attribute) {
             if ($this->classInformation->isPlainAttribute($attribute)) {
-                $validator = new PlainAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new PlainAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher, $this->definitionInformationFactory);
             }
             if ($this->classInformation->isLocalizedAttribute($attribute)) {
-                $validator = new LocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new LocalizedAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher, $this->definitionInformationFactory);
             }
             if ($this->classInformation->isObjectbrickAttribute($attribute)) {
-                $validator = new ObjectBrickAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new ObjectBrickAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher, $this->definitionInformationFactory);
             }
             if ($this->classInformation->isFieldcollectionAttribute($attribute)) {
-                $validator = new FieldCollectionAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new FieldCollectionAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher, $this->definitionInformationFactory);
             }
             if ($this->classInformation->isRelationAttribute($attribute)) {
-                $validator = new RelationAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher);
+                $validator = new RelationAttribute($this->obj, $attribute, $this->constraintsConfig, $this->metaConfig, $this->eventDispatcher, $this->definitionInformationFactory);
             }
             if (isset($validator)) {
                 $validator->validate();

@@ -2,6 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Config\V1\Constraints;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
 
@@ -18,10 +19,12 @@ class Writer extends AbstractWriter implements ConstraintKeys
     /**
      * Write the bundle's config file.
      * @param Reader $reader
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(Reader $reader)
+    public function __construct(Reader $reader, EventDispatcherInterface $eventDispatcher)
     {
         $this->reader = $reader;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -54,23 +57,20 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string $attributeName
      * @return bool
      */
-    public function removeClassAttribute(string $className, string $attributeName): bool
+    public function deleteClassAttribute(string $className, string $attributeName): bool
     {
-        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
+        if (!$this->reader->isClassConfigured($className) || !$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
         $raw = $this->reader->getCurrentSection();
-        if (!$this->reader->isClassConfigured($className)) {
-            return true;
-        }
         unset($raw[$className][$attributeName]);
 
         return $this->writeConfig($raw);
     }
 
     /**
-     * Adds a new config entry or edits an existing one for a class-attribute constraint if it does not yet exist.
+     * Adds a new config entry or edits an existing one for a class-attribute rule if it does not yet exist.
      *
      * @param string $className
      * @param string $attributeName
@@ -78,7 +78,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string $params
      * @return bool
      */
-    public function addOrModifyConstraint(string $className, string $attributeName, string $constraint, string $params = null): bool
+    public function modifyRule(string $className, string $attributeName, string $constraint, string $params = null): bool
     {
         try {
             $paramsParsed = json_decode($params, true, 512, JSON_THROW_ON_ERROR);
@@ -98,23 +98,20 @@ class Writer extends AbstractWriter implements ConstraintKeys
     }
 
     /**
-     * Deletes a class-attribute constraint.
+     * Deletes a class-attribute rule.
      *
      * @param string $className
      * @param string $attributeName
      * @param string $constraint
      * @return bool
      */
-    public function deleteConstraint(string $className, string $attributeName, string $constraint): bool
+    public function deleteRule(string $className, string $attributeName, string $constraint): bool
     {
-        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
+        if (!$this->reader->isClassConfigured($className) || !$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
         $raw = $this->reader->getCurrentSection();
-        if (!$this->reader->isClassConfigured($className)) {
-            return true;
-        }
 
         unset($raw[$className][$attributeName][self::KEY_RULES][$constraint]);
 
@@ -129,7 +126,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string|null $note
      * @return bool
      */
-    public function addOrModifyNote(string $className, string $attributeName, string $note = null): bool
+    public function modifyNote(string $className, string $attributeName, string $note = null): bool
     {
         $raw = $this->reader->getCurrentSection();
 
@@ -147,14 +144,11 @@ class Writer extends AbstractWriter implements ConstraintKeys
      */
     public function deleteNote(string $className, string $attributeName): bool
     {
-        if (!$this->reader->isClassAttributeConfigured($className, $attributeName)) {
+        if (!$this->reader->isClassConfigured($className) || !$this->reader->isClassAttributeConfigured($className, $attributeName)) {
             return true;
         }
 
         $raw = $this->reader->getCurrentSection();
-        if (!$this->reader->isClassConfigured($className)) {
-            return true;
-        }
 
         $raw[$className][$attributeName][self::KEY_NOTE] = null;
 

@@ -8,9 +8,10 @@ class ClassInformation extends DefinitionInformation
 {
     /**
      * {@inheritDoc}}
+     * @codeCoverageIgnore Has to be mocked
      */
-    protected function setDefinition(): void
+    public function getDefinition(): ?ClassDefinition
     {
-        $this->definition= ClassDefinition::getByName($this->name);
+        return ClassDefinition::getByName($this->name);
     }
 }

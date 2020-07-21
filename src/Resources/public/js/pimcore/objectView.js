@@ -55,7 +55,7 @@ valantic.dataquality.objectView = Class.create({
                 listeners: {
                     load: function (store) {
                         const data = store.getData().getAt(0);
-                        if (!data.get('score') || !data.get('color')) {
+                        if (!data.get('color')) {
                             return;
                         }
                         this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${this.colorMapping(data.get('color'))}">${this.formatAsPercentage(data.get('score'))}</span>)`);

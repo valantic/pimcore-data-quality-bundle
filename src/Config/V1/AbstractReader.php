@@ -3,26 +3,28 @@
 namespace Valantic\DataQualityBundle\Config\V1;
 
 use Pimcore\Model\DataObject\Concrete;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Throwable;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 
 abstract class AbstractReader extends Config
 {
     /**
-     * @var EventDispatcher
+     * @var DefinitionInformationFactory
      */
-    protected $eventDispatcher;
+    protected $definitionInformationFactory;
 
     /**
      * Read and write the bundle's configuration.
      *
      * @param EventDispatcherInterface $eventDispatcher
+     * @param DefinitionInformationFactory $definitionInformationFactory
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->definitionInformationFactory = $definitionInformationFactory;
     }
 
     /**
@@ -54,7 +56,11 @@ abstract class AbstractReader extends Config
     public function getForClass(string $className): array
     {
         try {
-            $className = (new ClassInformation($className))->getName();
+            $classInformation = $this->definitionInformationFactory->make($className);
+            $className = $classInformation->getName();
+            if(empty($className)){
+                throw new RuntimeException(sprintf("Could not look up %s.", $className));
+            }
         } catch (Throwable $throwable) {
             return [];
         }
