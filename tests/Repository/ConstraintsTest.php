@@ -14,15 +14,36 @@ class ConstraintsTest extends AbstractTestCase
      */
     protected $constraints;
 
+    /**
+     * @var SampleConstraintFull
+     */
+    protected $customConstraintFull;
+
+    /**
+     * @var SampleConstraintMinimal
+     */
+    protected $customConstraintMinimal;
+
     protected function setUp(): void
     {
-        $this->constraints = new ConstraintDefinitions([]);
+        $this->customConstraintFull = new SampleConstraintFull();
+        $this->customConstraintMinimal = new SampleConstraintMinimal();
+        $iter = new \ArrayObject([
+            'string',
+            123,
+            false,
+            null,
+            SampleConstraintFull::class,
+            $this->customConstraintFull,
+            $this->customConstraintMinimal,
+        ]);
+        $this->constraints = new ConstraintDefinitions($iter);
     }
 
     public function testConstraintFormat()
     {
         $this->assertIsArray($this->constraints->all());
-        $this->assertCount(49, $this->constraints->all());
+        $this->assertCount(51, $this->constraints->all());
         foreach ($this->constraints->all() as $name => $constraint) {
             $this->assertIsArray($constraint, $name);
             if (array_key_exists('parameters', $constraint)) {
@@ -40,5 +61,29 @@ class ConstraintsTest extends AbstractTestCase
                 }
             }
         }
+    }
+
+    public function testCustomConstraintFull()
+    {
+        $this->assertIsArray($this->constraints->all());
+        $this->assertArrayHasKey(SampleConstraintFull::class, $this->constraints->all());
+        $repoConstraint = $this->constraints->all()[SampleConstraintFull::class];
+        $this->assertIsArray($repoConstraint);
+        $this->assertSame($this->customConstraintFull->getLabel(), $repoConstraint['label']);
+        $this->assertSame($this->customConstraintFull->getDefaultOption(), $repoConstraint['parameters']['default']);
+        $this->assertSame($this->customConstraintFull->requiredParameters(), $repoConstraint['parameters']['required']);
+        $this->assertSame($this->customConstraintFull->optionalParameters(), $repoConstraint['parameters']['optional']);
+    }
+
+    public function testCustomConstraintMinimal()
+    {
+        $this->assertIsArray($this->constraints->all());
+        $this->assertArrayHasKey(SampleConstraintMinimal::class, $this->constraints->all());
+        $repoConstraint = $this->constraints->all()[SampleConstraintMinimal::class];
+        $this->assertIsArray($repoConstraint);
+        $this->assertSame('SampleConstraintMinimal', $repoConstraint['label']);
+        $this->assertArrayNotHasKey('default', $repoConstraint['parameters']);
+        $this->assertArrayNotHasKey('required', $repoConstraint['parameters']);
+        $this->assertArrayNotHasKey('optional', $repoConstraint['parameters']);
     }
 }
