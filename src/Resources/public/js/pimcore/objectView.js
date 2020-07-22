@@ -158,6 +158,19 @@ valantic.dataquality.objectView = Class.create({
                         dataIndex: 'value_preview',
                         editable: false,
                         flex: 1,
+                        renderer: function (value, meta, record) {
+                            const preview = record.get('value_preview');
+                            let val = record.get('value');
+                            if (Array.isArray(val)) {
+                                val = `<ul>${val.map((v) => `<li>${v}</li>`).join('')}</ul>`;
+                            }
+                            if ((typeof val === 'object' && val !== null)) {
+                                val = `<div>${Object.keys(val).map((k) => `<h4>${k}</h4><p>${val[k]}</p>`).join('')}</div>`;
+                            }
+                            return `<div class="show-when-wrapped" style="display:none;">${val}</div><div class="hide-when-wrapped">${preview}</div>`;
+                        },
+                        cellWrap: false,
+                        variableRowHeight: false,
                     },
                     {
                         xtype: 'actioncolumn',
@@ -167,15 +180,19 @@ valantic.dataquality.objectView = Class.create({
                             {
                                 tooltip: t('details'),
                                 icon: '/bundles/pimcoreadmin/img/flat-color-icons/view_details.svg',
-                                handler: function (gridRef, rowIndex, colIndex, item, e, record) {
-                                    let value = record.get('value');
-                                    if (Array.isArray(value)) {
-                                        value = `<ul>${value.map((v) => `<li>${v}</li>`).join('')}</ul>`;
+                                handler: function (gridRef, rowIndex, colIndex) {
+                                    // eslint-disable-next-line no-param-reassign
+                                    const cell = gridRef.getRow(rowIndex).querySelector(`${`td:nth-child(${colIndex}`})`);
+                                    const wrapClass = 'x-wrap-cell';
+                                    if (!cell.classList.contains(wrapClass)) {
+                                        cell.classList.add(wrapClass);
+                                        cell.querySelector('.hide-when-wrapped').style.display = 'none';
+                                        cell.querySelector('.show-when-wrapped').style.display = 'inline-block';
+                                    } else {
+                                        cell.classList.remove(wrapClass);
+                                        cell.querySelector('.show-when-wrapped').style.display = 'none';
+                                        cell.querySelector('.hide-when-wrapped').style.display = 'inline-block';
                                     }
-                                    if ((typeof value === 'object' && value !== null)) {
-                                        value = `<div>${Object.keys(value).map((k) => `<h4>${k}</h4><p>${value[k]}</p>`).join('')}</div>`;
-                                    }
-                                    Ext.Msg.alert(record.get('label'), value, Ext.emptyFn);
                                 },
                             },
                         ],
