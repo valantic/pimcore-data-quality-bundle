@@ -1,24 +1,26 @@
 <?php
 
-
-namespace Valantic\DataQualityBundle\Constraints;
-
+namespace Valantic\DataQualityBundle\Constraints\RelationScore;
 
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
-use Valantic\DataQualityBundle\Validation\Colorable;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 
-class RelationScoreValidator extends ConstraintValidator
+abstract class AbstractValidator extends ConstraintValidator
 {
     /**
      * @var Validate
      */
     protected $validate;
 
+    /**
+     * Get the Colorable threshold for this validator.
+     * @return string
+     */
+    abstract protected function getThresholdKey():string;
 
     /**
      * Validation passes if all relations have a green score.
@@ -27,8 +29,8 @@ class RelationScoreValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof RelationScore) {
-            throw new UnexpectedTypeException($constraint, RelationScore::class);
+        if (!$constraint instanceof AbstractConstraint) {
+            throw new UnexpectedTypeException($constraint, AbstractConstraint::class);
         }
 
         $this->validate = $constraint->container->get('valantic_dataquality_validate_dataobject');
@@ -41,22 +43,22 @@ class RelationScoreValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'array');
         }
 
-        $greenCount = 0;
-        $validationCount = 0;
+        $validCount = 0;
+        $totalCount = 0;
 
         foreach ($value as $id) {
             $validation = clone $this->validate;
             $validation->setObject(Concrete::getById($id));
-            $validation->addSkippedConstraint(RelationScore::class);
+            $validation->addSkippedConstraint(AbstractConstraint::class);
             $validation->validate();
-            $validationCount++;
+            $totalCount++;
 
-            if ($validation->color() === Colorable::COLOR_GREEN) {
-                $greenCount++;
+            if ($validation->color() === $this->getThresholdKey()) {
+                $validCount++;
             }
         }
 
-        if ($greenCount !== $validationCount) {
+        if ($validCount !== $totalCount) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation();
         }

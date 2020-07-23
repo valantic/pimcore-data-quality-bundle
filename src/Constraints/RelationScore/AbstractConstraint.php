@@ -1,11 +1,11 @@
 <?php
 
-namespace Valantic\DataQualityBundle\Constraints;
+namespace Valantic\DataQualityBundle\Constraints\RelationScore;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Valantic\DataQualityBundle\Repository\AbstractCustomConstraint;
 
-class RelationScore extends AbstractCustomConstraint
+abstract class AbstractConstraint extends AbstractCustomConstraint
 {
     public $message = 'The related object score(s) fall below the threshold.';
 
@@ -17,22 +17,6 @@ class RelationScore extends AbstractCustomConstraint
      * @var ContainerInterface
      */
     public $container;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function validatedBy()
-    {
-        return RelationScoreValidator::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getLabel(): string
-    {
-        return 'RelationScore';
-    }
 
     public function setContainer(ContainerInterface $container)
     {
