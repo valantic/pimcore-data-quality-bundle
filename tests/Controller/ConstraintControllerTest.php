@@ -38,7 +38,7 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testListEmpty()
     {
         $this->controller->setContainer(self::$container);
-        $response = $this->controller->listAction(Request::create('/'), $this->getConstraintsReader());
+        $response = $this->controller->listAction(Request::create('/'), $this->getConstraintsReader(), new ConstraintDefinitions([]));
 
         $this->assertJson($response->getContent());
 
@@ -52,7 +52,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->activateConfig(self::CONFIG_FULL);
 
         $this->controller->setContainer(self::$container);
-        $response = $this->controller->listAction(Request::create('/'), $this->getConstraintsReader());
+        $response = $this->controller->listAction(Request::create('/'), $this->getConstraintsReader(), new ConstraintDefinitions([]));
 
         $this->assertJson($response->getContent());
 
@@ -80,7 +80,7 @@ class ConstraintControllerTest extends AbstractTestCase
     {
         $this->activateConfig(self::CONFIG_FULL);
 
-        $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'Product']), $this->getConstraintsReader());
+        $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'Product']), $this->getConstraintsReader(), new ConstraintDefinitions([]));
 
         $this->assertJson($response->getContent());
 
@@ -98,7 +98,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->activateConfig(self::CONFIG_FULL);
 
         $this->controller->setContainer(self::$container);
-        $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'email']), $this->getConstraintsReader());
+        $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'email']), $this->getConstraintsReader(), new ConstraintDefinitions([]));
 
         $this->assertJson($response->getContent());
 
