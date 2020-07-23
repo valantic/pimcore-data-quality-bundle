@@ -1,4 +1,5 @@
 services:
+    Valantic\DataQualityBundle\Validation\DataObject\Validate: '@valantic_dataquality_validate_dataobject'
     # default configuration for services in *this* file
     _defaults:
         # automatically injects dependencies in your services
@@ -47,4 +48,10 @@ services:
 
     Valantic\DataQualityBundle\Config\V1\Meta\Writer: ~
 
-    Valantic\DataQualityBundle\Validation\DataObject\Validate: ~
+    valantic_dataquality_validate_dataobject:
+        public: true
+        class: 'Valantic\DataQualityBundle\Validation\DataObject\Validate'
+
+    Valantic\DataQualityBundle\Constraints\:
+        resource: '../../Constraints'
+        tags: ['validator.constraint_validator']

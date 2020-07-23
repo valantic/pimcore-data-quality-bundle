@@ -3,7 +3,9 @@
 namespace Valantic\DataQualityBundle\Validation;
 
 use Pimcore\Model\Element\AbstractElement;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
@@ -57,18 +59,30 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
     protected $definitionInformationFactory;
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var array
+     */
+    protected $skippedConstraints = [];
+
+    /**
      * Validate an object and all its attributes.
      * @param ConstraintsConfig $constraintsConfig
      * @param MetaConfig $metaConfig
      * @param EventDispatcherInterface $eventDispatcher
      * @param DefinitionInformationFactory $definitionInformationFactory
+     * @param ContainerInterface $container
      */
-    public function __construct(ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory)
+    public function __construct(ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory, ContainerInterface $container)
     {
         $this->constraintsConfig = $constraintsConfig;
         $this->metaConfig = $metaConfig;
         $this->eventDispatcher = $eventDispatcher;
         $this->definitionInformationFactory = $definitionInformationFactory;
+        $this->container = $container;
     }
 
     /**
@@ -103,6 +117,15 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
      * @param AbstractElement $obj The object to validate.
      */
     abstract public function setObject(AbstractElement $obj);
+
+    /**
+     * Mark a constraint validator as skipped (useful to prevent recursion/cycles for relations).
+     * @param string $constraintValidator
+     */
+    public function addSkippedConstraint(string $constraintValidator)
+    {
+        $this->skippedConstraints[] = $constraintValidator;
+    }
 
     /**
      * Get the scores for the individual attributes.

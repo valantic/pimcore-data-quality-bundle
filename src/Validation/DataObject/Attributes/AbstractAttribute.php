@@ -4,6 +4,7 @@ namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Exception;
 use Pimcore\Model\DataObject\Concrete;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -72,6 +73,16 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
     protected $eventDispatcher;
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var array
+     */
+    protected $skippedConstraints;
+
+    /**
      * Validates an attribute of an object.
      *
      * @param Concrete $obj Object to validate
@@ -80,8 +91,10 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
      * @param MetaConfig $metaConfig
      * @param EventDispatcherInterface $eventDispatcher
      * @param DefinitionInformationFactory $definitionInformationFactory
+     * @param ContainerInterface $container
+     * @param array $skippedConstraints
      */
-    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory)
+    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory, ContainerInterface $container, array $skippedConstraints)
     {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
@@ -92,6 +105,8 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
         $this->metaConfig = $metaConfig;
         $this->eventDispatcher = $eventDispatcher;
         $this->classInformation = $definitionInformationFactory->make($this->obj->getClassName());
+        $this->container = $container;
+        $this->skippedConstraints = $skippedConstraints;
     }
 
     /**
@@ -131,8 +146,16 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
                 continue;
             }
 
+            if (in_array($name, $this->skippedConstraints, true)) {
+                continue;
+            }
+
             try {
-                $constraints[] = new $name(...([$params]));
+                $instance = new $name(...([$params]));
+                if (method_exists($instance, 'setContainer')) {
+                    $instance->setContainer($this->container);
+                }
+                $constraints[] = $instance;
             } catch (Throwable $throwable) {
                 $this->eventDispatcher->dispatch(new InvalidConstraintEvent($throwable, $name, $params));
             }
