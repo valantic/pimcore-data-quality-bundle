@@ -248,7 +248,7 @@ valantic.dataquality.settings_constraints = Class.create({
                 {
                     text: t('valantic_dataquality_config_column_constraint'),
                     sortable: true,
-                    dataIndex: 'constraint',
+                    dataIndex: 'label',
                     flex: 60,
                 },
                 {

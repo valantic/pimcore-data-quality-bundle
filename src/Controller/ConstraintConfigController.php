@@ -26,8 +26,9 @@ class ConstraintConfigController extends BaseController
      *
      * @return JsonResponse
      */
-    public function listAction(Request $request, ConfigReader $config): JsonResponse
+    public function listAction(Request $request, ConfigReader $config, ConstraintDefinitions $definitions): JsonResponse
     {
+        $constraintDefinitions = $definitions->all();
         $this->checkPermission(self::CONFIG_NAME);
 
         $filter = $request->get('filterText');
@@ -42,6 +43,7 @@ class ConstraintConfigController extends BaseController
                 foreach ($config->getRulesForClassAttribute($className, $attribute) as $constraint => $args) {
                     $transformedRules[] = [
                         'constraint' => $constraint,
+                        'label' => array_key_exists($constraint, $constraintDefinitions) ? ($constraintDefinitions[$constraint]['label'] ?? $constraint) : $constraint,
                         'args' => $args,
                     ];
                 }
