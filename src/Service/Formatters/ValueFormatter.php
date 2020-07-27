@@ -18,7 +18,7 @@ class ValueFormatter implements Formatter
 
     /**
      * Strips HTML tags.
-     * @param $input
+     * @param $input mixed
      * @return array|string|string[]
      */
     protected function stripTags($input)
@@ -34,7 +34,7 @@ class ValueFormatter implements Formatter
 
     /**
      * Trims the input.
-     * @param $input
+     * @param $input mixed
      * @return array|string|string[]
      */
     protected function trim($input)
@@ -50,7 +50,7 @@ class ValueFormatter implements Formatter
 
     /**
      * Shortens the input if longer than $threshold.
-     * @param $input
+     * @param $input mixed
      * @param int $threshold
      * @return array|string|string[]
      */

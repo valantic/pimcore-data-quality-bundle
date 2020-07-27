@@ -3,24 +3,23 @@
 namespace Valantic\DataQualityBundle\Validation;
 
 use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\ModelInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
-use Valantic\DataQualityBundle\Validation\Colorable;
-use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
-use Valantic\DataQualityBundle\Validation\MultiColorable;
-use Valantic\DataQualityBundle\Validation\MultiScorable;
-use Valantic\DataQualityBundle\Validation\Scorable;
-use Valantic\DataQualityBundle\Validation\Validatable;
 
 abstract class AbstractValidateObject implements Validatable, Scorable, Colorable
 {
     use ColorScoreTrait;
+
+    /**
+     * @var ModelInterface
+     */
+    protected $obj;
 
     /**
      * @var ConstraintsConfig

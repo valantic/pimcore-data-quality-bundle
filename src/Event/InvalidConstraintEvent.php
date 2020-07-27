@@ -9,12 +9,12 @@ class InvalidConstraintEvent extends Event
     public const NAME = 'valantic.data_quality.invalid_constraint';
 
     /**
-     * @var
+     * @var string
      */
     protected $name;
 
     /**
-     * @var
+     * @var mixed
      */
     protected $params;
 

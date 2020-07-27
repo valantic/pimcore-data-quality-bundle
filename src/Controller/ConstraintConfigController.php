@@ -71,6 +71,7 @@ class ConstraintConfigController extends BaseController
     {
         $this->checkPermission(self::CONFIG_NAME);
 
+        $classNames = [];
         foreach ($this->getClassNames() as $name) {
             $classNames[] = ['name' => $name];
         }

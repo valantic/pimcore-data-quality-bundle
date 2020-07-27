@@ -16,7 +16,8 @@
         "symfony/routing": "^4.4",
         "symfony/dependency-injection": "^4.4",
         "symfony/framework-bundle": "^4.4",
-        "infection/infection": "^0.16.4"
+        "infection/infection": "^0.16.4",
+        "phpstan/phpstan": "^0.12.33"
     },
     "license": "proprietary",
     "authors": [
@@ -44,6 +45,7 @@
     },
     "scripts": {
         "test": "./vendor/bin/phpunit",
+        "phpstan": "./vendor/bin/phpstan analyse src tests -l 1",
         "infection": [
             "Composer\\Config::disableProcessTimeout",
             "./vendor/bin/infection --only-covered"
