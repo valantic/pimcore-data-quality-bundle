@@ -2,9 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
-use Pimcore\Model\DataObject\Concrete;
 use Throwable;
-use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
 class PlainAttribute extends AbstractAttribute
 {

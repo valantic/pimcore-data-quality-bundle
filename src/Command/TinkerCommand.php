@@ -6,8 +6,6 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\DataObject\Customer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * @codeCoverageIgnore

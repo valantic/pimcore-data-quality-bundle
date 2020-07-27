@@ -2,8 +2,6 @@
 
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
-use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Tool;
 use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;

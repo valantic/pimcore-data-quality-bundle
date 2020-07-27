@@ -2,7 +2,6 @@
 
 namespace Valantic\DataQualityBundle\Service\Formatters;
 
-use Pimcore\Tool;
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 
 class ValuePreviewFormatter extends ValueFormatter

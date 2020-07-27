@@ -2,8 +2,6 @@
 
 namespace Valantic\DataQualityBundle\Tests\Service;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Valantic\DataQualityBundle\Config\V1\Meta\Reader;
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;

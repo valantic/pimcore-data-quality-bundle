@@ -12,6 +12,7 @@ trait SafeArray
      *
      * @param array|mixed $arr
      * @param string|int $key
+     *
      * @return array Always returns an array, defaults to [].
      */
     protected function safeArray($arr, $key): array

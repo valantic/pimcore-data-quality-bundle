@@ -3,15 +3,15 @@
 namespace Valantic\DataQualityBundle\Tests;
 
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
+use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaReader;
-use Valantic\DataQualityBundle\Config\V1\Meta\Writer as MetaWriter;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsReader;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConstraintsWriter;
+use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaReader;
+use Valantic\DataQualityBundle\Config\V1\Meta\Writer as MetaWriter;
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Service\Information\FieldCollectionInformation;

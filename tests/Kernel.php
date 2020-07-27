@@ -22,7 +22,7 @@ class Kernel extends SymfonyKernel
     /**
      * {@inheritDoc}
      */
-    public function registerContainerConfiguration(LoaderInterface $loader):void
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         // TODO: Implement registerContainerConfiguration() method.
     }

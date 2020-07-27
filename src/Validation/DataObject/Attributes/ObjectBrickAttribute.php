@@ -4,8 +4,6 @@ namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
-use Throwable;
-use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
 class ObjectBrickAttribute extends AbstractAttribute
 {

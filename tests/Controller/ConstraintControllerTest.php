@@ -3,10 +3,8 @@
 namespace Valantic\DataQualityBundle\Tests\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Valantic\DataQualityBundle\Config\V1\Meta\MetaKeys;
 use Valantic\DataQualityBundle\Controller\ConstraintConfigController;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
-use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class ConstraintControllerTest extends AbstractTestCase
