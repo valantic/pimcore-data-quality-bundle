@@ -4,6 +4,7 @@ namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Exception;
 use Pimcore\Model\DataObject\Concrete;
+use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -148,6 +149,20 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
             }
 
             if (in_array($name, $this->skippedConstraints, true)) {
+                continue;
+            }
+
+            try {
+                $reflection = new ReflectionClass($name);
+
+                $subclasses = array_filter($this->skippedConstraints, function ($skippedConstraint) use ($reflection) {
+                    return $reflection->isSubclassOf($skippedConstraint);
+                });
+            } catch (\ReflectionException $e) {
+                $subclasses = [1];
+            }
+
+            if (!empty($subclasses)) {
                 continue;
             }
 

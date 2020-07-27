@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
+use Valantic\DataQualityBundle\Validation\Colorable;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 
 abstract class AbstractValidator extends ConstraintValidator
@@ -23,6 +24,12 @@ abstract class AbstractValidator extends ConstraintValidator
     abstract protected function getThresholdKey(): string;
 
     /**
+     * Get the constraint this validator expects.
+     * @return string
+     */
+    abstract protected function getConstraint(): string;
+
+    /**
      * Validation passes if all relations have a green score.
      *
      * @param mixed $value
@@ -32,8 +39,8 @@ abstract class AbstractValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (!$constraint instanceof AbstractConstraint) {
-            throw new UnexpectedTypeException($constraint, AbstractConstraint::class);
+        if (get_class($constraint) !== $this->getConstraint()) {
+            throw new UnexpectedTypeException($constraint, $this->getConstraint());
         }
 
         $this->validate = $constraint->container->get('valantic_dataquality_validate_dataobject');
@@ -56,7 +63,7 @@ abstract class AbstractValidator extends ConstraintValidator
             $validation->validate();
             $totalCount++;
 
-            if ($validation->color() === $this->getThresholdKey()) {
+            if ($validation->color() === $this->getThresholdKey() || ($this->getThresholdKey() === Colorable::COLOR_ORANGE && $validation->color() === Colorable::COLOR_GREEN)) {
                 $validCount++;
             }
         }

@@ -13,4 +13,12 @@ class GreenValidator extends AbstractValidator
     {
         return Colorable::COLOR_GREEN;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getConstraint(): string
+    {
+        return GreenConstraint::class;
+    }
 }

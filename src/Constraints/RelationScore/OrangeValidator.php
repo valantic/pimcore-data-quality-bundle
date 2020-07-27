@@ -13,4 +13,12 @@ class OrangeValidator extends AbstractValidator
     {
         return Colorable::COLOR_ORANGE;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getConstraint(): string
+    {
+        return OrangeConstraint::class;
+    }
 }
