@@ -1,5 +1,7 @@
 pimcore.registerNS('pimcore.plugin.ValanticDataQualityBundle');
 
+const objectViewTabs = {};
+
 pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
     getClassName: function () {
         return 'pimcore.plugin.ValanticDataQualityBundle';
@@ -35,11 +37,18 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
             },
             success: function (response) {
                 if (JSON.parse(response.responseText).status) {
-                    object.tabbar.add(new valantic.dataquality.objectView(object).getLayout());
+                    objectViewTabs[object.id] = new valantic.dataquality.objectView(object);
+                    object.tabbar.add(objectViewTabs[object.id].getLayout());
                     pimcore.layout.refresh();
                 }
             },
         });
+    },
+
+    postSaveObject: function (object) {
+        if (objectViewTabs[object.id]) {
+            objectViewTabs[object.id].reload();
+        }
     },
 });
 
