@@ -30,6 +30,7 @@ class ConstraintFailureEvent extends Event
 
     /**
      * ConstraintFailureEvent constructor.
+     *
      * @param Throwable $throwable
      * @param int $id
      * @param string $attribute

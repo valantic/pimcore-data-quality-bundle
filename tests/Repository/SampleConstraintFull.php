@@ -6,10 +6,19 @@ use Valantic\DataQualityBundle\Repository\AbstractCustomConstraint;
 
 class SampleConstraintFull extends AbstractCustomConstraint
 {
+    /**
+     * @var string
+     */
     public $message = 'The string "{{ string }}" is no nonsense.';
 
+    /**
+     * @var mixed
+     */
     public $expected;
 
+    /**
+     * @var mixed
+     */
     public $allowed;
 
     /**

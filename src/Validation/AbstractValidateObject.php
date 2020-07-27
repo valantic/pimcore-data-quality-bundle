@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
-use Valantic\DataQualityBundle\Service\Information\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
 
@@ -43,7 +43,7 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
     protected $validators = [];
 
     /**
-     * @var ClassInformation
+     * @var DefinitionInformation
      */
     protected $classInformation;
 
@@ -69,6 +69,7 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
 
     /**
      * Validate an object and all its attributes.
+     *
      * @param ConstraintsConfig $constraintsConfig
      * @param MetaConfig $metaConfig
      * @param EventDispatcherInterface $eventDispatcher
@@ -113,15 +114,21 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
 
     /**
      * Set the object to validate.
+     *
      * @param AbstractElement $obj The object to validate.
+     *
+     * @return void
      */
-    abstract public function setObject(AbstractElement $obj);
+    abstract public function setObject(AbstractElement $obj): void;
 
     /**
      * Mark a constraint validator as skipped (useful to prevent recursion/cycles for relations).
+     *
      * @param string $constraintValidator
+     *
+     * @return void
      */
-    public function addSkippedConstraint(string $constraintValidator)
+    public function addSkippedConstraint(string $constraintValidator): void
     {
         $this->skippedConstraints[] = $constraintValidator;
     }

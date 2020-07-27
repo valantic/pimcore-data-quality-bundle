@@ -21,5 +21,5 @@ abstract class Event extends BaseEvent
      * Message to log when in dev/debug mode.
      * @return string
      */
-    abstract protected function logMessage():string;
+    abstract protected function logMessage(): string;
 }

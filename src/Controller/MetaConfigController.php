@@ -21,6 +21,7 @@ class MetaConfigController extends BaseController
      *
      * @param Request $request
      * @param ConfigReader $config
+     *
      * @return JsonResponse
      */
     public function listAction(Request $request, ConfigReader $config): JsonResponse
@@ -77,6 +78,7 @@ class MetaConfigController extends BaseController
      * @Route("/locales", options={"expose"=true}, methods={"GET"})
      *
      * @param LocalesList $localesList
+     *
      * @return JsonResponse
      */
     public function listLocalesAction(LocalesList $localesList): JsonResponse

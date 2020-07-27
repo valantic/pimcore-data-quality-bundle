@@ -12,9 +12,9 @@ class SampleValidatorMinimal extends ConstraintValidator
     /**
      * {@inheritDoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        if (!$constraint instanceof SampleValidatorMinimal) {
+        if (!($constraint instanceof SampleValidatorMinimal)) {
             throw new UnexpectedTypeException($constraint, SampleValidatorMinimal::class);
         }
 

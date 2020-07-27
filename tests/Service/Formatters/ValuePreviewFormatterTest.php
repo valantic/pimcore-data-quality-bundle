@@ -24,13 +24,13 @@ class ValuePreviewFormatterTest extends AbstractTestCase
         $this->formatter = new ValuePreviewFormatter($localesList);
     }
 
-    public function testSimple()
+    public function testSimple(): void
     {
         $text = 'lorem ispum';
         $this->assertSame($text, $this->formatter->format($text));
     }
 
-    public function testPreviewIsShorter()
+    public function testPreviewIsShorter(): void
     {
         $formatter = new ValueFormatter();
         $text = 'abcde';
@@ -38,19 +38,19 @@ class ValuePreviewFormatterTest extends AbstractTestCase
         $this->assertTrue(strlen($formatter->format($textRepeated)) > strlen($this->formatter->format($textRepeated)));
     }
 
-    public function testDefaultLocale()
+    public function testDefaultLocale(): void
     {
         $text = ['de' => 'Deutscher Text', 'en' => 'english text'];
         $this->assertSame($text['de'], $this->formatter->format($text));
     }
 
-    public function testEmptyDefaultLocale()
+    public function testEmptyDefaultLocale(): void
     {
         $text = ['de' => '', 'en' => 'english text'];
         $this->assertSame($text['en'], $this->formatter->format($text));
     }
 
-    public function testNoDefaultLocale()
+    public function testNoDefaultLocale(): void
     {
         $text = ['fr' => 'texte français', 'en' => 'english text'];
         $this->assertStringContainsString($text['fr'], $this->formatter->format($text));
@@ -58,13 +58,13 @@ class ValuePreviewFormatterTest extends AbstractTestCase
         $this->assertStringContainsString($text['en'], $this->formatter->format($text));
     }
 
-    public function testEmptyLocales()
+    public function testEmptyLocales(): void
     {
         $text = ['de' => null, 'fr' => '', 'en' => false];
         $this->assertSame('', $this->formatter->format($text));
     }
 
-    public function testLength()
+    public function testLength(): void
     {
         $text = 'abcde';
         $textRepeated = str_repeat($text, 100);
@@ -74,7 +74,7 @@ class ValuePreviewFormatterTest extends AbstractTestCase
         $this->assertSame(50 + 6, strlen($this->formatter->format($textRepeated)));
     }
 
-    public function testLengthExact()
+    public function testLengthExact(): void
     {
         $text = 'a';
         $textRepeated = str_repeat($text, 50);
@@ -82,7 +82,7 @@ class ValuePreviewFormatterTest extends AbstractTestCase
     }
 
 
-    public function testLengthOneoff()
+    public function testLengthOneoff(): void
     {
         $text = 'a';
 

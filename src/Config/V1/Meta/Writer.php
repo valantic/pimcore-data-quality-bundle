@@ -17,6 +17,7 @@ class Writer extends AbstractWriter implements MetaKeys
 
     /**
      * Write the bundle's config file.
+     *
      * @param Reader $reader
      * @param EventDispatcherInterface $eventDispatcher
      */
@@ -33,6 +34,7 @@ class Writer extends AbstractWriter implements MetaKeys
      * @param array $locales
      * @param int $thresholdGreen
      * @param int $thresholdOrange
+     *
      * @return bool
      */
     public function update(string $className, array $locales = [], int $thresholdGreen = 0, int $thresholdOrange = 0): bool
@@ -50,7 +52,9 @@ class Writer extends AbstractWriter implements MetaKeys
 
     /**
      * Delete the config entry for $className.
+     *
      * @param string $className
+     *
      * @return bool
      */
     public function delete(string $className): bool

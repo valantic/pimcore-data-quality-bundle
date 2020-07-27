@@ -19,20 +19,44 @@ class ConstraintTest extends AbstractTestCase
      */
     protected $writer;
 
+    /**
+     * @var string
+     */
     protected $className = 'SomeClass';
 
+    /**
+     * @var string
+     */
     protected $attributeName = 'SomeAttribute';
 
+    /**
+     * @var string
+     */
     protected $constraintName = 'SomeConstraint';
 
+    /**
+     * @var int
+     */
     protected $constraintParams = 3;
 
+    /**
+     * @var string
+     */
     protected $classNameOther = 'OtherNamespace\\OtherClass';
 
+    /**
+     * @var string
+     */
     protected $attributeNameOther = 'other.attribute';
 
+    /**
+     * @var string
+     */
     protected $constraintNameOther = 'Custom\\OtherConstraint';
 
+    /**
+     * @var array
+     */
     protected $constraintParamsOther = ['arg1' => true, 'arg2' => 'yes', 3, null];
 
     protected function setUp(): void
@@ -43,32 +67,32 @@ class ConstraintTest extends AbstractTestCase
         $this->writer = $this->getConstraintsWriter();
     }
 
-    public function testReaderInstantiated()
+    public function testReaderInstantiated(): void
     {
         $this->assertInstanceOf(Reader::class, $this->reader);
     }
 
-    public function testReadMissingConfig()
+    public function testReadMissingConfig(): void
     {
         $this->assertIsArray($this->reader->getConfiguredClasses());
         $this->assertCount(0, $this->reader->getConfiguredClasses());
     }
 
-    public function testReadCorruptConfig()
+    public function testReadCorruptConfig(): void
     {
         $this->activateConfig($this::CONFIG_CORRUPT);
         $this->assertIsArray($this->reader->getConfiguredClasses());
         $this->assertCount(0, $this->reader->getConfiguredClasses());
     }
 
-    public function testReadStringConfig()
+    public function testReadStringConfig(): void
     {
         $this->activateConfig($this::CONFIG_STRING);
         $this->assertIsArray($this->reader->getConfiguredClasses());
         $this->assertCount(0, $this->reader->getConfiguredClasses());
     }
 
-    public function testReadClassesAreConfigured()
+    public function testReadClassesAreConfigured(): void
     {
         $this->activateConfig($this::CONFIG_FULL);
         $this->assertIsArray($this->reader->getConfiguredClasses());
@@ -79,7 +103,7 @@ class ConstraintTest extends AbstractTestCase
         }
     }
 
-    public function testReadClassKeys()
+    public function testReadClassKeys(): void
     {
         $this->activateConfig($this::CONFIG_FULL);
         $className = 'Product';
@@ -99,23 +123,23 @@ class ConstraintTest extends AbstractTestCase
         }
     }
 
-    public function testReadMissingClass()
+    public function testReadMissingClass(): void
     {
         $this->assertSame([], $this->reader->getForClass($this->classNameOther));
     }
 
-    public function testWriteMissingConfig()
+    public function testWriteMissingConfig(): void
     {
         $this->assertTrue($this->writer->ensureConfigExists());
     }
 
-    public function testWriteToMissingConfigFile()
+    public function testWriteToMissingConfigFile(): void
     {
         $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
         $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
     }
 
-    public function testWriteNote()
+    public function testWriteNote(): void
     {
         $this->assertNull($this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
 
@@ -140,21 +164,21 @@ class ConstraintTest extends AbstractTestCase
         $this->assertNull($this->reader->getNoteForClassAttribute($this->classNameOther, $this->attributeName));
     }
 
-    public function testWriteDoubleAdd()
+    public function testWriteDoubleAdd(): void
     {
         $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
         $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
         $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
     }
 
-    public function testWriteToCorruptConfigFile()
+    public function testWriteToCorruptConfigFile(): void
     {
         $this->activateConfig(self::CONFIG_CORRUPT);
         $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
         $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
     }
 
-    public function testWriteToInvalidConfigFile()
+    public function testWriteToInvalidConfigFile(): void
     {
         $this->activateConfig(self::CONFIG_STRING);
 
@@ -162,7 +186,7 @@ class ConstraintTest extends AbstractTestCase
         $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
     }
 
-    public function testWriteDoesNotAffectOtherEntries()
+    public function testWriteDoesNotAffectOtherEntries(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -173,7 +197,7 @@ class ConstraintTest extends AbstractTestCase
         $this->assertCount(4, $this->reader->getConfiguredClasses());
     }
 
-    public function testDeleteEntry()
+    public function testDeleteEntry(): void
     {
         $this->writer->addClassAttribute($this->className, $this->attributeName);
         $this->assertTrue($this->reader->isClassConfigured($this->className));
@@ -184,7 +208,7 @@ class ConstraintTest extends AbstractTestCase
         $this->assertFalse($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
     }
 
-    public function testDeleteUnknownEntry()
+    public function testDeleteUnknownEntry(): void
     {
         $this->assertFalse($this->reader->isClassConfigured($this->className));
 
@@ -193,7 +217,7 @@ class ConstraintTest extends AbstractTestCase
         $this->assertFalse($this->reader->isClassConfigured($this->className));
     }
 
-    public function testSimpleRule()
+    public function testSimpleRule(): void
     {
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
@@ -204,25 +228,25 @@ class ConstraintTest extends AbstractTestCase
         $this->assertNull($this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
-    public function testRuleEmptyStringParams()
+    public function testRuleEmptyStringParams(): void
     {
         $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, ''));
         $this->assertNull($this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
-    public function testRuleScalarParams()
+    public function testRuleScalarParams(): void
     {
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, $this->constraintParams));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, (string)$this->constraintParams));
         $this->assertSame($this->constraintParams, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
-    public function testConstraintArrayParams()
+    public function testConstraintArrayParams(): void
     {
         $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
         $this->assertSame($this->constraintParamsOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintNameOther]);
     }
 
-    public function testMultipleRules()
+    public function testMultipleRules(): void
     {
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
@@ -244,7 +268,7 @@ class ConstraintTest extends AbstractTestCase
         $this->assertArrayHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
     }
 
-    public function testDeleteRules()
+    public function testDeleteRules(): void
     {
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
@@ -263,7 +287,7 @@ class ConstraintTest extends AbstractTestCase
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
     }
 
-    public function testDeleteUnknownRules()
+    public function testDeleteUnknownRules(): void
     {
         $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
         $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));

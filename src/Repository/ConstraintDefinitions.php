@@ -2,6 +2,8 @@
 
 namespace Valantic\DataQualityBundle\Repository;
 
+use IteratorAggregate;
+
 class ConstraintDefinitions
 {
     /**
@@ -16,6 +18,9 @@ class ConstraintDefinitions
     {
         $customContraints = [];
         try {
+            /**
+             * @var IteratorAggregate $taggedConstraints
+             */
             foreach ($taggedConstraints->getIterator() as $taggedConstraint) {
                 if ($taggedConstraint instanceof CustomConstraintParameters) {
                     $customContraints[] = $taggedConstraint;

@@ -14,6 +14,7 @@ class ValuePreviewFormatter extends ValueFormatter
 
     /**
      * ValuePreviewFormatter constructor.
+     *
      * @param LocalesList $localesList
      */
     public function __construct(LocalesList $localesList)

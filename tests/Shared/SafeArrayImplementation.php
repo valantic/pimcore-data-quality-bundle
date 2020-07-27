@@ -8,7 +8,13 @@ class SafeArrayImplementation
 {
     use SafeArray;
 
-    public function get($arr, $key)
+    /**
+     * @param mixed $arr
+     * @param mixed $key
+     *
+     * @return array
+     */
+    public function get($arr, $key): array
     {
         return $this->safeArray($arr, $key);
     }

@@ -13,10 +13,19 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class DefinitionInformationTest extends AbstractTestCase
 {
+    /**
+     * @var DefinitionInformation
+     */
     protected $definitionInformation;
 
+    /**
+     * @var string
+     */
     protected $name = 'Product';
 
+    /**
+     * @var DefinitionInformationFactory
+     */
     protected $definitionInformationFactory;
 
     protected function setUp(): void
@@ -47,17 +56,17 @@ class DefinitionInformationTest extends AbstractTestCase
         $this->definitionInformationFactory = $definitionInformationFactory;
     }
 
-    public function testName()
+    public function testName(): void
     {
         $this->assertSame($this->name, $this->definitionInformation->getName());
     }
 
-    public function testNamespacedName()
+    public function testNamespacedName(): void
     {
         $this->assertSame($this->name, $this->definitionInformationFactory->make('Pimcore\Model\DataObject\\' . $this->name)->getName());
     }
 
-    public function testAllAttributesHaveAType()
+    public function testAllAttributesHaveAType(): void
     {
         foreach ($this->definitionInformation->getAllAttributes() as $attribute => $data) {
             $this->assertIsString($this->definitionInformation->getAttributeType($attribute), $attribute);
@@ -73,7 +82,7 @@ class DefinitionInformationTest extends AbstractTestCase
         }
     }
 
-    public function testAttributeLabels()
+    public function testAttributeLabels(): void
     {
         foreach ($this->definitionInformation->getAllAttributes() as $attribute => $data) {
             $this->assertIsString($this->definitionInformation->getAttributeLabel($attribute));
@@ -94,7 +103,7 @@ class DefinitionInformationTest extends AbstractTestCase
         }
     }
 
-    public function testUnknownAttribute()
+    public function testUnknownAttribute(): void
     {
         $this->assertNull($this->definitionInformation->getAttributeType('unknown_attribute'));
         $this->assertSame('', $this->definitionInformation->getAttributeLabel('unknown_attribute'));

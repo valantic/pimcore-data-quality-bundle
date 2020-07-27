@@ -24,7 +24,7 @@ class Validate extends AbstractValidateObject implements MultiScorable
     /**
      * {@inheritDoc}
      */
-    public function setObject(AbstractElement $obj)
+    public function setObject(AbstractElement $obj): void
     {
         if (!($obj instanceof Concrete)) {
             throw new InvalidArgumentException('Please provide a Concrete DataObject.');

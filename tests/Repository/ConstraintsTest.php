@@ -40,7 +40,7 @@ class ConstraintsTest extends AbstractTestCase
         $this->constraints = new ConstraintDefinitions($iter);
     }
 
-    public function testConstraintFormat()
+    public function testConstraintFormat(): void
     {
         $this->assertIsArray($this->constraints->all());
         $this->assertCount(51, $this->constraints->all());
@@ -63,7 +63,7 @@ class ConstraintsTest extends AbstractTestCase
         }
     }
 
-    public function testCustomConstraintFull()
+    public function testCustomConstraintFull(): void
     {
         $this->assertIsArray($this->constraints->all());
         $this->assertArrayHasKey(SampleConstraintFull::class, $this->constraints->all());
@@ -75,7 +75,7 @@ class ConstraintsTest extends AbstractTestCase
         $this->assertSame($this->customConstraintFull->optionalParameters(), $repoConstraint['parameters']['optional']);
     }
 
-    public function testCustomConstraintMinimal()
+    public function testCustomConstraintMinimal(): void
     {
         $this->assertIsArray($this->constraints->all());
         $this->assertArrayHasKey(SampleConstraintMinimal::class, $this->constraints->all());

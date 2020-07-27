@@ -20,14 +20,17 @@ abstract class AbstractValidator extends ConstraintValidator
      * Get the Colorable threshold for this validator.
      * @return string
      */
-    abstract protected function getThresholdKey():string;
+    abstract protected function getThresholdKey(): string;
 
     /**
      * Validation passes if all relations have a green score.
+     *
      * @param mixed $value
      * @param Constraint $constraint
+     *
+     * @return void
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof AbstractConstraint) {
             throw new UnexpectedTypeException($constraint, AbstractConstraint::class);

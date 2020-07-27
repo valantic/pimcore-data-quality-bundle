@@ -9,6 +9,11 @@ use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
 class Writer extends AbstractWriter implements ConstraintKeys
 {
     /**
+     * @var Reader
+     */
+    protected $reader;
+
+    /**
      * {@inheritDoc}
      */
     protected function getCurrentSectionName(): string
@@ -18,6 +23,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
 
     /**
      * Write the bundle's config file.
+     *
      * @param Reader $reader
      * @param EventDispatcherInterface $eventDispatcher
      */
@@ -32,6 +38,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      *
      * @param string $className
      * @param string $attributeName
+     *
      * @return bool
      */
     public function addClassAttribute(string $className, string $attributeName): bool
@@ -55,6 +62,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      *
      * @param string $className
      * @param string $attributeName
+     *
      * @return bool
      */
     public function deleteClassAttribute(string $className, string $attributeName): bool
@@ -76,6 +84,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string $attributeName
      * @param string $constraint
      * @param string $params
+     *
      * @return bool
      */
     public function modifyRule(string $className, string $attributeName, string $constraint, string $params = null): bool
@@ -103,6 +112,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string $className
      * @param string $attributeName
      * @param string $constraint
+     *
      * @return bool
      */
     public function deleteRule(string $className, string $attributeName, string $constraint): bool
@@ -124,6 +134,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      * @param string $className
      * @param string $attributeName
      * @param string|null $note
+     *
      * @return bool
      */
     public function modifyNote(string $className, string $attributeName, string $note = null): bool
@@ -140,6 +151,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
      *
      * @param string $className
      * @param string $attributeName
+     *
      * @return bool
      */
     public function deleteNote(string $className, string $attributeName): bool

@@ -18,7 +18,7 @@ class TinkerCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:data-quality:tinker')
@@ -28,8 +28,10 @@ class TinkerCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->dump("Hello from " . __CLASS__);
+
+        return 0;
     }
 }

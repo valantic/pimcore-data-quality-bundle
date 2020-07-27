@@ -20,6 +20,7 @@ class Reader extends AbstractReader implements ConstraintKeys
      *
      * @param Concrete $obj
      * @param string $attribute
+     *
      * @return array
      */
     protected function getForObjectAttribute(Concrete $obj, string $attribute): array
@@ -32,6 +33,7 @@ class Reader extends AbstractReader implements ConstraintKeys
      *
      * @param string $className Base name or ::class
      * @param string $attribute
+     *
      * @return array
      */
     protected function getForClassAttribute(string $className, string $attribute): array
@@ -46,6 +48,7 @@ class Reader extends AbstractReader implements ConstraintKeys
      *
      * @param Concrete $obj
      * @param string $attribute
+     *
      * @return array
      */
     public function getRulesForObjectAttribute(Concrete $obj, string $attribute): array
@@ -58,6 +61,7 @@ class Reader extends AbstractReader implements ConstraintKeys
      *
      * @param string $className Base name or ::class
      * @param string $attribute
+     *
      * @return array
      */
     public function getRulesForClassAttribute(string $className, string $attribute): array
@@ -73,7 +77,8 @@ class Reader extends AbstractReader implements ConstraintKeys
      *
      * @param Concrete $obj
      * @param string $attribute
-     * @return ?string
+     *
+     * @return string|null
      */
     public function getNoteForObjectAttribute(Concrete $obj, string $attribute): ?string
     {
@@ -85,7 +90,8 @@ class Reader extends AbstractReader implements ConstraintKeys
      *
      * @param string $className Base name or ::class
      * @param string $attribute
-     * @return ?string
+     *
+     * @return string|null
      */
     public function getNoteForClassAttribute(string $className, string $attribute): ?string
     {
@@ -109,8 +115,10 @@ class Reader extends AbstractReader implements ConstraintKeys
 
     /**
      * Checks whether $attributeName in $className is configured.
+     *
      * @param string $className
      * @param string $attributeName
+     *
      * @return bool
      */
     public function isClassAttributeConfigured(string $className, string $attributeName): bool

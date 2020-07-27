@@ -16,6 +16,7 @@ trait ColorScoreTrait
      * Perform the actual calculation of the color.
      *
      * @param float $score
+     *
      * @return string
      */
     protected function calculateColor(float $score): string

@@ -6,7 +6,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaReader;
 use Valantic\DataQualityBundle\Config\V1\Meta\Writer as MetaWriter;
@@ -25,7 +25,7 @@ abstract class AbstractTestCase extends KernelTestCase
     public const CONFIG_STRING = 'config_string.yml';
 
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     protected static $container;
 
@@ -41,17 +41,17 @@ abstract class AbstractTestCase extends KernelTestCase
         self::cleanUp();
     }
 
-    protected static function cleanUp()
+    protected static function cleanUp(): void
     {
         array_map('unlink', array_filter((array)glob(__DIR__ . '/scratch/*') ?: []));
     }
 
-    protected function activateConfig(string $name)
+    protected function activateConfig(string $name): void
     {
         copy(__DIR__ . '/fixtures/' . $name, __DIR__ . '/scratch/valantic_dataquality_config.yml');
     }
 
-    protected function deleteConfig()
+    protected function deleteConfig(): void
     {
         $name = __DIR__ . '/scratch/valantic_dataquality_config.yml';
         if (file_exists($name)) {

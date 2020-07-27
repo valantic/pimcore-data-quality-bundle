@@ -9,6 +9,9 @@ use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 class Kernel extends SymfonyKernel
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public function registerBundles()
     {
         return [
@@ -16,7 +19,10 @@ class Kernel extends SymfonyKernel
         ];
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    /**
+     * {@inheritDoc}
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader):void
     {
         // TODO: Implement registerContainerConfiguration() method.
     }

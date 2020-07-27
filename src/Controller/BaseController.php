@@ -9,7 +9,7 @@ abstract class BaseController extends AdminController
 {
     public const CONFIG_NAME = 'plugin_valantic_dataquality_config';
 
-    protected function checkPermission($permission)
+    protected function checkPermission($permission): void
     {
         /**
          * Due to the way parent::checkPermission() works, this call is workaround

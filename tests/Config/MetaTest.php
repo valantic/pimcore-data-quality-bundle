@@ -19,6 +19,9 @@ class MetaTest extends AbstractTestCase
      */
     protected $writer;
 
+    /**
+     * @var string
+     */
     protected $className = 'SomeClass';
 
     protected function setUp(): void
@@ -29,32 +32,32 @@ class MetaTest extends AbstractTestCase
         $this->writer = $this->getMetaWriter();
     }
 
-    public function testReaderInstantiated()
+    public function testReaderInstantiated(): void
     {
         $this->assertInstanceOf(Reader::class, $this->reader);
     }
 
-    public function testReadMissingConfig()
+    public function testReadMissingConfig(): void
     {
         $this->assertIsArray($this->reader->getConfiguredClasses());
         $this->assertCount(0, $this->reader->getConfiguredClasses());
     }
 
-    public function testReadCorruptConfig()
+    public function testReadCorruptConfig(): void
     {
         $this->activateConfig($this::CONFIG_CORRUPT);
         $this->assertIsArray($this->reader->getConfiguredClasses());
         $this->assertCount(0, $this->reader->getConfiguredClasses());
     }
 
-    public function testReadStringConfig()
+    public function testReadStringConfig(): void
     {
         $this->activateConfig($this::CONFIG_STRING);
         $this->assertIsArray($this->reader->getConfiguredClasses());
         $this->assertCount(0, $this->reader->getConfiguredClasses());
     }
 
-    public function testReadClassesAreConfigured()
+    public function testReadClassesAreConfigured(): void
     {
         $this->activateConfig($this::CONFIG_FULL);
         $this->assertIsArray($this->reader->getConfiguredClasses());
@@ -65,7 +68,7 @@ class MetaTest extends AbstractTestCase
         }
     }
 
-    public function testReadClassKeys()
+    public function testReadClassKeys(): void
     {
         $this->activateConfig($this::CONFIG_FULL);
         $className = 'Product';
@@ -77,17 +80,17 @@ class MetaTest extends AbstractTestCase
         $this->assertArrayHasKey(MetaKeys::KEY_THRESHOLD_GREEN, $config);
     }
 
-    public function testReadMissingClass()
+    public function testReadMissingClass(): void
     {
         $this->assertSame([], $this->reader->getForClass('UnknownClass'));
     }
 
-    public function testWriteMissingConfig()
+    public function testWriteMissingConfig(): void
     {
         $this->assertTrue($this->writer->ensureConfigExists());
     }
 
-    public function testWriteToMissingConfigFile()
+    public function testWriteToMissingConfigFile(): void
     {
         $this->assertTrue($this->writer->update($this->className, ['a', 'b'], 80, 50));
         $this->assertSame([
@@ -100,7 +103,7 @@ class MetaTest extends AbstractTestCase
         ], $this->reader->getForClass($this->className));
     }
 
-    public function testWriteToCorruptConfigFile()
+    public function testWriteToCorruptConfigFile(): void
     {
         $this->activateConfig(self::CONFIG_CORRUPT);
 
@@ -115,7 +118,7 @@ class MetaTest extends AbstractTestCase
         ], $this->reader->getForClass($this->className));
     }
 
-    public function testWriteToInvalidConfigFile()
+    public function testWriteToInvalidConfigFile(): void
     {
         $this->activateConfig(self::CONFIG_STRING);
 
@@ -130,7 +133,7 @@ class MetaTest extends AbstractTestCase
         ], $this->reader->getForClass($this->className));
     }
 
-    public function testWriteDoesNotAffectOtherEntries()
+    public function testWriteDoesNotAffectOtherEntries(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -141,7 +144,7 @@ class MetaTest extends AbstractTestCase
         $this->assertCount(3, $this->reader->getConfiguredClasses());
     }
 
-    public function testWriteUpdates()
+    public function testWriteUpdates(): void
     {
         $this->writer->update($this->className, [], 80, 0);
         $this->assertSame(0.8, $this->reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
@@ -160,7 +163,7 @@ class MetaTest extends AbstractTestCase
         $this->assertSame(['b'], $this->reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
     }
 
-    public function testDeleteEntry()
+    public function testDeleteEntry(): void
     {
         $this->writer->update($this->className, [], 80, 0);
         $this->assertTrue($this->reader->isClassConfigured($this->className));
@@ -170,7 +173,7 @@ class MetaTest extends AbstractTestCase
         $this->assertFalse($this->reader->isClassConfigured($this->className));
     }
 
-    public function testDeleteUnknownEntry()
+    public function testDeleteUnknownEntry(): void
     {
         $this->assertFalse($this->reader->isClassConfigured($this->className));
 

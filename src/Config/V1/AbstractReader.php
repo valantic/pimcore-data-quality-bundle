@@ -39,7 +39,9 @@ abstract class AbstractReader extends Config
 
     /**
      * Checks whether $className is configured.
+     *
      * @param string $className
+     *
      * @return bool
      */
     public function isClassConfigured(string $className): bool
@@ -51,6 +53,7 @@ abstract class AbstractReader extends Config
      * Given a class name, return the corresponding config.
      *
      * @param string $className Base name or ::class
+     *
      * @return array
      */
     public function getForClass(string $className): array
@@ -58,7 +61,7 @@ abstract class AbstractReader extends Config
         try {
             $classInformation = $this->definitionInformationFactory->make($className);
             $className = $classInformation->getName();
-            if(empty($className)){
+            if (empty($className)) {
                 throw new RuntimeException(sprintf("Could not look up %s.", $className));
             }
         } catch (Throwable $throwable) {
@@ -76,6 +79,7 @@ abstract class AbstractReader extends Config
      * Given $obj, return the corresponding config.
      *
      * @param Concrete $obj
+     *
      * @return array
      */
     public function getForObject(Concrete $obj): array
@@ -85,7 +89,9 @@ abstract class AbstractReader extends Config
 
     /**
      * Checks whether $obj is configured.
+     *
      * @param Concrete $obj
+     *
      * @return bool
      */
     public function isObjectConfigured(Concrete $obj): bool

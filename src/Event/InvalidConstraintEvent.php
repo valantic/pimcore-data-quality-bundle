@@ -25,9 +25,10 @@ class InvalidConstraintEvent extends Event
 
     /**
      * InvalidConstraintEvent constructor.
+     *
      * @param Throwable $throwable
-     * @param $name
-     * @param $params
+     * @param string $name
+     * @param mixed $params
      */
     public function __construct(Throwable $throwable, $name, $params)
     {

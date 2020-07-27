@@ -10,8 +10,8 @@ trait SafeArray
      *
      * This method does not have any type hints on purpose.
      *
-     * @param $arr
-     * @param $key
+     * @param array|mixed $arr
+     * @param string|int $key
      * @return array Always returns an array, defaults to [].
      */
     protected function safeArray($arr, $key): array

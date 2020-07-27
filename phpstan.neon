@@ -1,3 +1,6 @@
 parameters:
     bootstrapFiles:
         - phpstan.php
+    checkMissingIterableValueType: false
+includes:
+	- phpstan-baseline.neon

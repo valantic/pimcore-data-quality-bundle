@@ -17,7 +17,7 @@ class BundleTest extends AbstractTestCase
         $this->bundle = new ValanticDataQualityBundle();
     }
 
-    public function testJsPaths()
+    public function testJsPaths(): void
     {
         $this->assertIsArray($this->bundle->getJsPaths());
 

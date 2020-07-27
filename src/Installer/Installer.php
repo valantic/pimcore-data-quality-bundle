@@ -57,7 +57,7 @@ class Installer extends MigrationInstaller
     /**
      * {@inheritdoc}
      */
-    public function migrateInstall(Schema $schema, Version $version)
+    public function migrateInstall(Schema $schema, Version $version): void
     {
         $version->addSql('INSERT INTO `users_permission_definitions` (`key`) VALUES (?);', [ConstraintConfigController::CONFIG_NAME]);
         $this->writer->ensureConfigExists();
@@ -66,7 +66,7 @@ class Installer extends MigrationInstaller
     /**
      * {@inheritdoc}
      */
-    public function migrateUninstall(Schema $schema, Version $version)
+    public function migrateUninstall(Schema $schema, Version $version): void
     {
         $version->addSql('DELETE FROM `users_permission_definitions` WHERE `key` = ?;', [ConstraintConfigController::CONFIG_NAME]);
     }

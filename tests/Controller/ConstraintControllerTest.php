@@ -16,12 +16,24 @@ class ConstraintControllerTest extends AbstractTestCase
      */
     protected $controller;
 
+    /**
+     * @var string
+     */
     protected $className = 'SomeClass';
 
+    /**
+     * @var string
+     */
     protected $attributeName = 'some_attribute';
 
+    /**
+     * @var string
+     */
     protected $constraintName = 'that_constraint';
 
+    /**
+     * @var array
+     */
     protected $constraintParams = [1, 'hello', false];
 
     protected function setUp(): void
@@ -35,7 +47,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->controller->setContainer(self::$container);
     }
 
-    public function testListEmpty()
+    public function testListEmpty(): void
     {
         $this->controller->setContainer(self::$container);
         $response = $this->controller->listAction(Request::create('/'), $this->getConstraintsReader(), new ConstraintDefinitions([]));
@@ -47,7 +59,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertSame([], $decoded);
     }
 
-    public function testListFull()
+    public function testListFull(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -76,7 +88,7 @@ class ConstraintControllerTest extends AbstractTestCase
         }
     }
 
-    public function testListFiltered()
+    public function testListFiltered(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -93,7 +105,7 @@ class ConstraintControllerTest extends AbstractTestCase
         }
     }
 
-    public function testListMatchesConfig()
+    public function testListMatchesConfig(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -121,7 +133,7 @@ class ConstraintControllerTest extends AbstractTestCase
         }
     }
 
-    public function testListClasses()
+    public function testListClasses(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -138,7 +150,7 @@ class ConstraintControllerTest extends AbstractTestCase
         }
     }
 
-    public function testListAttributesNoClassname()
+    public function testListAttributesNoClassname(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -152,7 +164,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertCount(0, $decoded['attributes']);
     }
 
-    public function testListAttributes()
+    public function testListAttributes(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
         $reader = $this->getConstraintsReader();
@@ -172,7 +184,7 @@ class ConstraintControllerTest extends AbstractTestCase
         }
     }
 
-    public function testAddAttributeMissingData()
+    public function testAddAttributeMissingData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -189,7 +201,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertFalse($decoded['status']);
     }
 
-    public function testAddAttributePartialData()
+    public function testAddAttributePartialData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -213,7 +225,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertTrue($decoded['status']);
     }
 
-    public function testAddAttributeCompleteData()
+    public function testAddAttributeCompleteData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -238,7 +250,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertTrue($decoded['status']);
     }
 
-    public function testDeleteAttributeMissingData()
+    public function testDeleteAttributeMissingData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -255,7 +267,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertFalse($decoded['status']);
     }
 
-    public function testDeleteAttributeCompleteData()
+    public function testDeleteAttributeCompleteData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -275,7 +287,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertTrue($decoded['status']);
     }
 
-    public function testListConstraints()
+    public function testListConstraints(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -304,7 +316,7 @@ class ConstraintControllerTest extends AbstractTestCase
     }
 
 
-    public function testAddConstraintMissingData()
+    public function testAddConstraintMissingData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -324,7 +336,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertFalse($decoded['status']);
     }
 
-    public function testAddConstraintPartialData()
+    public function testAddConstraintPartialData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -348,7 +360,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertTrue($decoded['status']);
     }
 
-    public function testAddConstraintCompleteData()
+    public function testAddConstraintCompleteData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -373,7 +385,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertTrue($decoded['status']);
     }
 
-    public function testDeleteConstraintMissingData()
+    public function testDeleteConstraintMissingData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -393,7 +405,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertFalse($decoded['status']);
     }
 
-    public function testDeleteConstraintCompleteData()
+    public function testDeleteConstraintCompleteData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 

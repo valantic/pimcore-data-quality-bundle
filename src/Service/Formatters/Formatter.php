@@ -8,7 +8,9 @@ interface Formatter
 {
     /**
      * Formats $input and returns the formatted value.
-     * @param $input mixed
+     *
+     * @param mixed $input
+     *
      * @return mixed
      */
     public function format($input);

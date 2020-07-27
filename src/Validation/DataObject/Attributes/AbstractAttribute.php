@@ -6,6 +6,7 @@ use Exception;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
@@ -13,7 +14,7 @@ use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
-use Valantic\DataQualityBundle\Service\Information\ClassInformation;
+use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SafeArray;
 use Valantic\DataQualityBundle\Validation\Colorable;
@@ -53,12 +54,12 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
 
     /**
      * Violations found during validation.
-     * @var array
+     * @var array|ConstraintViolationListInterface
      */
     protected $violations = [];
 
     /**
-     * @var ClassInformation
+     * @var DefinitionInformation
      */
     protected $classInformation;
 
@@ -172,8 +173,10 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
 
     /**
      * Traverses the inheritance tree until a value has been found.
+     *
      * @param Concrete $obj
      * @param string|null $locale
+     *
      * @return mixed
      * @throws Exception
      */

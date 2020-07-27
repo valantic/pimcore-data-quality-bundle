@@ -69,6 +69,7 @@ abstract class Config
      * Get a config section.
      *
      * @param string $name
+     *
      * @return array
      */
     private function getSection(string $name): array

@@ -15,6 +15,9 @@ class MetaControllerTest extends AbstractTestCase
      */
     protected $controller;
 
+    /**
+     * @var string
+     */
     protected $className = 'SomeClass';
 
     protected function setUp(): void
@@ -28,7 +31,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->controller->setContainer(self::$container);
     }
 
-    public function testListEmpty()
+    public function testListEmpty(): void
     {
         $this->controller->setContainer(self::$container);
         $response = $this->controller->listAction(Request::create('/'), $this->getMetaReader());
@@ -40,7 +43,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame([], $decoded);
     }
 
-    public function testListFull()
+    public function testListFull(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -69,7 +72,7 @@ class MetaControllerTest extends AbstractTestCase
         }
     }
 
-    public function testListFiltered()
+    public function testListFiltered(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -84,7 +87,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame('Product', $decoded[0]['classname']);
     }
 
-    public function testListMatchesConfig()
+    public function testListMatchesConfig(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -103,7 +106,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertEqualsWithDelta($config[MetaKeys::KEY_THRESHOLD_ORANGE] * 100, $decoded['threshold_orange'], 0.1);
     }
 
-    public function testListClasses()
+    public function testListClasses(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -120,7 +123,7 @@ class MetaControllerTest extends AbstractTestCase
         }
     }
 
-    public function testAddMissingData()
+    public function testAddMissingData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -137,7 +140,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertFalse($decoded['status']);
     }
 
-    public function testAddPartialData()
+    public function testAddPartialData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -159,7 +162,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertTrue($decoded['status']);
     }
 
-    public function testAddCompleteData()
+    public function testAddCompleteData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -186,7 +189,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertTrue($decoded['status']);
     }
 
-    public function testDeleteMissingData()
+    public function testDeleteMissingData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -203,7 +206,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertFalse($decoded['status']);
     }
 
-    public function testDeleteCompleteData()
+    public function testDeleteCompleteData(): void
     {
         $this->activateConfig(self::CONFIG_FULL);
 
@@ -220,7 +223,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertTrue($decoded['status']);
     }
 
-    public function testLocalesList()
+    public function testLocalesList(): void
     {
         $this->activateConfig(self::CONFIG_EMPTY);
         $locales = ['de', 'en'];

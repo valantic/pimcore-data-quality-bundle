@@ -7,18 +7,17 @@ use Valantic\DataQualityBundle\Repository\AbstractCustomConstraint;
 
 abstract class AbstractConstraint extends AbstractCustomConstraint
 {
+    /**
+     * @var string
+     */
     public $message = 'The related object score(s) fall below the threshold.';
-
-    public $expected;
-
-    public $allowed;
 
     /**
      * @var ContainerInterface
      */
     public $container;
 
-    public function setContainer(ContainerInterface $container)
+    public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
     }

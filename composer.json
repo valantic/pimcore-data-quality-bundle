@@ -45,7 +45,7 @@
     },
     "scripts": {
         "test": "./vendor/bin/phpunit",
-        "phpstan": "./vendor/bin/phpstan analyse src tests -l 1",
+        "phpstan": "./vendor/bin/phpstan analyse src tests -l 6",
         "infection": [
             "Composer\\Config::disableProcessTimeout",
             "./vendor/bin/infection --only-covered"

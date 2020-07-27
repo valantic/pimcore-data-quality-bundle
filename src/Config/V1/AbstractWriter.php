@@ -14,7 +14,9 @@ abstract class AbstractWriter extends Config
 
     /**
      * Persists the new config to disk.
+     *
      * @param array $updated The new config.
+     *
      * @return bool
      */
     protected function writeConfig(array $updated): bool

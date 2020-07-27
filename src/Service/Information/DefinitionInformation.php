@@ -92,8 +92,10 @@ abstract class DefinitionInformation
      * @param FieldCollectionInformation $fieldCollectionInformation
      * @param ObjectBrickInformation $objectBrickInformation
      * @param string $name
+     *
+     * @return void
      */
-    public function make(ClassInformation $classInformation, FieldCollectionInformation $fieldCollectionInformation, ObjectBrickInformation $objectBrickInformation, string $name)
+    public function make(ClassInformation $classInformation, FieldCollectionInformation $fieldCollectionInformation, ObjectBrickInformation $objectBrickInformation, string $name): void
     {
         $this->classInformation = $classInformation;
         $this->fieldCollectionInformation = $fieldCollectionInformation;
@@ -104,9 +106,12 @@ abstract class DefinitionInformation
 
     /**
      * Set the name and pre-load data.
+     *
      * @param string $name
+     *
+     * @return void
      */
-    protected function setName(string $name)
+    protected function setName(string $name): void
     {
         if (strpos($name, '\\') !== false) {
             $nameParts = explode('\\', $name);
@@ -150,7 +155,9 @@ abstract class DefinitionInformation
 
     /**
      * Get the type of a class attribute.
+     *
      * @param string $attribute
+     *
      * @return string|null
      */
     public function getAttributeType(string $attribute): ?string
@@ -179,7 +186,9 @@ abstract class DefinitionInformation
 
     /**
      * Checks whether $attribute is an attribute.
+     *
      * @param string $attribute
+     *
      * @return bool
      */
     public function isAttribute(string $attribute): bool
@@ -189,7 +198,9 @@ abstract class DefinitionInformation
 
     /**
      * Checks whether $attribute is plain.
+     *
      * @param string $attribute
+     *
      * @return bool
      */
     public function isPlainAttribute(string $attribute): bool
@@ -199,7 +210,9 @@ abstract class DefinitionInformation
 
     /**
      * Checks whether $attribute is localized.
+     *
      * @param string $attribute
+     *
      * @return bool
      */
     public function isLocalizedAttribute(string $attribute): bool
@@ -209,7 +222,9 @@ abstract class DefinitionInformation
 
     /**
      * Checks whether $attribute is an objectbrick.
+     *
      * @param string $attribute
+     *
      * @return bool
      */
     public function isObjectbrickAttribute(string $attribute): bool
@@ -219,7 +234,9 @@ abstract class DefinitionInformation
 
     /**
      * Checks whether $attribute is a fieldcollection.
+     *
      * @param string $attribute
+     *
      * @return bool
      */
     public function isFieldcollectionAttribute(string $attribute): bool
@@ -229,7 +246,9 @@ abstract class DefinitionInformation
 
     /**
      * Checks whether $attribute is a classificationstore.
+     *
      * @param string $attribute
+     *
      * @return bool
      */
     public function isClassificationstoreAttribute(string $attribute): bool
@@ -239,7 +258,9 @@ abstract class DefinitionInformation
 
     /**
      * Checks whether $attribute is a relation.
+     *
      * @param string $attribute
+     *
      * @return bool
      */
     public function isRelationAttribute(string $attribute): bool
@@ -253,7 +274,12 @@ abstract class DefinitionInformation
      */
     abstract public function getDefinition();
 
-    protected function findAllAttributes()
+    /**
+     * Finds all attributes.
+     *
+     * @return void
+     */
+    protected function findAllAttributes(): void
     {
         $this->findLocalizedAttributes();
         $this->findObjectbrickAttributes();
@@ -266,16 +292,13 @@ abstract class DefinitionInformation
     /**
      * Finds all localized attributes present in this class keyed by their names
      * and saves them in the corresponding property..
-     * @return array
+     * @return void
      */
     protected function findLocalizedAttributes(): void
     {
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Localizedfields) {
-                /**
-                 * @var $fieldDefinition Localizedfields
-                 */
                 foreach ($fieldDefinition->getChildren() as $child) {
                     $fieldDefinitions[$child->getName()] = $child;
                 }
@@ -295,9 +318,6 @@ abstract class DefinitionInformation
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Objectbricks) {
-                /**
-                 * @var $fieldDefinition Objectbricks
-                 */
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
                     $this->objectBrickInformation->setName($type);
                     $information = clone $this->objectBrickInformation;
@@ -324,9 +344,6 @@ abstract class DefinitionInformation
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Fieldcollections) {
-                /**
-                 * @var $fieldDefinition Fieldcollections
-                 */
                 foreach ($fieldDefinition->getAllowedTypes() as $type) {
                     $this->fieldCollectionInformation->setName($type);
                     $information = clone $this->fieldCollectionInformation;
@@ -352,9 +369,6 @@ abstract class DefinitionInformation
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof Classificationstore) {
-                /**
-                 * @var $fieldDefinition Classificationstore
-                 */
                 // TODO: finish implementation
                 $fieldDefinitions[$fieldDefinition->getName()] = $fieldDefinition;
             }
@@ -374,9 +388,6 @@ abstract class DefinitionInformation
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof AbstractRelations) {
-                /**
-                 * @var $fieldDefinition AbstractRelations
-                 */
                 $fieldDefinitions[$fieldDefinition->getName()] = $fieldDefinition;
             }
         }
@@ -404,7 +415,9 @@ abstract class DefinitionInformation
 
     /**
      * If available, return the label for this attribute.
+     *
      * @param string $attribute
+     *
      * @return string
      */
     public function getAttributeLabel(string $attribute): string

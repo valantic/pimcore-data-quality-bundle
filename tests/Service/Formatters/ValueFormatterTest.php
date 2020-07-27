@@ -7,28 +7,28 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class ValueFormatterTest extends AbstractTestCase
 {
-    public function testSimple()
+    public function testSimple(): void
     {
         $formatter = new ValueFormatter();
         $text = 'lorem ispum';
         $this->assertSame($text, $formatter->format($text));
     }
 
-    public function testTrim()
+    public function testTrim(): void
     {
         $formatter = new ValueFormatter();
         $text = ' abcde   ';
         $this->assertSame('abcde', $formatter->format($text));
     }
 
-    public function testTrimArray()
+    public function testTrimArray(): void
     {
         $formatter = new ValueFormatter();
         $text = [' abcde  '];
         $this->assertSame('abcde', $formatter->format($text)[0]);
     }
 
-    public function testLength()
+    public function testLength(): void
     {
         $formatter = new ValueFormatter();
         $text = 'abcde';
@@ -39,7 +39,7 @@ class ValueFormatterTest extends AbstractTestCase
         $this->assertSame(80 + 6, strlen($formatter->format($textRepeated)));
     }
 
-    public function testLengthExact()
+    public function testLengthExact(): void
     {
         $formatter = new ValueFormatter();
         $text = 'a';
@@ -47,7 +47,7 @@ class ValueFormatterTest extends AbstractTestCase
         $this->assertSame($textRepeated, $formatter->format($textRepeated));
     }
 
-    public function testLengthOneoff()
+    public function testLengthOneoff(): void
     {
         $formatter = new ValueFormatter();
         $text = 'a';
@@ -61,7 +61,7 @@ class ValueFormatterTest extends AbstractTestCase
         $this->assertNotSame($textRepeated, $formatter->format($textRepeated));
     }
 
-    public function testTags()
+    public function testTags(): void
     {
         $formatter = new ValueFormatter();
         $text = '<p>Hello world</p>';
@@ -69,7 +69,7 @@ class ValueFormatterTest extends AbstractTestCase
         $this->assertSame('Hello world', $formatter->format($text));
     }
 
-    public function testTagsArray()
+    public function testTagsArray(): void
     {
         $formatter = new ValueFormatter();
         $text = ['<p>Hello world</p>'];
@@ -77,14 +77,14 @@ class ValueFormatterTest extends AbstractTestCase
         $this->assertSame('Hello world', $formatter->format($text)[0]);
     }
 
-    public function testArraySimple()
+    public function testArraySimple(): void
     {
         $formatter = new ValueFormatter();
         $text = ['lorem ispum'];
         $this->assertSame($text, $formatter->format($text));
     }
 
-    public function testArrayLength()
+    public function testArrayLength(): void
     {
         $formatter = new ValueFormatter();
         $text = ['abcde', '12345'];
@@ -97,7 +97,7 @@ class ValueFormatterTest extends AbstractTestCase
         }
     }
 
-    public function testArrayTags()
+    public function testArrayTags(): void
     {
         $formatter = new ValueFormatter();
         $text = '<p>Hello world</p>';
