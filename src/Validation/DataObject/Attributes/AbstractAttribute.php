@@ -4,6 +4,7 @@ namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Exception;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\ModelInterface;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -12,6 +13,7 @@ use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
+use Valantic\DataQualityBundle\Config\V1\Meta\MetaKeys;
 use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
@@ -85,6 +87,20 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
     protected $skippedConstraints;
 
     /**
+     * The maximum nesting level. Used for cycle detection.
+     * Is set on the very first call and not modified after.
+     * @var int
+     */
+    protected static $maxNestingLevel = -1;
+
+    /**
+     * The root of the validation tree. Used for cycle prevention.
+     * Is set on the very first call and not modified after.
+     * @var ModelInterface
+     */
+    protected static $validationRootObject;
+
+    /**
      * Validates an attribute of an object.
      *
      * @param Concrete $obj Object to validate
@@ -109,6 +125,14 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
         $this->classInformation = $definitionInformationFactory->make($this->obj->getClassName());
         $this->container = $container;
         $this->skippedConstraints = $skippedConstraints;
+
+        if (self::$maxNestingLevel < 0) {
+            self::$maxNestingLevel = $this->metaConfig->getForObject($this->obj)[MetaKeys::KEY_NESTING_LIMIT] ?? 1;
+        }
+
+        if (!self::$validationRootObject) {
+            self::$validationRootObject = clone $this->obj;
+        }
     }
 
     /**
@@ -138,17 +162,20 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
      */
     protected function getConstraints(): array
     {
+        if ($this->getNestingLevel() > 2) {
+            dd();
+        }
         $constraints = [];
         foreach ($this->getRules() as $name => $params) {
+            if ($this->getNestingLevel() > self::$maxNestingLevel) {
+                continue;
+            }
+
             if (strpos($name, '\\') === false) {
                 $name = 'Symfony\Component\Validator\Constraints\\' . $name;
             }
 
             if (!class_exists($name)) {
-                continue;
-            }
-
-            if (in_array($name, $this->skippedConstraints, true)) {
                 continue;
             }
 
@@ -162,7 +189,8 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
                 $subclasses = [1];
             }
 
-            if (!empty($subclasses)) {
+
+            if (in_array($name, $this->skippedConstraints, true) || !empty($subclasses)) {
                 continue;
             }
 
@@ -214,5 +242,16 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
         } catch (Throwable $e) {
             $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
         }
+    }
+
+    /**
+     * Returns the current nesting level. Used for cycle detection.
+     * @return int A positive integer
+     */
+    protected function getNestingLevel(): int
+    {
+        return max(count(array_filter(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), function ($trace) {
+                return ($trace['class'] ?? '') === __CLASS__ && ($trace['function'] ?? '') === 'validate';
+            })) - 1, 0);
     }
 }

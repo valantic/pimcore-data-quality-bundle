@@ -14,7 +14,7 @@ valantic.dataquality.settings_meta = Class.create({
             const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('valantic_dataquality_metaconfig_list'),
-                ['classname', 'locales', 'threshold_green', 'threshold_orange'],
+                ['classname', 'locales', 'threshold_green', 'threshold_orange', 'nesting_limit'],
                 itemsPerPage,
                 {
                     autoLoad: true,
@@ -70,7 +70,12 @@ valantic.dataquality.settings_meta = Class.create({
 
             const columns = [
                 {
-                    text: 'ID', sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60,
+                    text: 'ID',
+                    sortable: true,
+                    dataIndex: 'id',
+                    hidden: true,
+                    filter: 'numeric',
+                    flex: 60,
                 },
                 {
                     text: t('valantic_dataquality_config_column_classname'),
@@ -102,6 +107,13 @@ valantic.dataquality.settings_meta = Class.create({
                     text: t('valantic_dataquality_config_column_threshold_orange'),
                     sortable: true,
                     dataIndex: 'threshold_orange',
+                    filter: 'number',
+                    flex: 50,
+                },
+                {
+                    text: t('valantic_dataquality_config_column_nesting_limit'),
+                    sortable: true,
+                    dataIndex: 'nesting_limit',
                     filter: 'number',
                     flex: 50,
                 },
@@ -237,6 +249,7 @@ valantic.dataquality.settings_meta = Class.create({
             maxValue: 100,
             minValue: 0,
         };
+
         const orangeRange = {
             xtype: 'numberfield',
             fieldLabel: t('valantic_dataquality_config_column_threshold_orange'),
@@ -248,9 +261,20 @@ valantic.dataquality.settings_meta = Class.create({
             minValue: 0,
         };
 
+        const nestingLimitRange = {
+            xtype: 'numberfield',
+            fieldLabel: t('valantic_dataquality_config_column_nesting_limit'),
+            name: 'nesting_limit',
+            editable: true,
+            width: 250,
+            value: record ? record.get('nesting_limit') : 1,
+            maxValue: 48,
+            minValue: 0,
+        };
+
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
-            items: [classnameCombo, localeCombo, greenRange, orangeRange],
+            items: [classnameCombo, localeCombo, greenRange, orangeRange, nestingLimitRange],
         });
 
         const modifyWin = new Ext.Window({
@@ -263,7 +287,8 @@ valantic.dataquality.settings_meta = Class.create({
                 text: t('save'),
                 iconCls: 'pimcore_icon_accept',
                 handler: function () {
-                    const values = formPanel.getForm().getFieldValues();
+                    const values = formPanel.getForm()
+                        .getFieldValues();
 
                     Ext.Ajax.request({
                         url: Routing.generate('valantic_dataquality_metaconfig_modify'),

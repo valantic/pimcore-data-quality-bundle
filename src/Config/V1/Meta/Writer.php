@@ -35,9 +35,11 @@ class Writer extends AbstractWriter implements MetaKeys
      * @param int $thresholdGreen
      * @param int $thresholdOrange
      *
+     * @param int $nestingLimit
+     *
      * @return bool
      */
-    public function update(string $className, array $locales = [], int $thresholdGreen = 0, int $thresholdOrange = 0): bool
+    public function update(string $className, array $locales = [], int $thresholdGreen = 0, int $thresholdOrange = 0, int $nestingLimit = 1): bool
     {
         $raw = $this->reader->getCurrentSection();
         if (!$this->reader->isClassConfigured($className)) {
@@ -46,6 +48,7 @@ class Writer extends AbstractWriter implements MetaKeys
         $raw[$className][self::KEY_LOCALES] = $locales;
         $raw[$className][self::KEY_THRESHOLD_GREEN] = $thresholdGreen / 100;
         $raw[$className][self::KEY_THRESHOLD_ORANGE] = $thresholdOrange / 100;
+        $raw[$className][self::KEY_NESTING_LIMIT] = $nestingLimit;
 
         return $this->writeConfig($raw);
     }

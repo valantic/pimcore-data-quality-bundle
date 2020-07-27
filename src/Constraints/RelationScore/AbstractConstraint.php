@@ -10,7 +10,7 @@ abstract class AbstractConstraint extends AbstractCustomConstraint
     /**
      * @var string
      */
-    public $message = 'The related object score(s) fall below the threshold.';
+    public $message = 'The related object score(s) fall below the threshold (IDs: {{ ids }}).';
 
     /**
      * @var ContainerInterface

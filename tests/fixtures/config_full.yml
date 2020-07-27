@@ -57,6 +57,7 @@ meta:
       - de
     threshold_green: 0.9
     threshold_orange: 0.5
+    nesting_limit: 4
   Customer:
     locales:
       - en

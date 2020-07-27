@@ -59,12 +59,14 @@ meta:
       - en
     threshold_green: 0.95
     threshold_orange: 0.5
+    nesting_limit: 2
   Customer:
     locales:
       - en
       - de
     threshold_green: 0.9
     threshold_orange: 0.6
+    nesting_limit: 3
 ```
 
 All options can be configured in Pimcore's backend.

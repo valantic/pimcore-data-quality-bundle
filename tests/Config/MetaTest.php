@@ -75,6 +75,7 @@ class MetaTest extends AbstractTestCase
         $this->assertTrue($this->reader->isClassConfigured($className));
         $config = $this->reader->getForClass($className);
 
+        $this->assertArrayHasKey(MetaKeys::KEY_NESTING_LIMIT, $config);
         $this->assertArrayHasKey(MetaKeys::KEY_LOCALES, $config);
         $this->assertArrayHasKey(MetaKeys::KEY_THRESHOLD_ORANGE, $config);
         $this->assertArrayHasKey(MetaKeys::KEY_THRESHOLD_GREEN, $config);
@@ -100,6 +101,7 @@ class MetaTest extends AbstractTestCase
             ],
             'threshold_green' => 0.8,
             'threshold_orange' => 0.5,
+            'nesting_limit' => 1,
         ], $this->reader->getForClass($this->className));
     }
 
@@ -115,6 +117,7 @@ class MetaTest extends AbstractTestCase
             ],
             'threshold_green' => 0.8,
             'threshold_orange' => 0.5,
+            'nesting_limit' => 1,
         ], $this->reader->getForClass($this->className));
     }
 
@@ -130,6 +133,7 @@ class MetaTest extends AbstractTestCase
             ],
             'threshold_green' => 0.8,
             'threshold_orange' => 0.5,
+            'nesting_limit' => 1,
         ], $this->reader->getForClass($this->className));
     }
 
@@ -146,21 +150,30 @@ class MetaTest extends AbstractTestCase
 
     public function testWriteUpdates(): void
     {
-        $this->writer->update($this->className, [], 80, 0);
+        $this->writer->update($this->className, [], 80, 0, 1);
         $this->assertSame(0.8, $this->reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
 
-        $this->writer->update($this->className, [], 70, 0);
-        $this->writer->update($this->className, [], 50, 70);
+        $this->writer->update($this->className, [], 70, 0, 1);
+        $this->writer->update($this->className, [], 50, 70, 1);
         $this->assertSame(0.5, $this->reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
 
-        $this->writer->update($this->className, [], 0, 0);
+        $this->writer->update($this->className, [], 0, 0, 1);
         $this->assertSame([], $this->reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
 
-        $this->writer->update($this->className, ['a'], 0, 0);
+        $this->writer->update($this->className, ['a'], 0, 0, 1);
         $this->assertSame(['a'], $this->reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
 
-        $this->writer->update($this->className, ['b'], 0, 0);
+        $this->writer->update($this->className, ['b'], 0, 0, 1);
         $this->assertSame(['b'], $this->reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
+
+        $this->writer->update($this->className, ['b'], 0, 0, 1);
+        $this->assertSame(1, $this->reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
+
+        $this->writer->update($this->className, ['b'], 0, 0, 3);
+        $this->assertSame(3, $this->reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
+
+        $this->writer->update($this->className, ['b'], 0, 0, 0);
+        $this->assertSame(0, $this->reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
     }
 
     public function testDeleteEntry(): void

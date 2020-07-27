@@ -19,10 +19,14 @@ class RelationAttribute extends AbstractAttribute
 
         $ids = [];
 
-        foreach ($relation as $item) {
-            $ids[] = $item->getId();
+        if (is_array($relation)) {
+            foreach ($relation as $item) {
+                $ids[] = $item->getId();
+            }
+        } else {
+            $ids[] = $relation->getId();
         }
 
-        return $ids;
+        return array_diff($ids, [self::$validationRootObject->getId()]);
     }
 }

@@ -117,6 +117,7 @@ class MetaControllerTest extends AbstractTestCase
         $reader = $this->getMetaReader();
         $config = $reader->getForClass($decoded['classname']);
 
+        $this->assertSame($config[MetaKeys::KEY_NESTING_LIMIT], $decoded['nesting_limit']);
         $this->assertSame($config[MetaKeys::KEY_LOCALES], $decoded['locales']);
         $this->assertEqualsWithDelta($config[MetaKeys::KEY_THRESHOLD_GREEN] * 100, $decoded['threshold_green'], 0.1);
         $this->assertEqualsWithDelta($config[MetaKeys::KEY_THRESHOLD_ORANGE] * 100, $decoded['threshold_orange'], 0.1);
@@ -183,6 +184,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame([], $reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
         $this->assertSame(0, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_ORANGE]);
         $this->assertSame(0, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
+        $this->assertSame(1, $reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
 
         $decoded = json_decode($content, true);
 
@@ -201,6 +203,7 @@ class MetaControllerTest extends AbstractTestCase
             'locales' => ['de', 'en'],
             'threshold_green' => 80,
             'threshold_orange' => 50,
+            'nesting_limit' => 2,
         ]), $this->getMetaWriter());
 
         $content = $response->getContent();
@@ -214,6 +217,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame(['de', 'en'], $reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
         $this->assertSame(0.5, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_ORANGE]);
         $this->assertSame(0.8, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
+        $this->assertSame(2, $reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
 
         $decoded = json_decode($content, true);
 

@@ -18,6 +18,11 @@ abstract class AbstractValidator extends ConstraintValidator
     protected $validate;
 
     /**
+     * @var bool
+     */
+    protected $skipConstraintOnFurtherValidation = true;
+
+    /**
      * Get the Colorable threshold for this validator.
      * @return string
      */
@@ -55,21 +60,27 @@ abstract class AbstractValidator extends ConstraintValidator
 
         $validCount = 0;
         $totalCount = 0;
+        $failedIds = [];
 
         foreach ($value as $id) {
             $validation = clone $this->validate;
             $validation->setObject(Concrete::getById($id));
-            $validation->addSkippedConstraint(AbstractConstraint::class);
+            if ($this->skipConstraintOnFurtherValidation) {
+                $validation->addSkippedConstraint(AbstractConstraint::class);
+            }
             $validation->validate();
             $totalCount++;
 
             if ($validation->color() === $this->getThresholdKey() || ($this->getThresholdKey() === Colorable::COLOR_ORANGE && $validation->color() === Colorable::COLOR_GREEN)) {
                 $validCount++;
+            } else {
+                $failedIds[] = $id;
             }
         }
 
         if ($validCount !== $totalCount) {
             $this->context->buildViolation($constraint->message)
+                ->setParameter('{{ ids }}', implode(', ', $failedIds))
                 ->addViolation();
         }
     }

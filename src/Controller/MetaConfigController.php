@@ -39,6 +39,7 @@ class MetaConfigController extends BaseController
             }
             $entries[] = [
                 'classname' => $className,
+                'nesting_limit' => $config->getForClass($className)[$config::KEY_NESTING_LIMIT] ?? 1,
                 'locales' => $config->getForClass($className)[$config::KEY_LOCALES] ?? [],
                 'threshold_green' => ($config->getForClass($className)[$config::KEY_THRESHOLD_GREEN] ?? 0) * 100,
                 'threshold_orange' => ($config->getForClass($className)[$config::KEY_THRESHOLD_ORANGE] ?? 0) * 100,
@@ -114,7 +115,8 @@ class MetaConfigController extends BaseController
                 $request->request->get('classname'),
                 $request->request->get('locales', []),
                 $request->request->getInt('threshold_green'),
-                $request->request->getInt('threshold_orange')
+                $request->request->getInt('threshold_orange'),
+                $request->request->getInt('nesting_limit', 1)
             ),
         ]);
     }

@@ -5,6 +5,7 @@
          backupGlobals="false"
          colors="true"
          bootstrap="./vendor/autoload.php"
+         cacheResult="true"
 >
     <php>
         <ini name="error_reporting" value="-1"/>
