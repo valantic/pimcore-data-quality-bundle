@@ -36,9 +36,13 @@ class MetaControllerTest extends AbstractTestCase
         $this->controller->setContainer(self::$container);
         $response = $this->controller->listAction(Request::create('/'), $this->getMetaReader());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), false);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, false);
 
         $this->assertSame([], $decoded);
     }
@@ -50,9 +54,13 @@ class MetaControllerTest extends AbstractTestCase
         $this->controller->setContainer(self::$container);
         $response = $this->controller->listAction(Request::create('/'), $this->getMetaReader());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), true);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, true);
 
         $this->assertCount(2, $decoded);
 
@@ -78,9 +86,13 @@ class MetaControllerTest extends AbstractTestCase
 
         $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'Product']), $this->getMetaReader());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), true);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, true);
 
         $this->assertCount(1, $decoded);
 
@@ -94,9 +106,13 @@ class MetaControllerTest extends AbstractTestCase
         $this->controller->setContainer(self::$container);
         $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'Product']), $this->getMetaReader());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), true)[0];
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, true)[0];
 
         $reader = $this->getMetaReader();
         $config = $reader->getForClass($decoded['classname']);
@@ -111,9 +127,13 @@ class MetaControllerTest extends AbstractTestCase
         $this->activateConfig(self::CONFIG_FULL);
 
         $response = $this->controller->listClassesAction($this->getMetaReader());
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), true);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('classes', $decoded);
         $this->assertCount(1, $decoded['classes']);
@@ -131,10 +151,14 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertCount(2, $reader->getConfiguredClasses());
         $response = $this->controller->modifyAction(Request::create('/', 'POST'), $this->getMetaWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(2, $reader->getConfiguredClasses());
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -148,7 +172,11 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertCount(2, $reader->getConfiguredClasses());
         $response = $this->controller->modifyAction(Request::create('/', 'POST', ['classname' => $this->className]), $this->getMetaWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(3, $reader->getConfiguredClasses());
         $this->assertTrue($reader->isClassConfigured($this->className));
 
@@ -156,7 +184,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame(0, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_ORANGE]);
         $this->assertSame(0, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -175,7 +203,11 @@ class MetaControllerTest extends AbstractTestCase
             'threshold_orange' => 50,
         ]), $this->getMetaWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(3, $reader->getConfiguredClasses());
         $this->assertTrue($reader->isClassConfigured($this->className));
 
@@ -183,7 +215,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame(0.5, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_ORANGE]);
         $this->assertSame(0.8, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -197,10 +229,14 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertCount(2, $reader->getConfiguredClasses());
         $response = $this->controller->deleteAction(Request::create('/', 'POST'), $this->getMetaWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(2, $reader->getConfiguredClasses());
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -214,10 +250,14 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertCount(2, $reader->getConfiguredClasses());
         $response = $this->controller->deleteAction(Request::create('/', 'POST', ['classname' => 'Product']), $this->getMetaWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(1, $reader->getConfiguredClasses());
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -233,8 +273,12 @@ class MetaControllerTest extends AbstractTestCase
 
         $response = $this->controller->listLocalesAction($localesList);
 
-        $this->assertJson($response->getContent());
-        $decoded = json_decode($response->getContent(), true);
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('locales', $decoded);
         $this->assertSameSize($locales, $decoded['locales']);

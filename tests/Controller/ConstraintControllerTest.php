@@ -52,9 +52,13 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->controller->setContainer(self::$container);
         $response = $this->controller->listAction(Request::create('/'), $this->getConstraintsReader(), new ConstraintDefinitions([]));
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), false);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, false);
 
         $this->assertSame([], $decoded);
     }
@@ -66,9 +70,13 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->controller->setContainer(self::$container);
         $response = $this->controller->listAction(Request::create('/'), $this->getConstraintsReader(), new ConstraintDefinitions([]));
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), true);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, true);
 
         $this->assertCount(10, $decoded);
 
@@ -94,9 +102,13 @@ class ConstraintControllerTest extends AbstractTestCase
 
         $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'Product']), $this->getConstraintsReader(), new ConstraintDefinitions([]));
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), true);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, true);
 
         $this->assertCount(6, $decoded);
 
@@ -112,9 +124,13 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->controller->setContainer(self::$container);
         $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'email']), $this->getConstraintsReader(), new ConstraintDefinitions([]));
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), true);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, true);
         $this->assertCount(1, $decoded);
 
         $entry = $decoded[0];
@@ -138,9 +154,13 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->activateConfig(self::CONFIG_FULL);
 
         $response = $this->controller->listClassesAction();
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
 
-        $decoded = json_decode($response->getContent(), true);
+        $this->assertJson($content);
+
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('classes', $decoded);
         $this->assertCount(3, $decoded['classes']);
@@ -156,8 +176,12 @@ class ConstraintControllerTest extends AbstractTestCase
 
         $response = $this->controller->listAttributesAction(Request::create('/', 'GET'), $this->getConstraintsReader(), $this->getInformationFactory());
 
-        $this->assertJson($response->getContent());
-        $decoded = json_decode($response->getContent(), true);
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
+        $decoded = json_decode($content, true);
 
         $this->assertCount(1, $decoded);
         $this->assertArrayHasKey('attributes', $decoded);
@@ -171,8 +195,12 @@ class ConstraintControllerTest extends AbstractTestCase
 
         $response = $this->controller->listAttributesAction(Request::create('/', 'GET', ['classname' => 'Product']), $this->getConstraintsReader(), $this->getInformationFactory());
 
-        $this->assertJson($response->getContent());
-        $decoded = json_decode($response->getContent(), true);
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
+        $decoded = json_decode($content, true);
 
         $this->assertCount(1, $decoded);
         $this->assertArrayHasKey('attributes', $decoded);
@@ -192,10 +220,14 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertCount(0, $reader->getConfiguredClassAttributes($this->className));
         $response = $this->controller->addAttributeAction(Request::create('/', 'POST'), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(0, $reader->getConfiguredClassAttributes($this->className));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -212,14 +244,18 @@ class ConstraintControllerTest extends AbstractTestCase
             'attributename' => $this->attributeName,
         ]), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(1, $reader->getConfiguredClassAttributes($this->className));
         $this->assertTrue($reader->isClassConfigured($this->className));
         $this->assertTrue($reader->isClassAttributeConfigured($this->className, $this->attributeName));
         $this->assertSame([], $reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertNull($reader->getNoteForClassAttribute($this->className, $this->attributeName));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -237,14 +273,18 @@ class ConstraintControllerTest extends AbstractTestCase
             'note' => 'NOTE',
         ]), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(1, $reader->getConfiguredClassAttributes($this->className));
         $this->assertTrue($reader->isClassConfigured($this->className));
         $this->assertTrue($reader->isClassAttributeConfigured($this->className, $this->attributeName));
         $this->assertSame([], $reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertSame('NOTE', $reader->getNoteForClassAttribute($this->className, $this->attributeName));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -258,10 +298,14 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertCount(6, $reader->getConfiguredClassAttributes('Product'));
         $response = $this->controller->deleteAttributeAction(Request::create('/', 'POST'), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(6, $reader->getConfiguredClassAttributes('Product'));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -278,10 +322,14 @@ class ConstraintControllerTest extends AbstractTestCase
             'attributename' => 'name',
         ]), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(5, $reader->getConfiguredClassAttributes('Product'));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -293,8 +341,12 @@ class ConstraintControllerTest extends AbstractTestCase
 
         $response = $this->controller->listConstraintsAction((new ConstraintDefinitions([])));
 
-        $this->assertJson($response->getContent());
-        $decoded = json_decode($response->getContent(), true);
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
+        $decoded = json_decode($content, true);
 
         $this->assertCount(1, $decoded);
         $this->assertArrayHasKey('constraints', $decoded);
@@ -327,10 +379,14 @@ class ConstraintControllerTest extends AbstractTestCase
             'attributename' => $this->attributeName,
         ]), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(0, $reader->getConfiguredClassAttributes($this->className));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -348,13 +404,17 @@ class ConstraintControllerTest extends AbstractTestCase
             'constraint' => $this->constraintName,
         ]), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(1, $reader->getConfiguredClassAttributes($this->className));
         $this->assertTrue($reader->isClassConfigured($this->className));
         $this->assertTrue($reader->isClassAttributeConfigured($this->className, $this->attributeName));
         $this->assertSame([$this->constraintName => null], $reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -373,13 +433,17 @@ class ConstraintControllerTest extends AbstractTestCase
             'params' => json_encode($this->constraintParams),
         ]), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(1, $reader->getConfiguredClassAttributes($this->className));
         $this->assertTrue($reader->isClassConfigured($this->className));
         $this->assertTrue($reader->isClassAttributeConfigured($this->className, $this->attributeName));
         $this->assertSame([$this->constraintName => $this->constraintParams], $reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -396,10 +460,14 @@ class ConstraintControllerTest extends AbstractTestCase
             'attributename' => 'name',
         ]), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(2, $reader->getRulesForClassAttribute('Product', 'name'));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -417,10 +485,14 @@ class ConstraintControllerTest extends AbstractTestCase
             'constraint' => 'Length',
         ]), $this->getConstraintsWriter());
 
-        $this->assertJson($response->getContent());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $content = (string)$content;
+
+        $this->assertJson($content);
         $this->assertCount(1, $reader->getRulesForClassAttribute('Product', 'name'));
 
-        $decoded = json_decode($response->getContent(), true);
+        $decoded = json_decode($content, true);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);

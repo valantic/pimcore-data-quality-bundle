@@ -90,7 +90,7 @@ class Writer extends AbstractWriter implements ConstraintKeys
     public function modifyRule(string $className, string $attributeName, string $constraint, string $params = null): bool
     {
         try {
-            $paramsParsed = json_decode($params, true, 512, JSON_THROW_ON_ERROR);
+            $paramsParsed = json_decode($params ?: '', true, 512, JSON_THROW_ON_ERROR);
         } catch (Throwable $throwable) {
             $paramsParsed = $params;
         }
