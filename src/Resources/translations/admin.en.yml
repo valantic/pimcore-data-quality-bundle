@@ -1,6 +1,6 @@
 valantic_dataquality_config_column_attributename: 'Attribute'
 valantic_dataquality_config_column_classname: 'Class name'
-valantic_dataquality_config_column_constraint: 'Contraint'
+valantic_dataquality_config_column_constraint: 'Constraint'
 valantic_dataquality_config_column_locales: 'Locales'
 valantic_dataquality_config_column_note: 'Note'
 valantic_dataquality_config_column_parameters: 'Parameters (JSON)'

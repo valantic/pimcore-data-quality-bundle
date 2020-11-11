@@ -16,20 +16,20 @@ class ConstraintDefinitions
      */
     public function __construct(iterable $taggedConstraints)
     {
-        $customContraints = [];
+        $customConstraints = [];
         try {
             /**
              * @var IteratorAggregate $taggedConstraints
              */
             foreach ($taggedConstraints->getIterator() as $taggedConstraint) {
                 if ($taggedConstraint instanceof CustomConstraintParameters) {
-                    $customContraints[] = $taggedConstraint;
+                    $customConstraints[] = $taggedConstraint;
                 }
             }
         } catch (\Throwable $throwable) {
 
         }
-        $this->customConstraints = $customContraints;
+        $this->customConstraints = $customConstraints;
     }
 
     /**
