@@ -1,6 +1,131 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\AbstractReader\\:\\:getForClass\\(\\) expects class\\-string, string given\\.$#"
+			count: 1
+			path: src/Config/V1/AbstractReader.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\AbstractReader\\:\\:getForClass\\(\\) expects class\\-string, string given\\.$#"
+			count: 2
+			path: src/Config/V1/Constraints/Reader.php
+
+		-
+			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$container\\.$#"
+			count: 1
+			path: src/Constraints/RelationScore/AbstractValidator.php
+
+		-
+			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$message\\.$#"
+			count: 1
+			path: src/Constraints/RelationScore/AbstractValidator.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:addClassAttribute\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:deleteClassAttribute\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:deleteRule\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:modifyNote\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:modifyRule\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Valantic\\\\DataQualityBundle\\\\Service\\\\Information\\\\DefinitionInformationFactory\\:\\:make\\(\\) expects class\\-string, bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#2 \\$attributeName of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:addClassAttribute\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#2 \\$attributeName of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:deleteClassAttribute\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#2 \\$attributeName of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:deleteRule\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#2 \\$attributeName of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:modifyNote\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#2 \\$attributeName of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:modifyRule\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#3 \\$constraint of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:deleteRule\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#3 \\$constraint of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:modifyRule\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#3 \\$note of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:modifyNote\\(\\) expects string\\|null, bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#4 \\$params of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Constraints\\\\Writer\\:\\:modifyRule\\(\\) expects string\\|null, bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/Controller/ConstraintConfigController.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Meta\\\\Writer\\:\\:delete\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/MetaConfigController.php
+
+		-
+			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Meta\\\\Writer\\:\\:update\\(\\) expects string, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|true given\\.$#"
+			count: 1
+			path: src/Controller/MetaConfigController.php
+
+		-
+			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\:\\:get\\(\\) expects bool\\|float\\|int\\|string\\|null, array given\\.$#"
+			count: 1
+			path: src/Controller/MetaConfigController.php
+
+		-
+			message: "#^Parameter \\#2 \\$locales of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\Meta\\\\Writer\\:\\:update\\(\\) expects array, bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/Controller/MetaConfigController.php
+
+		-
+			message: "#^Call to an undefined static method Valantic\\\\DataQualityBundle\\\\Event\\\\Event\\:\\:__construct\\(\\)\\.$#"
+			count: 1
+			path: src/Event/ConstraintFailureEvent.php
+
+		-
+			message: "#^Call to an undefined static method Valantic\\\\DataQualityBundle\\\\Event\\\\Event\\:\\:__construct\\(\\)\\.$#"
+			count: 1
+			path: src/Event/InvalidConstraintEvent.php
+
+		-
 			message: "#^Cannot call method getIterator\\(\\) on iterable\\.$#"
 			count: 1
 			path: src/Repository/ConstraintDefinitions.php
@@ -11,22 +136,52 @@ parameters:
 			path: src/Repository/ConstraintDefinitions.php
 
 		-
-			message: "#^Parameter \\#1 \\$obj of method Valantic\\\\DataQualityBundle\\\\Config\\\\V1\\\\AbstractReader\\:\\:getForObject\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete, Pimcore\\\\Model\\\\ModelInterface given\\.$#"
+			message: "#^Method Valantic\\\\DataQualityBundle\\\\Service\\\\Formatters\\\\ValueFormatter\\:\\:shorten\\(\\) should return array\\<string\\>\\|string but returns array\\<array\\<string\\>\\|string\\>\\.$#"
 			count: 1
-			path: src/Validation/AbstractValidateObject.php
+			path: src/Service/Formatters/ValueFormatter.php
 
 		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$args of function array_merge_recursive expects array, Symfony\\\\Component\\\\Validator\\\\ConstraintViolationListInterface given\\.$#"
+			message: "#^Method Valantic\\\\DataQualityBundle\\\\Service\\\\Formatters\\\\ValueFormatter\\:\\:stripTags\\(\\) should return array\\<string\\>\\|string but returns array\\<array\\<string\\>\\|string\\>\\|string\\.$#"
+			count: 1
+			path: src/Service/Formatters/ValueFormatter.php
+
+		-
+			message: "#^Method Valantic\\\\DataQualityBundle\\\\Service\\\\Formatters\\\\ValueFormatter\\:\\:trim\\(\\) should return array\\<string\\>\\|string but returns array\\<array\\<string\\>\\|string\\>\\|string\\.$#"
+			count: 1
+			path: src/Service/Formatters/ValueFormatter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\|Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Definition\\:\\:getTitle\\(\\)\\.$#"
+			count: 2
+			path: src/Service/Information/DefinitionInformation.php
+
+		-
+			message: "#^Method Valantic\\\\DataQualityBundle\\\\ValanticDataQualityBundle\\:\\:getInstaller\\(\\) should return Valantic\\\\DataQualityBundle\\\\Installer\\\\Installer but returns object\\|null\\.$#"
+			count: 1
+			path: src/ValanticDataQualityBundle.php
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Valantic\\\\DataQualityBundle\\\\Service\\\\Information\\\\DefinitionInformationFactory\\:\\:make\\(\\) expects class\\-string, string given\\.$#"
+			count: 1
+			path: src/Validation/DataObject/Attributes/AbstractAttribute.php
+
+		-
+			message: "#^Property Valantic\\\\DataQualityBundle\\\\Validation\\\\DataObject\\\\Attributes\\\\AbstractAttribute\\:\\:\\$violations \\(array\\<Symfony\\\\Component\\\\Validator\\\\ConstraintViolationListInterface\\>\\) does not accept Symfony\\\\Component\\\\Validator\\\\ConstraintViolationListInterface\\.$#"
+			count: 1
+			path: src/Validation/DataObject/Attributes/AbstractAttribute.php
+
+		-
+			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge_recursive expects array, Symfony\\\\Component\\\\Validator\\\\ConstraintViolationListInterface given\\.$#"
 			count: 1
 			path: src/Validation/DataObject/Attributes/FieldCollectionAttribute.php
 
 		-
-			message: "#^Instanceof between Symfony\\\\Component\\\\Validator\\\\Constraint and Valantic\\\\DataQualityBundle\\\\Tests\\\\Repository\\\\SampleValidatorMinimal will always evaluate to false\\.$#"
+			message: "#^Parameter \\#1 \\$name of method Valantic\\\\DataQualityBundle\\\\Service\\\\Information\\\\DefinitionInformationFactory\\:\\:make\\(\\) expects class\\-string, string given\\.$#"
 			count: 1
-			path: tests/Repository/SampleValidatorMinimal.php
+			path: src/Validation/DataObject/Validate.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between int\\<1, max\\> and 0 will always evaluate to false\\.$#"
 			count: 1
-			path: tests/Repository/SampleValidatorMinimal.php
+			path: src/Validation/DataObject/Validate.php
 

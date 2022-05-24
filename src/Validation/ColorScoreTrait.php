@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Validation;
 
 trait ColorScoreTrait
@@ -14,16 +16,12 @@ trait ColorScoreTrait
 
     /**
      * Perform the actual calculation of the color.
-     *
-     * @param float $score
-     *
-     * @return string
      */
     protected function calculateColor(float $score): string
     {
         $config = $this->metaConfig->getForObject($this->obj);
-        $greenThreshold = $config[$this->metaConfig::KEY_THRESHOLD_GREEN];
-        $orangeThreshold = $config[$this->metaConfig::KEY_THRESHOLD_ORANGE];
+        $greenThreshold = $config[$this->metaConfig::KEY_THRESHOLD_GREEN] ?? 0;
+        $orangeThreshold = $config[$this->metaConfig::KEY_THRESHOLD_ORANGE] ?? 0;
 
         if ($greenThreshold >= 0 && $score >= $greenThreshold) {
             return self::COLOR_GREEN;

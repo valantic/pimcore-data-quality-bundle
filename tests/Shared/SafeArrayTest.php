@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Shared;
 
 use PHPUnit\Framework\TestCase;
 
 class SafeArrayTest extends TestCase
 {
-    /**
-     * @var SafeArrayImplementation
-     */
-    protected $obj;
+    protected SafeArrayImplementation $obj;
 
     protected function setUp(): void
     {
@@ -21,6 +20,7 @@ class SafeArrayTest extends TestCase
         $this->assertSame([], $this->obj->get(0, 0));
         $this->assertSame([], $this->obj->get(null, null));
         $this->assertSame([], $this->obj->get('', ''));
+        $this->expectError();
         $this->assertSame([], $this->obj->get(new \stdClass(), new \stdClass()));
     }
 

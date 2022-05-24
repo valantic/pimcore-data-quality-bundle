@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Model\DataObject\Objectbrick;
@@ -10,7 +12,7 @@ class ObjectBrickAttribute extends AbstractAttribute
     /**
      * {@inheritDoc}
      */
-    public function value()
+    public function value(): mixed
     {
         [$attribute, $brick, $brickAttribute] = explode('.', $this->attribute, 3);
         $objAttr = $this->obj->get($attribute);

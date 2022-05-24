@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\Installer\InstallerInterface;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Valantic\DataQualityBundle\Installer\Installer;
 
@@ -12,16 +13,7 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
     use PackageVersionTrait;
 
     /**
-     * {@inheritdoc}
-     * @codeCoverageIgnore
-     */
-    protected function getComposerPackageName(): string
-    {
-        return 'valantic-pimcore/data-quality-bundle';
-    }
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getJsPaths(): array
     {
@@ -35,13 +27,22 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
-     * @return InstallerInterface|null
      * @codeCoverageIgnore Can't be executed in testing
      */
-    public function getInstaller()
+    public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
+     */
+    protected function getComposerPackageName(): string
+    {
+        return 'valantic-pimcore/data-quality-bundle';
     }
 }

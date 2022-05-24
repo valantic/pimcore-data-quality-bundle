@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Validation;
 
-use Pimcore\Model\Element\AbstractElement;
-use Pimcore\Model\ModelInterface;
+use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
@@ -16,56 +17,20 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
 {
     use ColorScoreTrait;
 
-    /**
-     * @var ModelInterface
-     */
-    protected $obj;
+    protected Concrete $obj;
 
-    /**
-     * @var ConstraintsConfig
-     */
-    protected $constraintsConfig;
-
-    /**
-     * @var MetaConfig
-     */
-    protected $metaConfig;
-
-    /**
-     * @var array
-     */
-    protected $validationConfig;
+    protected array $validationConfig;
 
     /**
      * Validators used for this object.
+     *
      * @var AbstractAttribute[]
      */
-    protected $validators = [];
+    protected array $validators = [];
 
-    /**
-     * @var DefinitionInformation
-     */
-    protected $classInformation;
+    protected DefinitionInformation $classInformation;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var DefinitionInformationFactory
-     */
-    protected $definitionInformationFactory;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $skippedConstraints = [];
+    protected array $skippedConstraints = [];
 
     /**
      * Validate an object and all its attributes.
@@ -76,57 +41,17 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
      * @param DefinitionInformationFactory $definitionInformationFactory
      * @param ContainerInterface $container
      */
-    public function __construct(ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory, ContainerInterface $container)
-    {
-        $this->constraintsConfig = $constraintsConfig;
-        $this->metaConfig = $metaConfig;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->definitionInformationFactory = $definitionInformationFactory;
-        $this->container = $container;
+    public function __construct(
+        protected ConstraintsConfig $constraintsConfig,
+        protected MetaConfig $metaConfig,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected DefinitionInformationFactory $definitionInformationFactory,
+        protected ContainerInterface $container
+    ) {
     }
-
-    /**
-     * Returns a list of all attributes that can be validated i.e. that exist and are configured.
-     * @return array
-     */
-    protected function getValidatableAttributes(): array
-    {
-        return array_intersect($this->getAttributesInConfig(), $this->getAttributesInObject());
-    }
-
-    /**
-     * Returns a list of configured attributes.
-     * @return array
-     */
-    protected function getAttributesInConfig(): array
-    {
-        return array_keys($this->validationConfig);
-    }
-
-    /**
-     * Returns a list of attributes present in the object.
-     * @return array
-     */
-    protected function getAttributesInObject(): array
-    {
-        return array_keys($this->classInformation->getAllAttributes());
-    }
-
-    /**
-     * Set the object to validate.
-     *
-     * @param AbstractElement $obj The object to validate.
-     *
-     * @return void
-     */
-    abstract public function setObject(AbstractElement $obj): void;
 
     /**
      * Mark a constraint validator as skipped (useful to prevent recursion/cycles for relations).
-     *
-     * @param string $constraintValidator
-     *
-     * @return void
      */
     public function addSkippedConstraint(string $constraintValidator): void
     {
@@ -135,7 +60,6 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
 
     /**
      * Get the scores for the individual attributes.
-     * @return array
      */
     public function attributeScores(): array
     {
@@ -165,5 +89,36 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
         }
 
         return $attributeScores;
+    }
+
+    /**
+     * Set the object to validate.
+     *
+     * @param Concrete $obj the object to validate
+     */
+    abstract public function setObject(Concrete $obj): void;
+
+    /**
+     * Returns a list of all attributes that can be validated i.e. that exist and are configured.
+     */
+    protected function getValidatableAttributes(): array
+    {
+        return array_intersect($this->getAttributesInConfig(), $this->getAttributesInObject());
+    }
+
+    /**
+     * Returns a list of configured attributes.
+     */
+    protected function getAttributesInConfig(): array
+    {
+        return array_keys($this->validationConfig);
+    }
+
+    /**
+     * Returns a list of attributes present in the object.
+     */
+    protected function getAttributesInObject(): array
+    {
+        return array_keys($this->classInformation->getAllAttributes());
     }
 }

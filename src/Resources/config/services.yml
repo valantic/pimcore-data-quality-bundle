@@ -15,18 +15,16 @@ services:
     Valantic\DataQualityBundle\Controller\:
         resource: '../../Controller'
         public: true
-        tags: ['controller.service_arguments']
+        tags: [ 'controller.service_arguments' ]
 
 
     Valantic\DataQualityBundle\Command\:
         resource: '../../Command'
-        tags: ['console.command']
+        tags: [ 'console.command' ]
 
 
     Valantic\DataQualityBundle\Installer\Installer:
         public: true
-        arguments:
-            $bundle: "@=service('kernel').getBundle('ValanticDataQualityBundle')"
 
 
     Valantic\DataQualityBundle\Service\:
@@ -54,4 +52,4 @@ services:
 
     Valantic\DataQualityBundle\Constraints\:
         resource: '../../Constraints'
-        tags: ['validator.constraint_validator']
+        tags: [ 'validator.constraint_validator' ]

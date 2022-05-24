@@ -1,59 +1,88 @@
 {
-    "name": "valantic-pimcore/data-quality-bundle",
-    "description": "Data quality score for Pimcore",
-    "type": "pimcore-bundle",
-    "require": {
-        "php": "^7.3",
-        "pimcore/pimcore": "^6.6",
-        "symfony/validator": "^4.4",
-        "ext-json": "*"
+  "name": "valantic/pimcore-data-quality-bundle",
+  "version": "0.6.7",
+  "description": "Data quality score for Pimcore",
+  "type": "pimcore-bundle",
+  "require": {
+    "php": "^8.0",
+    "ext-json": "*",
+    "pimcore/pimcore": "^10.0",
+    "symfony/validator": "^5.0"
+  },
+  "require-dev": {
+    "bamarni/composer-bin-plugin": "^1.4",
+    "infection/infection": "^0.26.10",
+    "phpstan/phpstan": "^1.7.0",
+    "phpunit/phpunit": "^9.2",
+    "rector/rector": "^0.13.0",
+    "roave/security-advisories": "dev-latest",
+    "symfony/config": "^5.0",
+    "symfony/dependency-injection": "^5.0",
+    "symfony/framework-bundle": "^5.0",
+    "symfony/http-foundation": "^5.0",
+    "symfony/http-kernel": "^5.0",
+    "symfony/routing": "^5.0"
+  },
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Linus Metzler",
+      "email": "linus.metzler@cec.valantic.com"
     },
-    "require-dev": {
-        "phpunit/phpunit": "^9.2",
-        "symfony/config": "^4.4",
-        "symfony/http-kernel": "^4.4",
-        "symfony/http-foundation": "^4.4",
-        "symfony/routing": "^4.4",
-        "symfony/dependency-injection": "^4.4",
-        "symfony/framework-bundle": "^4.4",
-        "infection/infection": "^0.16.4",
-        "phpstan/phpstan": "^0.12.33"
-    },
-    "license": "proprietary",
-    "authors": [
-        {
-            "name": "Linus Metzler",
-            "email": "linus.metzler@cec.valantic.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Valantic\\DataQualityBundle\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Valantic\\DataQualityBundle\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "pimcore": {
-            "bundles": [
-                "Valantic\\DataQualityBundle\\ValanticDataQualityBundle"
-            ]
-        }
-    },
-    "scripts": {
-        "test": "./vendor/bin/phpunit",
-        "phpstan": "./vendor/bin/phpstan analyse src tests -l 6",
-        "infection": [
-            "Composer\\Config::disableProcessTimeout",
-            "./vendor/bin/infection --only-covered"
-        ]
-    },
-    "config": {
-        "platform": {
-            "php": "7.3"
-        }
+    {
+      "name": "Patrick Ryser",
+      "email": "patrick.ryser@cec.valantic.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Valantic\\DataQualityBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Valantic\\DataQualityBundle\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Valantic\\DataQualityBundle\\ValanticDataQualityBundle"
+      ]
+    }
+  },
+
+  "scripts": {
+    "post-install-cmd": [
+      "@composer bin all install --ansi"
+    ],
+    "post-update-cmd": [
+      "@composer bin all update --ansi"
+    ],
+    "phpstan": [
+      "vendor/bin/phpstan analyse --memory-limit=1G"
+    ],
+    "phpcs": [
+      "vendor/bin/php-cs-fixer fix --diff"
+    ],
+    "phpcs-check": [
+      "vendor/bin/php-cs-fixer fix --diff --dry-run"
+    ],
+    "rector": [
+      "vendor/bin/rector process src tests"
+    ],
+    "test": "./vendor/bin/phpunit",
+    "infection": [
+      "Composer\\Config::disableProcessTimeout",
+      "./vendor/bin/infection --only-covered"
+    ]
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "bamarni/composer-bin-plugin": true,
+      "ocramius/package-versions": true,
+      "infection/extension-installer": true
+    }
+  }
 }

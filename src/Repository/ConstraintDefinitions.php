@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Repository;
 
 use IteratorAggregate;
@@ -9,11 +11,8 @@ class ConstraintDefinitions
     /**
      * @var CustomConstraintParameters[]
      */
-    protected $customConstraints;
+    protected array $customConstraints;
 
-    /**
-     * @param iterable $taggedConstraints
-     */
     public function __construct(iterable $taggedConstraints)
     {
         $customConstraints = [];
@@ -26,15 +25,13 @@ class ConstraintDefinitions
                     $customConstraints[] = $taggedConstraint;
                 }
             }
-        } catch (\Throwable $throwable) {
-
+        } catch (\Throwable) {
         }
         $this->customConstraints = $customConstraints;
     }
 
     /**
      * All constraints.
-     * @return array
      */
     public function all(): array
     {
@@ -43,14 +40,13 @@ class ConstraintDefinitions
 
     /**
      * Configuration for custom constraints.
-     * @return array
      */
     protected function custom(): array
     {
         $definitions = [];
 
         foreach ($this->customConstraints as $constraint) {
-            $definitions[get_class($constraint)] = [
+            $definitions[$constraint::class] = [
                 'label' => $constraint->getLabel(),
                 'parameters' => array_filter([
                     'default' => $constraint->defaultParameter(),
@@ -65,7 +61,6 @@ class ConstraintDefinitions
 
     /**
      * Configuration for Symfony 4.4 constraints.
-     * @return array
      */
     protected function symfony(): array
     {
@@ -101,7 +96,7 @@ class ConstraintDefinitions
                 'parameters' => [
                     'default' => 'choices',
                     'optional' => ['callback' => [], 'max' => 0, 'min' => 0, 'multiple' => false],
-                    'required' => ['choices' => [],],
+                    'required' => ['choices' => []],
                 ],
             ],
             'Count' => [
@@ -131,7 +126,7 @@ class ConstraintDefinitions
             'EqualTo' => [
                 'parameters' => [
                     'default' => 'value',
-                    'optional' => ['propertyPath' => null,],
+                    'optional' => ['propertyPath' => null],
                     'required' => ['value' => ''],
                 ],
             ],
@@ -155,7 +150,7 @@ class ConstraintDefinitions
             'GreaterThanOrEqual' => [
                 'parameters' => [
                     'default' => 'value',
-                    'optional' => ['propertyPath' => null,],
+                    'optional' => ['propertyPath' => null],
                     'required' => ['value' => ''],
                 ],
             ],
@@ -163,7 +158,7 @@ class ConstraintDefinitions
             'IdenticalTo' => [
                 'parameters' => [
                     'default' => 'value',
-                    'optional' => ['propertyPath' => null,],
+                    'optional' => ['propertyPath' => null],
                     'required' => ['value' => ''],
                 ],
             ],
@@ -213,14 +208,14 @@ class ConstraintDefinitions
             'LessThan' => [
                 'parameters' => [
                     'default' => 'value',
-                    'optional' => ['propertyPath' => null,],
+                    'optional' => ['propertyPath' => null],
                     'required' => ['value' => ''],
                 ],
             ],
             'LessThanOrEqual' => [
                 'parameters' => [
                     'default' => 'value',
-                    'optional' => ['propertyPath' => null,],
+                    'optional' => ['propertyPath' => null],
                     'required' => ['value' => ''],
                 ],
             ],
@@ -241,7 +236,7 @@ class ConstraintDefinitions
             'NotEqualTo' => [
                 'parameters' => [
                     'default' => 'value',
-                    'optional' => ['propertyPath' => null,],
+                    'optional' => ['propertyPath' => null],
                     'required' => ['value' => ''],
                 ],
             ],

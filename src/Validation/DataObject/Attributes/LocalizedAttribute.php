@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Tool;
@@ -13,7 +15,7 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
     /**
      * {@inheritDoc}
      */
-    public function validate()
+    public function validate(): void
     {
         if (!$this->classInformation->isLocalizedAttribute($this->attribute)) {
             return;
@@ -77,6 +79,24 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
         return $colors;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function value(): mixed
+    {
+        $value = [];
+
+        foreach ($this->getValidatableLocales() as $locale) {
+            try {
+                $value[$locale] = $this->valueInherited($this->obj, $locale);
+            } catch (Throwable) {
+                continue;
+            }
+        }
+
+        return $value;
+    }
+
     protected function getValidatableLocales(): array
     {
         return array_intersect($this->getLocalesInConfig(), $this->getValidLocales());
@@ -84,7 +104,6 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
 
     /**
      * Returns a list of configured attributes.
-     * @return array
      */
     protected function getLocalesInConfig(): array
     {
@@ -93,29 +112,9 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
 
     /**
      * List of enabled locales.
-     * @return array
      */
     protected function getValidLocales(): array
     {
         return Tool::getValidLanguages();
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function value()
-    {
-        $value = [];
-
-        foreach ($this->getValidatableLocales() as $locale) {
-            try {
-                $value[$locale] = $this->valueInherited($this->obj, $locale);
-            } catch (Throwable $throwable) {
-                continue;
-            }
-        }
-
-        return $value;
-    }
-
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Shared;
 
 trait SafeArray
@@ -11,12 +13,14 @@ trait SafeArray
      * This method does not have any type hints on purpose.
      *
      * @param array|mixed $arr
-     * @param string|int $key
      *
-     * @return array Always returns an array, defaults to [].
+     * @return array always returns an array, defaults to []
      */
-    protected function safeArray($arr, $key): array
+    protected function safeArray(mixed $arr, string|int|null $key): array
     {
+        if ($key === null) {
+            return [];
+        }
         if (!is_array($arr)) {
             return [];
         }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Validation\DataObject;
 
 use InvalidArgumentException;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\Element\AbstractElement;
 use Valantic\DataQualityBundle\Validation\AbstractValidateObject;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\FieldCollectionAttribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\LocalizedAttribute;
@@ -15,15 +16,12 @@ use Valantic\DataQualityBundle\Validation\MultiScorable;
 
 class Validate extends AbstractValidateObject implements MultiScorable
 {
-    /**
-     * @var Concrete
-     */
-    protected $obj;
+    protected Concrete $obj;
 
     /**
      * {@inheritDoc}
      */
-    public function setObject(AbstractElement $obj): void
+    public function setObject(Concrete $obj): void
     {
         if (!($obj instanceof Concrete)) {
             throw new InvalidArgumentException('Please provide a Concrete DataObject.');
@@ -37,7 +35,7 @@ class Validate extends AbstractValidateObject implements MultiScorable
     /**
      * {@inheritDoc}
      */
-    public function validate()
+    public function validate(): void
     {
         $validators = [];
         foreach ($this->getValidatableAttributes() as $attribute) {
@@ -90,7 +88,7 @@ class Validate extends AbstractValidateObject implements MultiScorable
         // iterate over the keys of all multiscores (... requires the array_values above)
         foreach (array_keys(array_merge_recursive(...$multiScores)) as $multiKey) {
             $scores = array_column($multiScores, $multiKey);
-            if (!count($scores)) {
+            if (count($scores) === 0) {
                 $result[$multiKey] = 0;
                 continue;
             }

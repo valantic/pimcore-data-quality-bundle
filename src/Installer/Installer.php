@@ -1,28 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Installer;
 
-use Doctrine\DBAL\Migrations\Version;
-use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db;
-use Pimcore\Db\ConnectionInterface;
-use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
-use Pimcore\Migrations\MigrationManager;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
-use Valantic\DataQualityBundle\Controller\ConstraintConfigController;
+use Valantic\DataQualityBundle\Controller\BaseController;
 
-class Installer extends MigrationInstaller
+class Installer extends AbstractInstaller
 {
-    /**
-     * @var ConfigWriter
-     */
-    protected $writer;
-
-    public function __construct(BundleInterface $bundle, ConnectionInterface $connection, MigrationManager $migrationManager, ConfigWriter $writer)
-    {
-        parent::__construct($bundle, $connection, $migrationManager);
-        $this->writer = $writer;
+    public function __construct(
+        protected ConfigWriter $writer
+    ) {
+        parent::__construct();
     }
 
     public function getMigrationVersion(): string
@@ -35,39 +27,38 @@ class Installer extends MigrationInstaller
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function canBeInstalled(): bool
     {
         return !$this->isInstalled();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isInstalled(): bool
     {
         $db = Db::get();
-        $check = $db->fetchOne("SELECT `key` FROM `users_permission_definitions` where `key` = ?", [ConstraintConfigController::CONFIG_NAME]);
+        $check = $db->fetchOne(
+            'SELECT `key` FROM `users_permission_definitions` where `key` = ?',
+            [BaseController::CONFIG_NAME]
+        );
 
-        return (bool)$check;
+        return (bool) $check;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function migrateInstall(Schema $schema, Version $version): void
+    public function install(): void
     {
-        $version->addSql('INSERT INTO `users_permission_definitions` (`key`) VALUES (?);', [ConstraintConfigController::CONFIG_NAME]);
+        $db = Db::get();
+        $db->executeStatement(
+            'INSERT INTO `users_permission_definitions` (`key`) VALUES (?);',
+            [BaseController::CONFIG_NAME]
+        );
         $this->writer->ensureConfigExists();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function migrateUninstall(Schema $schema, Version $version): void
+    public function uninstall(): void
     {
-        $version->addSql('DELETE FROM `users_permission_definitions` WHERE `key` = ?;', [ConstraintConfigController::CONFIG_NAME]);
+        $db = Db::get();
+        $db->executeStatement(
+            'DELETE FROM `users_permission_definitions` WHERE `key` = ?;',
+            [BaseController::CONFIG_NAME]
+        );
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -9,21 +11,13 @@ use Valantic\DataQualityBundle\Config\V1\Meta\Reader as ConfigReader;
 use Valantic\DataQualityBundle\Config\V1\Meta\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 
-/**
- * @Route("/admin/valantic/data-quality/meta-config")
- */
+#[Route('/admin/valantic/data-quality/meta-config')]
 class MetaConfigController extends BaseController
 {
     /**
      * Returns the config for the admin editor.
-     *
-     * @Route("/list", options={"expose"=true}, methods={"GET", "POST"})
-     *
-     * @param Request $request
-     * @param ConfigReader $config
-     *
-     * @return JsonResponse
      */
+    #[Route('/list', options: ['expose' => true], methods: ['GET', 'POST'])]
     public function listAction(Request $request, ConfigReader $config): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
@@ -33,7 +27,7 @@ class MetaConfigController extends BaseController
         $entries = [];
         foreach ($config->getConfiguredClasses() as $className) {
             if ($filter) {
-                if (stripos($className, $filter) === false) {
+                if (stripos($className, (string) $filter) === false) {
                     continue;
                 }
             }
@@ -51,13 +45,8 @@ class MetaConfigController extends BaseController
 
     /**
      * Return a list of possible classes to configure.
-     *
-     * @Route("/classes", options={"expose"=true}, methods={"GET"})
-     *
-     * @param ConfigReader $reader
-     *
-     * @return JsonResponse
      */
+    #[Route('/classes', options: ['expose' => true], methods: ['GET'])]
     public function listClassesAction(ConfigReader $reader): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
@@ -75,13 +64,8 @@ class MetaConfigController extends BaseController
 
     /**
      * Return a list of possible locales to configure.
-     *
-     * @Route("/locales", options={"expose"=true}, methods={"GET"})
-     *
-     * @param LocalesList $localesList
-     *
-     * @return JsonResponse
      */
+    #[Route('/locales', options: ['expose' => true], methods: ['GET'])]
     public function listLocalesAction(LocalesList $localesList): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
@@ -96,14 +80,8 @@ class MetaConfigController extends BaseController
 
     /**
      * Adds or updates the locale config for a class.
-     *
-     * @Route("/modify", options={"expose"=true}, methods={"POST"})
-     *
-     * @param Request $request
-     * @param ConfigWriter $config
-     *
-     * @return JsonResponse
      */
+    #[Route('/modify', options: ['expose' => true], methods: ['POST'])]
     public function modifyAction(Request $request, ConfigWriter $config): JsonResponse
     {
         if (empty($request->request->get('classname'))) {
@@ -123,14 +101,8 @@ class MetaConfigController extends BaseController
 
     /**
      * Deletes a config entry for a class.
-     *
-     * @Route("/modify", options={"expose"=true}, methods={"DELETE"})
-     *
-     * @param Request $request
-     * @param ConfigWriter $config
-     *
-     * @return JsonResponse
      */
+    #[Route('/modify', options: ['expose' => true], methods: ['DELETE'])]
     public function deleteAction(Request $request, ConfigWriter $config): JsonResponse
     {
         if (empty($request->request->get('classname'))) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Service\Formatters;
 
 class ValueFormatter implements Formatter
@@ -7,65 +9,43 @@ class ValueFormatter implements Formatter
     /**
      * {@inheritDoc}
      */
-    public function format($input)
+    public function format(mixed $input): mixed
     {
         $output = $this->stripTags($input);
         $output = $this->trim($output);
-        $output = $this->shorten($output);
 
-        return $output;
+        return $this->shorten($output);
     }
 
     /**
      * Strips HTML tags.
      *
-     * @param mixed $input
-     *
      * @return array|string|string[]
      */
-    protected function stripTags($input)
+    protected function stripTags(mixed $input): array|string
     {
-        if (is_array($input)) {
-            return array_map(function ($value) {
-                return $this->stripTags($value);
-            }, $input);
-        }
-
-        return strip_tags($input);
+        return is_array($input) ? array_map(fn($value) => $this->stripTags($value), $input) : strip_tags((string)$input);
     }
 
     /**
      * Trims the input.
      *
-     * @param mixed $input
-     *
      * @return array|string|string[]
      */
-    protected function trim($input)
+    protected function trim(mixed $input): array|string
     {
-        if (is_array($input)) {
-            return array_map(function ($value) {
-                return $this->trim($value);
-            }, $input);
-        }
-
-        return trim($input);
+        return is_array($input) ? array_map(fn($value) => $this->trim($value), $input) : trim($input);
     }
 
     /**
      * Shortens the input if longer than $threshold.
      *
-     * @param mixed $input
-     * @param int $threshold
-     *
      * @return array|string|string[]
      */
-    protected function shorten($input, $threshold = 80)
+    protected function shorten(mixed $input, int $threshold = 80): array|string
     {
         if (is_array($input)) {
-            return array_map(function ($value) use ($threshold) {
-                return $this->shorten($value, $threshold);
-            }, $input);
+            return array_map(fn($value) => $this->shorten($value, $threshold), $input);
         }
 
         if (strlen($input) <= $threshold) {

@@ -1,17 +1,13 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Service\Formatters;
-
 
 interface Formatter
 {
     /**
      * Formats $input and returns the formatted value.
-     *
-     * @param mixed $input
-     *
-     * @return mixed
      */
-    public function format($input);
+    public function format(mixed $input): mixed;
 }

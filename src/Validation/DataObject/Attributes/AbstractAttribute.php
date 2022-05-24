@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Exception;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\ModelInterface;
+use Pimcore\Model\Element\ElementInterface;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -27,78 +29,33 @@ use Valantic\DataQualityBundle\Validation\Validatable;
 
 abstract class AbstractAttribute implements Validatable, Scorable, Colorable
 {
-    use SafeArray;
     use ColorScoreTrait;
+    use SafeArray;
 
-    /**
-     * @var ValidatorInterface
-     */
-    protected $validator;
+    protected ValidatorInterface $validator;
 
-    /**
-     * @var Concrete
-     */
-    protected $obj;
-
-    /**
-     * @var string
-     */
-    protected $attribute;
-
-    /**
-     * @var ConstraintsConfig
-     */
-    protected $constraintsConfig;
-
-    /**
-     * @var array
-     */
-    protected $validationConfig;
+    protected array $validationConfig;
 
     /**
      * Violations found during validation.
-     * @var array|ConstraintViolationListInterface
+     *
+     * @var array|ConstraintViolationListInterface[]
      */
-    protected $violations = [];
+    protected array $violations = [];
 
-    /**
-     * @var DefinitionInformation
-     */
-    protected $classInformation;
-
-    /**
-     * @var MetaConfig
-     */
-    protected $metaConfig;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $skippedConstraints;
+    protected DefinitionInformation $classInformation;
 
     /**
      * The maximum nesting level. Used for cycle detection.
      * Is set on the very first call and not modified after.
-     * @var int
      */
-    protected static $maxNestingLevel = -1;
+    protected static int $maxNestingLevel = -1;
 
     /**
      * The root of the validation tree. Used for cycle prevention.
      * Is set on the very first call and not modified after.
-     * @var ModelInterface
      */
-    protected static $validationRootObject;
+    protected static ElementInterface $validationRootObject;
 
     /**
      * Validates an attribute of an object.
@@ -108,29 +65,29 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
      * @param ConstraintsConfig $constraintsConfig
      * @param MetaConfig $metaConfig
      * @param EventDispatcherInterface $eventDispatcher
-     * @param DefinitionInformationFactory $definitionInformationFactory
      * @param ContainerInterface $container
      * @param array $skippedConstraints
      */
-    public function __construct(Concrete $obj, string $attribute, ConstraintsConfig $constraintsConfig, MetaConfig $metaConfig, EventDispatcherInterface $eventDispatcher, DefinitionInformationFactory $definitionInformationFactory, ContainerInterface $container, array $skippedConstraints)
-    {
+    public function __construct(
+        protected Concrete $obj,
+        protected string $attribute,
+        protected ConstraintsConfig $constraintsConfig,
+        protected MetaConfig $metaConfig,
+        protected EventDispatcherInterface $eventDispatcher,
+        DefinitionInformationFactory $definitionInformationFactory,
+        protected ContainerInterface $container,
+        protected array $skippedConstraints
+    ) {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
-        $this->obj = $obj;
-        $this->attribute = $attribute;
-        $this->constraintsConfig = $constraintsConfig;
         $this->validationConfig = $constraintsConfig->getRulesForObjectAttribute($obj, $attribute);
-        $this->metaConfig = $metaConfig;
-        $this->eventDispatcher = $eventDispatcher;
         $this->classInformation = $definitionInformationFactory->make($this->obj->getClassName());
-        $this->container = $container;
-        $this->skippedConstraints = $skippedConstraints;
 
         if (self::$maxNestingLevel < 0) {
             self::$maxNestingLevel = $this->metaConfig->getForObject($this->obj)[MetaKeys::KEY_NESTING_LIMIT] ?? 1;
         }
 
-        if (!self::$validationRootObject) {
+        if (!isset(self::$validationRootObject)) {
             self::$validationRootObject = clone $this->obj;
         }
     }
@@ -148,8 +105,24 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function validate(): void
+    {
+        try {
+            $this->violations = $this->validator->validate($this->value(), $this->getConstraints());
+        } catch (Throwable $e) {
+            $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
+        }
+    }
+
+    /**
+     * Returns the value being validated.
+     */
+    abstract public function value(): mixed;
+
+    /**
      * Get the validation rules for this attribute.
-     * @return array
      */
     protected function getRules(): array
     {
@@ -158,7 +131,6 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
 
     /**
      * Get instantiated constraint classes. Invalid constrains are discarded.
-     * @return array
      */
     protected function getConstraints(): array
     {
@@ -171,7 +143,7 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
                 continue;
             }
 
-            if (strpos($name, '\\') === false) {
+            if (!str_contains($name, '\\')) {
                 $name = 'Symfony\Component\Validator\Constraints\\' . $name;
             }
 
@@ -182,13 +154,10 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
             try {
                 $reflection = new ReflectionClass($name);
 
-                $subclasses = array_filter($this->skippedConstraints, function ($skippedConstraint) use ($reflection) {
-                    return $reflection->isSubclassOf($skippedConstraint);
-                });
-            } catch (\ReflectionException $e) {
+                $subclasses = array_filter($this->skippedConstraints, fn($skippedConstraint) => $reflection->isSubclassOf($skippedConstraint));
+            } catch (\ReflectionException) {
                 $subclasses = [1];
             }
-
 
             if (in_array($name, $this->skippedConstraints, true) || !empty($subclasses)) {
                 continue;
@@ -209,21 +178,11 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
     }
 
     /**
-     * Returns the value being validated.
-     * @return mixed
-     */
-    abstract public function value();
-
-    /**
      * Traverses the inheritance tree until a value has been found.
      *
-     * @param Concrete $obj
-     * @param string|null $locale
-     *
-     * @return mixed
      * @throws Exception
      */
-    protected function valueInherited(Concrete $obj, ?string $locale = null)
+    protected function valueInherited(Concrete $obj, ?string $locale = null): mixed
     {
         if (!$obj->getParentId() || !($obj->getParent() instanceof Concrete) || $obj->get($this->attribute, $locale)) {
             return $obj->get($this->attribute, $locale);
@@ -233,25 +192,22 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function validate()
-    {
-        try {
-            $this->violations = $this->validator->validate($this->value(), $this->getConstraints());
-        } catch (Throwable $e) {
-            $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
-        }
-    }
-
-    /**
      * Returns the current nesting level. Used for cycle detection.
+     *
      * @return int A positive integer
      */
     protected function getNestingLevel(): int
     {
-        return max(count(array_filter(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), function ($trace) {
-                return ($trace['class'] ?? '') === __CLASS__ && ($trace['function'] ?? '') === 'validate';
-            })) - 1, 0);
+        return max(
+            count(
+                array_filter(
+                    debug_backtrace(
+                        \DEBUG_BACKTRACE_IGNORE_ARGS
+                    ),
+                    fn($trace): bool => ($trace['class'] ?? '') === self::class && ($trace['function']) === 'validate'
+                )
+            ) - 1,
+            0
+        );
     }
 }

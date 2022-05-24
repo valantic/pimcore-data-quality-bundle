@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Repository;
 
 use Symfony\Component\Validator\Constraint;
@@ -27,7 +29,6 @@ class SampleValidatorFull extends ConstraintValidator
         if (!is_string($value)) {
             // throw this exception if your validator cannot handle the passed type so that it can be marked as invalid
             throw new UnexpectedValueException($value, 'string');
-
             // separate multiple types using pipes
             // throw new UnexpectedValueException($value, 'string|int');
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Model\DataObject\Fieldcollection;
@@ -11,7 +13,7 @@ class FieldCollectionAttribute extends AbstractAttribute
     /**
      * {@inheritDoc}
      */
-    public function validate()
+    public function validate(): void
     {
         if (!$this->classInformation->isFieldcollectionAttribute($this->attribute)) {
             return;
@@ -29,7 +31,7 @@ class FieldCollectionAttribute extends AbstractAttribute
     /**
      * {@inheritDoc}
      */
-    public function value()
+    public function value(): mixed
     {
         [$attribute, $field, $fieldAttribute] = explode('.', $this->attribute, 3);
         $objAttr = $this->obj->get($attribute);

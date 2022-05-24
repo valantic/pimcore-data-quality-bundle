@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Controller;
 
 use Pimcore\Model\DataObject\Concrete;
@@ -12,27 +14,21 @@ use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 
-/**
- * @Route("/admin/valantic/data-quality/score")
- */
+#[Route('/admin/valantic/data-quality/score')]
 class ScoreController extends BaseController
 {
     /**
      * Show score of an object (passed via ?id=n) for the admin backend.
-     *
-     * @Route("/show/", options={"expose"=true})
-     *
-     * @param Request $request
-     * @param Validate $validation
-     * @param ConstraintsConfig $constraintsConfig
-     * @param DefinitionInformationFactory $definitionInformationFactory
-     * @param ValueFormatter $valueFormatter
-     * @param ValuePreviewFormatter $valuePreviewFormatter
-     *
-     * @return JsonResponse
      */
-    public function showAction(Request $request, Validate $validation, ConstraintsConfig $constraintsConfig, DefinitionInformationFactory $definitionInformationFactory, ValueFormatter $valueFormatter, ValuePreviewFormatter $valuePreviewFormatter): JsonResponse
-    {
+    #[Route('/show/', options: ['expose' => true])]
+    public function showAction(
+        Request $request,
+        Validate $validation,
+        ConstraintsConfig $constraintsConfig,
+        DefinitionInformationFactory $definitionInformationFactory,
+        ValueFormatter $valueFormatter,
+        ValuePreviewFormatter $valuePreviewFormatter
+    ): JsonResponse {
         $obj = Concrete::getById($request->query->getInt('id'));
 
         if (!$obj) {
@@ -44,23 +40,22 @@ class ScoreController extends BaseController
             ]);
         }
 
-        $classInformation = $definitionInformationFactory->make(get_class($obj));
+        $classInformation = $definitionInformationFactory->make($obj::class);
 
         $validation->setObject($obj);
         $validation->validate();
         $filter = $request->get('filterText');
 
-
         $attributes = [];
         foreach ($validation->attributeScores() as $attribute => $score) {
-            if ($filter && stripos($attribute, $filter) === false) {
+            if ($filter && stripos($attribute, (string) $filter) === false) {
                 continue;
             }
 
             $attributes[] = array_merge(
                 [
                     'attribute' => $attribute,
-                    'label' => $classInformation->getAttributeLabel($attribute) ?? $attribute,
+                    'label' => $classInformation->getAttributeLabel($attribute),
                     'note' => $constraintsConfig->getNoteForObjectAttribute($obj, $attribute),
                     'type' => $classInformation->getAttributeType($attribute),
                 ],
@@ -84,14 +79,8 @@ class ScoreController extends BaseController
 
     /**
      * Check if an object can be scored i.e. if it is configured.
-     *
-     * @Route("/check/", options={"expose"=true})
-     *
-     * @param Request $request
-     * @param ConstraintsConfig $constraintsConfig
-     *
-     * @return JsonResponse
      */
+    #[Route('/check', options: ['expose' => true])]
     public function checkAction(Request $request, ConstraintsConfig $constraintsConfig): JsonResponse
     {
         $obj = Concrete::getById($request->query->getInt('id'));
@@ -104,6 +93,5 @@ class ScoreController extends BaseController
         return $this->json([
             'status' => $constraintsConfig->isObjectConfigured($obj),
         ]);
-
     }
 }

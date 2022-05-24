@@ -1,23 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Config\V1;
 
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
 
-abstract class AbstractWriter extends Config
+abstract class AbstractWriter extends Config implements WriterInterface
 {
     /**
-     * @var AbstractReader
+     * Ensures the config file exists.
      */
-    protected $reader;
+    public function ensureConfigExists(): bool
+    {
+        try {
+            return touch($this->getConfigFilePath());
+        } catch (Throwable) {
+            return false;
+        }
+    }
 
     /**
      * Persists the new config to disk.
      *
-     * @param array $updated The new config.
-     *
-     * @return bool
+     * @param array $updated the new config
      */
     protected function writeConfig(array $updated): bool
     {
@@ -26,21 +33,8 @@ abstract class AbstractWriter extends Config
             $raw[$this->getCurrentSectionName()] = $updated;
             $yaml = Yaml::dump($raw, 5, 2, Yaml::DUMP_NULL_AS_TILDE);
 
-            return (bool)file_put_contents($this->getConfigFilePath(), $yaml);
-        } catch (Throwable $throwable) {
-            return false;
-        }
-    }
-
-    /**
-     * Ensures the config file exists.
-     * @return bool
-     */
-    public function ensureConfigExists(): bool
-    {
-        try {
-            return touch($this->getConfigFilePath());
-        } catch (Throwable $throwable) {
+            return (bool) file_put_contents($this->getConfigFilePath(), $yaml);
+        } catch (Throwable) {
             return false;
         }
     }

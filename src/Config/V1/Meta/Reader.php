@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Config\V1\Meta;
 
 use Valantic\DataQualityBundle\Config\V1\AbstractReader;

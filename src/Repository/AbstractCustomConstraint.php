@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Repository;
 
 use Symfony\Component\Validator\Constraint;
@@ -12,15 +14,6 @@ abstract class AbstractCustomConstraint extends Constraint implements CustomCons
     public function getDefaultOption(): ?string
     {
         return $this->defaultParameter();
-    }
-
-    /**
-     * Needs to return an empty array as otherwise it'll be instantiated in ConstraintDefinitions, causing an exception.
-     * @return array
-     */
-    public function getRequiredOptions(): array
-    {
-        return [];
     }
 
     /**
@@ -52,8 +45,8 @@ abstract class AbstractCustomConstraint extends Constraint implements CustomCons
      */
     public function getLabel(): string
     {
-        $parts = explode('\\', get_class($this));
+        $parts = explode('\\', static::class);
 
-        return (string)array_pop($parts);
+        return (string) array_pop($parts);
     }
 }

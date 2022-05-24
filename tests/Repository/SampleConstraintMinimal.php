@@ -1,25 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Repository;
 
 use Valantic\DataQualityBundle\Repository\AbstractCustomConstraint;
 
 class SampleConstraintMinimal extends AbstractCustomConstraint
 {
-    /**
-     * @var string
-     */
-    public $message = 'The string "{{ string }}" is no nonsense.';
+    public string  $message = 'The string "{{ string }}" is no nonsense.';
 
-    /**
-     * @var mixed
-     */
-    public $expected;
+    public mixed  $expected;
 
-    /**
-     * @var mixed
-     */
-    public $allowed;
+    public mixed $allowed;
 
     /**
      * {@inheritDoc}

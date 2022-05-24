@@ -1,17 +1,14 @@
 {
-  "name": "data-quality-bundle",
-  "version": "1.0.0",
+  "version": "0.6.7",
   "description": "Pimcore Data Quality Bundle",
-  "dependencies": {},
   "devDependencies": {
-    "eslint": "^7.3.1",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.21.2"
+    "@release-it/bumper": "^4.0.0",
+    "eslint": "^8.16.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "release-it": "^15.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint src/Resources/public/js"
-  },
-  "author": "valantic CEC Schweiz AG",
-  "license": "proprietary"
+    "release": "release-it"
+  }
 }

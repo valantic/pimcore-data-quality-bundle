@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Controller;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Valantic\DataQualityBundle\Config\V1\Meta\MetaKeys;
 use Valantic\DataQualityBundle\Controller\MetaConfigController;
@@ -13,12 +16,9 @@ class MetaControllerTest extends AbstractTestCase
     /**
      * @var MetaConfigController
      */
-    protected $controller;
+    protected MetaConfigController|MockObject $controller;
 
-    /**
-     * @var string
-     */
-    protected $className = 'SomeClass';
+    protected string $className = 'SomeClass';
 
     protected function setUp(): void
     {
@@ -38,11 +38,11 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, false);
+        $decoded = json_decode($content, false, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertSame([], $decoded);
     }
@@ -56,11 +56,11 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(2, $decoded);
 
@@ -88,11 +88,11 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(1, $decoded);
 
@@ -108,11 +108,11 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true)[0];
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR)[0];
 
         $reader = $this->getMetaReader();
         $config = $reader->getForClass($decoded['classname']);
@@ -130,11 +130,11 @@ class MetaControllerTest extends AbstractTestCase
         $response = $this->controller->listClassesAction($this->getMetaReader());
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('classes', $decoded);
         $this->assertCount(1, $decoded['classes']);
@@ -154,12 +154,12 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
         $this->assertCount(2, $reader->getConfiguredClasses());
 
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -175,7 +175,7 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
         $this->assertCount(3, $reader->getConfiguredClasses());
@@ -186,7 +186,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame(0, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
         $this->assertSame(1, $reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
 
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -208,7 +208,7 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
         $this->assertCount(3, $reader->getConfiguredClasses());
@@ -219,7 +219,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame(0.8, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
         $this->assertSame(2, $reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
 
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -235,12 +235,12 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
         $this->assertCount(2, $reader->getConfiguredClasses());
 
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -256,12 +256,12 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
         $this->assertCount(1, $reader->getConfiguredClasses());
 
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -279,10 +279,10 @@ class MetaControllerTest extends AbstractTestCase
 
         $content = $response->getContent();
         $this->assertIsString($content);
-        $content = (string)$content;
+        $content = (string) $content;
 
         $this->assertJson($content);
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('locales', $decoded);
         $this->assertSameSize($locales, $decoded['locales']);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Service\Formatters;
 
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
@@ -9,10 +11,7 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class ValuePreviewFormatterTest extends AbstractTestCase
 {
-    /**
-     * @var ValuePreviewFormatter
-     */
-    protected $formatter;
+    protected ValuePreviewFormatter $formatter;
 
     protected function setUp(): void
     {
@@ -60,7 +59,14 @@ class ValuePreviewFormatterTest extends AbstractTestCase
 
     public function testEmptyLocales(): void
     {
+        $text = ['fr' => ''];
+        $this->assertSame('', $this->formatter->format($text));
+    }
+
+    public function testInvalidLocales(): void
+    {
         $text = ['de' => null, 'fr' => '', 'en' => false];
+        $this->expectError();
         $this->assertSame('', $this->formatter->format($text));
     }
 
@@ -80,7 +86,6 @@ class ValuePreviewFormatterTest extends AbstractTestCase
         $textRepeated = str_repeat($text, 50);
         $this->assertSame($textRepeated, $this->formatter->format($textRepeated));
     }
-
 
     public function testLengthOneoff(): void
     {

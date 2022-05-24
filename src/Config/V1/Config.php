@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Config\V1;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -16,21 +18,10 @@ abstract class Config
 
     protected const CONFIG_SECTION_META = 'meta';
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * The identifier (a const starting with CONFIG_SECTION_) for the current config section.
-     * @return string
-     */
-    abstract protected function getCurrentSectionName(): string;
+    protected EventDispatcherInterface $eventDispatcher;
 
     /**
      * Returns the absolute path to the config file.
-     *
-     * @return string
      */
     protected function getConfigFilePath(): string
     {
@@ -40,14 +31,13 @@ abstract class Config
     /**
      * Returns the raw config as read from disk.
      *
-     * @return array
      * @internal
      */
     protected function getRaw(): array
     {
         try {
             $parsed = Yaml::parseFile($this->getConfigFilePath());
-        } catch (YamlException $exception) {
+        } catch (YamlException) {
             $this->eventDispatcher->dispatch(new InvalidConfigEvent());
 
             return [];
@@ -66,11 +56,20 @@ abstract class Config
     }
 
     /**
+     * Default method to get the current section inside a config class.
+     */
+    protected function getCurrentSection(): array
+    {
+        return $this->getSection($this->getCurrentSectionName());
+    }
+
+    /**
+     * The identifier (a const starting with CONFIG_SECTION_) for the current config section.
+     */
+    abstract protected function getCurrentSectionName(): string;
+
+    /**
      * Get a config section.
-     *
-     * @param string $name
-     *
-     * @return array
      */
     private function getSection(string $name): array
     {
@@ -78,14 +77,4 @@ abstract class Config
             ? $this->getRaw()[$name]
             : [];
     }
-
-    /**
-     * Default method to get the current section inside a config class.
-     * @return array
-     */
-    protected function getCurrentSection(): array
-    {
-        return $this->getSection($this->getCurrentSectionName());
-    }
-
 }

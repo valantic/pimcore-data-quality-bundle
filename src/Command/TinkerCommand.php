@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Model\DataObject\Customer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -12,9 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class TinkerCommand extends AbstractCommand
 {
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function configure(): void
     {
@@ -24,11 +24,11 @@ class TinkerCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->dump("Hello from " . __CLASS__);
+        $this->dump('Hello from ' . self::class);
 
         return 0;
     }

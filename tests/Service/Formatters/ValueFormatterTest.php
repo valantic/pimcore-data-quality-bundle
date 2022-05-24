@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Service\Formatters;
 
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;

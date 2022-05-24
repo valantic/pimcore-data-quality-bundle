@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Event;
 
 use Throwable;
@@ -9,55 +11,25 @@ class InvalidConstraintEvent extends Event
     public const NAME = 'valantic.data_quality.invalid_constraint';
 
     /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var mixed
-     */
-    protected $params;
-
-    /**
-     * @var Throwable
-     */
-    protected $throwable;
-
-    /**
      * InvalidConstraintEvent constructor.
      *
      * @param Throwable $throwable
      * @param string $name
-     * @param mixed $params
      */
-    public function __construct(Throwable $throwable, $name, $params)
+    public function __construct(protected Throwable $throwable, protected string $name, protected mixed $params)
     {
-        $this->name = $name;
-        $this->params = $params;
-        $this->throwable = $throwable;
-
-        parent::__construct();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getParams()
+    public function getParams(): mixed
     {
         return $this->params;
     }
 
-    /**
-     * @return Throwable
-     */
     public function getThrowable(): Throwable
     {
         return $this->throwable;
@@ -68,6 +40,12 @@ class InvalidConstraintEvent extends Event
      */
     protected function logMessage(): string
     {
-        return sprintf("Constraint %s with parameters %s failed to execute.\nMessage: %s\nTrace: %s", $this->getName(), json_encode($this->getParams()), $this->getThrowable()->getMessage(), $this->getThrowable()->getTraceAsString());
+        return sprintf(
+            "Constraint %s with parameters %s failed to execute.\nMessage: %s\nTrace: %s",
+            $this->getName(),
+            json_encode($this->getParams(), \JSON_THROW_ON_ERROR),
+            $this->getThrowable()->getMessage(),
+            $this->getThrowable()->getTraceAsString()
+        );
     }
 }

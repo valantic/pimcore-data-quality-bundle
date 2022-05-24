@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Service\Formatters;
 
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
@@ -7,24 +9,18 @@ use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 class ValuePreviewFormatter extends ValueFormatter
 {
     /**
-     * @var LocalesList
-     */
-    protected $localesList;
-
-    /**
      * ValuePreviewFormatter constructor.
      *
      * @param LocalesList $localesList
      */
-    public function __construct(LocalesList $localesList)
+    public function __construct(protected LocalesList $localesList)
     {
-        $this->localesList = $localesList;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function format($input)
+    public function format(mixed $input): mixed
     {
         $output = parent::format($input);
         $threshold = 50;

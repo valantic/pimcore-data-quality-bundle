@@ -1,31 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Service\Information;
 
 class DefinitionInformationFactory
 {
-    /**
-     * @var ClassInformation
-     */
-    protected $classInformation;
-
-    /**
-     * @var FieldCollectionInformation
-     */
-    protected $fieldCollectionInformation;
-
-    /**
-     * @var ObjectBrickInformation
-     */
-    protected $objectBrickInformation;
-
-    public function __construct(ClassInformation $classInformation, FieldCollectionInformation $fieldCollectionInformation, ObjectBrickInformation $objectBrickInformation)
-    {
-        $this->classInformation = $classInformation;
-        $this->fieldCollectionInformation = $fieldCollectionInformation;
-        $this->objectBrickInformation = $objectBrickInformation;
+    public function __construct(
+        protected ClassInformation $classInformation,
+        protected FieldCollectionInformation $fieldCollectionInformation,
+        protected ObjectBrickInformation $objectBrickInformation
+    ) {
     }
 
+    /**
+     * @param class-string $name
+     */
     public function make(string $name): DefinitionInformation
     {
         $classInformation = $this->classInformation;

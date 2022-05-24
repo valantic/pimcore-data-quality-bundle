@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Constraints\RelationScore;
 
 use Pimcore\Model\DataObject\Concrete;
@@ -12,39 +14,16 @@ use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 
 abstract class AbstractValidator extends ConstraintValidator
 {
-    /**
-     * @var Validate
-     */
-    protected $validate;
+    protected Validate $validate;
 
-    /**
-     * @var bool
-     */
-    protected $skipConstraintOnFurtherValidation = true;
-
-    /**
-     * Get the Colorable threshold for this validator.
-     * @return string
-     */
-    abstract protected function getThresholdKey(): string;
-
-    /**
-     * Get the constraint this validator expects.
-     * @return string
-     */
-    abstract protected function getConstraint(): string;
+    protected bool $skipConstraintOnFurtherValidation = true;
 
     /**
      * Validation passes if all relations have a green score.
-     *
-     * @param mixed $value
-     * @param Constraint $constraint
-     *
-     * @return void
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (get_class($constraint) !== $this->getConstraint()) {
+        if ($constraint::class !== $this->getConstraint()) {
             throw new UnexpectedTypeException($constraint, $this->getConstraint());
         }
 
@@ -84,4 +63,14 @@ abstract class AbstractValidator extends ConstraintValidator
                 ->addViolation();
         }
     }
+
+    /**
+     * Get the Colorable threshold for this validator.
+     */
+    abstract protected function getThresholdKey(): string;
+
+    /**
+     * Get the constraint this validator expects.
+     */
+    abstract protected function getConstraint(): string;
 }

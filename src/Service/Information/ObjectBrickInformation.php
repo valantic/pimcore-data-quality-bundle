@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Service\Information;
 
 use Pimcore\Model\DataObject\Objectbrick\Definition;
@@ -8,7 +10,8 @@ use Pimcore\Model\DataObject\Objectbrick\Definition\Listing;
 class ObjectBrickInformation extends DefinitionInformation
 {
     /**
-     * {@inheritDoc}}
+     * {@inheritDoc}
+     *
      * @codeCoverageIgnore Has to be mocked
      */
     public function getDefinition(): ?Definition

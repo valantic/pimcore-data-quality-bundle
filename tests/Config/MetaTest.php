@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Config;
 
 use Valantic\DataQualityBundle\Config\V1\Meta\MetaKeys;
@@ -9,20 +11,11 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class MetaTest extends AbstractTestCase
 {
-    /**
-     * @var Reader
-     */
-    protected $reader;
+    protected Reader $reader;
 
-    /**
-     * @var Writer
-     */
-    protected $writer;
+    protected Writer $writer;
 
-    /**
-     * @var string
-     */
-    protected $className = 'SomeClass';
+    protected string $className = 'SomeClass';
 
     protected function setUp(): void
     {

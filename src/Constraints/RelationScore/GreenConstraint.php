@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Constraints\RelationScore;
 
 class GreenConstraint extends AbstractConstraint

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Config\V1\Meta;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -8,36 +10,17 @@ use Valantic\DataQualityBundle\Config\V1\AbstractWriter;
 class Writer extends AbstractWriter implements MetaKeys
 {
     /**
-     * {@inheritDoc}
-     */
-    protected function getCurrentSectionName(): string
-    {
-        return self::CONFIG_SECTION_META;
-    }
-
-    /**
      * Write the bundle's config file.
      *
      * @param Reader $reader
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(Reader $reader, EventDispatcherInterface $eventDispatcher)
+    public function __construct(protected Reader $reader, protected EventDispatcherInterface $eventDispatcher)
     {
-        $this->reader = $reader;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
      * Updates (or creates) a config entry for $className.
-     *
-     * @param string $className
-     * @param array $locales
-     * @param int $thresholdGreen
-     * @param int $thresholdOrange
-     *
-     * @param int $nestingLimit
-     *
-     * @return bool
      */
     public function update(string $className, array $locales = [], int $thresholdGreen = 0, int $thresholdOrange = 0, int $nestingLimit = 1): bool
     {
@@ -55,10 +38,6 @@ class Writer extends AbstractWriter implements MetaKeys
 
     /**
      * Delete the config entry for $className.
-     *
-     * @param string $className
-     *
-     * @return bool
      */
     public function delete(string $className): bool
     {
@@ -70,5 +49,13 @@ class Writer extends AbstractWriter implements MetaKeys
         unset($raw[$className]);
 
         return $this->writeConfig($raw);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getCurrentSectionName(): string
+    {
+        return self::CONFIG_SECTION_META;
     }
 }

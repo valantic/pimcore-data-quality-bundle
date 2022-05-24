@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,21 +13,13 @@ use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 
-/**
- * @Route("/admin/valantic/data-quality/constraint-config")
- */
+#[Route('/admin/valantic/data-quality/constraint-config')]
 class ConstraintConfigController extends BaseController
 {
     /**
      * Returns the config for the admin editor.
-     *
-     * @Route("/list", options={"expose"=true}, methods={"GET", "POST"})
-     *
-     * @param Request $request
-     * @param ConfigReader $config
-     *
-     * @return JsonResponse
      */
+    #[Route('/list', options: ['expose' => true], methods: ['GET', 'POST'])]
     public function listAction(Request $request, ConfigReader $config, ConstraintDefinitions $definitions): JsonResponse
     {
         $constraintDefinitions = $definitions->all();
@@ -36,7 +30,7 @@ class ConstraintConfigController extends BaseController
         $entries = [];
         foreach ($config->getConfiguredClasses() as $className) {
             foreach ($config->getConfiguredClassAttributes($className) as $attribute) {
-                if ($filter && stripos($className, $filter) === false && stripos($attribute, $filter) === false) {
+                if ($filter && stripos($className, (string) $filter) === false && stripos($attribute, (string) $filter) === false) {
                     continue;
                 }
                 $transformedRules = [];
@@ -62,11 +56,8 @@ class ConstraintConfigController extends BaseController
 
     /**
      * Return a list of possible classes to configure.
-     *
-     * @Route("/classes", options={"expose"=true}, methods={"GET"})
-     *
-     * @return JsonResponse
      */
+    #[Route('/classes', options: ['expose' => true], methods: ['GET'])]
     public function listClassesAction(): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
@@ -81,15 +72,8 @@ class ConstraintConfigController extends BaseController
 
     /**
      * Return a list of possible attributes to configure for a class (?classname=x).
-     *
-     * @Route("/attributes", options={"expose"=true}, methods={"GET"})
-     *
-     * @param Request $request
-     * @param ConfigReader $config
-     * @param DefinitionInformationFactory $definitionInformationFactory
-     *
-     * @return JsonResponse
      */
+    #[Route('/attributes', options: ['expose' => true], methods: ['GET'])]
     public function listAttributesAction(Request $request, ConfigReader $config, DefinitionInformationFactory $definitionInformationFactory): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
@@ -101,7 +85,7 @@ class ConstraintConfigController extends BaseController
         try {
             $classInformation = $definitionInformationFactory->make($request->query->get('classname'));
             $attributes = array_keys($classInformation->getAllAttributes());
-        } catch (Throwable $throwable) {
+        } catch (Throwable) {
             return $this->json(['attributes' => []]);
         }
 
@@ -120,14 +104,8 @@ class ConstraintConfigController extends BaseController
 
     /**
      * Adds a new classname-attributename pair to the config.
-     *
-     * @Route("/attributes", options={"expose"=true}, methods={"POST"})
-     *
-     * @param Request $request
-     * @param ConfigWriter $config
-     *
-     * @return JsonResponse
      */
+    #[Route('/attributes', options: ['expose' => true], methods: ['POST'])]
     public function addAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
         if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
@@ -138,26 +116,20 @@ class ConstraintConfigController extends BaseController
 
         return $this->json([
             'status' => $config->addClassAttribute(
-                    $request->request->get('classname'),
-                    $request->request->get('attributename')
-                ) && $config->modifyNote(
-                    $request->request->get('classname'),
-                    $request->request->get('attributename'),
-                    $request->request->get('note'),
-                ),
+                $request->request->get('classname'),
+                $request->request->get('attributename')
+            ) && $config->modifyNote(
+                $request->request->get('classname'),
+                $request->request->get('attributename'),
+                $request->request->get('note'),
+            ),
         ]);
     }
 
     /**
      * Deletes a classname-attributename pair from the config.
-     *
-     * @Route("/attributes", options={"expose"=true}, methods={"DELETE"})
-     *
-     * @param Request $request
-     * @param ConfigWriter $config
-     *
-     * @return JsonResponse
      */
+    #[Route('/attributes', options: ['expose' => true], methods: ['DELETE'])]
     public function deleteAttributeAction(Request $request, ConfigWriter $config): JsonResponse
     {
         if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
@@ -176,13 +148,8 @@ class ConstraintConfigController extends BaseController
 
     /**
      * Returns a list of possible constraints.
-     *
-     * @Route("/constraints", options={"expose"=true}, methods={"GET"})
-     *
-     * @param ConstraintDefinitions $definitions
-     *
-     * @return JsonResponse
      */
+    #[Route('/constraints', options: ['expose' => true], methods: ['GET'])]
     public function listConstraintsAction(ConstraintDefinitions $definitions): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
@@ -204,14 +171,8 @@ class ConstraintConfigController extends BaseController
 
     /**
      * Adds a new constraint for a class attribute to the config.
-     *
-     * @Route("/constraints", options={"expose"=true}, methods={"POST"})
-     *
-     * @param Request $request
-     * @param ConfigWriter $config
-     *
-     * @return JsonResponse
      */
+    #[Route('/constraints', options: ['expose' => true], methods: ['POST'])]
     public function addConstraintAction(Request $request, ConfigWriter $config): JsonResponse
     {
         if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
@@ -232,14 +193,8 @@ class ConstraintConfigController extends BaseController
 
     /**
      * Delete a constraint for a class attribute from the config.
-     *
-     * @Route("/constraints", options={"expose"=true}, methods={"DELETE"})
-     *
-     * @param Request $request
-     * @param ConfigWriter $config
-     *
-     * @return JsonResponse
      */
+    #[Route('/constraints', options: ['expose' => true], methods: ['DELETE'])]
     public function deleteConstraintAction(Request $request, ConfigWriter $config): JsonResponse
     {
         if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {

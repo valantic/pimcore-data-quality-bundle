@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Service;
 
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
@@ -11,20 +13,11 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class DefinitionInformationTest extends AbstractTestCase
 {
-    /**
-     * @var DefinitionInformation
-     */
-    protected $definitionInformation;
+    protected DefinitionInformation $definitionInformation;
 
-    /**
-     * @var string
-     */
-    protected $name = 'Product';
+    protected string $name = 'Product';
 
-    /**
-     * @var DefinitionInformationFactory
-     */
-    protected $definitionInformationFactory;
+    protected DefinitionInformationFactory $definitionInformationFactory;
 
     protected function setUp(): void
     {
@@ -47,7 +40,6 @@ class DefinitionInformationTest extends AbstractTestCase
         $objectBrickInformationStub
             ->method('getDefinition')
             ->willReturn($this->getBarcodeObjectbrickDefinition());
-
 
         $definitionInformationFactory = new DefinitionInformationFactory($classInformationStub, $fieldCollectionInformationStub, $objectBrickInformationStub);
         $this->definitionInformation = $definitionInformationFactory->make($this->name);
@@ -107,4 +99,3 @@ class DefinitionInformationTest extends AbstractTestCase
         $this->assertSame('', $this->definitionInformation->getAttributeLabel('unknown_attribute'));
     }
 }
-

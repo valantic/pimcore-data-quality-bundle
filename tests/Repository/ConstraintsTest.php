@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Repository;
 
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
@@ -9,20 +11,11 @@ class ConstraintsTest extends AbstractTestCase
 {
     // TODO: add tests for custom constraints
 
-    /**
-     * @var ConstraintDefinitions
-     */
-    protected $constraints;
+    protected ConstraintDefinitions $constraints;
 
-    /**
-     * @var SampleConstraintFull
-     */
-    protected $customConstraintFull;
+    protected SampleConstraintFull $customConstraintFull;
 
-    /**
-     * @var SampleConstraintMinimal
-     */
-    protected $customConstraintMinimal;
+    protected SampleConstraintMinimal $customConstraintMinimal;
 
     protected function setUp(): void
     {

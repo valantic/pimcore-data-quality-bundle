@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Valantic\DataQualityBundle\Tests\Config;
 
 use Valantic\DataQualityBundle\Config\V1\Constraints\ConstraintKeys;
@@ -9,55 +11,25 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class ConstraintTest extends AbstractTestCase
 {
-    /**
-     * @var Reader
-     */
-    protected $reader;
+    protected Reader $reader;
 
-    /**
-     * @var Writer
-     */
-    protected $writer;
+    protected Writer $writer;
 
-    /**
-     * @var string
-     */
-    protected $className = 'SomeClass';
+    protected string $className = 'SomeClass';
 
-    /**
-     * @var string
-     */
-    protected $attributeName = 'SomeAttribute';
+    protected string $attributeName = 'SomeAttribute';
 
-    /**
-     * @var string
-     */
-    protected $constraintName = 'SomeConstraint';
+    protected string $constraintName = 'SomeConstraint';
 
-    /**
-     * @var int
-     */
-    protected $constraintParams = 3;
+    protected int $constraintParams = 3;
 
-    /**
-     * @var string
-     */
-    protected $classNameOther = 'OtherNamespace\\OtherClass';
+    protected string $classNameOther = 'OtherNamespace\\OtherClass';
 
-    /**
-     * @var string
-     */
-    protected $attributeNameOther = 'other.attribute';
+    protected string $attributeNameOther = 'other.attribute';
 
-    /**
-     * @var string
-     */
-    protected $constraintNameOther = 'Custom\\OtherConstraint';
+    protected string $constraintNameOther = 'Custom\\OtherConstraint';
 
-    /**
-     * @var array
-     */
-    protected $constraintParamsOther = ['arg1' => true, 'arg2' => 'yes', 3, null];
+    protected array $constraintParamsOther = ['arg1' => true, 'arg2' => 'yes', 3, null];
 
     protected function setUp(): void
     {
@@ -151,7 +123,6 @@ class ConstraintTest extends AbstractTestCase
         $this->assertTrue($this->writer->modifyNote($this->className, $this->attributeName, 'ipsum'));
         $this->assertSame('ipsum', $this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
 
-
         $this->assertTrue($this->writer->deleteNote($this->className, $this->attributeName));
         $this->assertTrue($this->writer->deleteNote($this->className, $this->attributeName));
         $this->assertNull($this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
@@ -236,13 +207,13 @@ class ConstraintTest extends AbstractTestCase
 
     public function testRuleScalarParams(): void
     {
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, (string)$this->constraintParams));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, (string) $this->constraintParams));
         $this->assertSame($this->constraintParams, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
     public function testConstraintArrayParams(): void
     {
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR)));
         $this->assertSame($this->constraintParamsOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintNameOther]);
     }
 
@@ -251,12 +222,11 @@ class ConstraintTest extends AbstractTestCase
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
 
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR)));
 
-
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeNameOther, $this->constraintName, json_encode($this->constraintParams)));
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeNameOther, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeNameOther, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeNameOther, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR)));
 
         $this->assertCount(2, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertCount(2, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
@@ -272,8 +242,8 @@ class ConstraintTest extends AbstractTestCase
     {
         $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR)));
 
         $this->assertArrayHasKey($this->constraintName, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
         $this->assertArrayHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
@@ -289,7 +259,7 @@ class ConstraintTest extends AbstractTestCase
 
     public function testDeleteUnknownRules(): void
     {
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams)));
+        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR)));
         $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));
         $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));
 
