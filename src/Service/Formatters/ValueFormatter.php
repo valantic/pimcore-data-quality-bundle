@@ -24,7 +24,7 @@ class ValueFormatter implements Formatter
      */
     protected function stripTags(mixed $input): array|string
     {
-        return is_array($input) ? array_map(fn($value) => $this->stripTags($value), $input) : strip_tags((string)$input);
+        return is_array($input) ? array_map(fn($value) => $this->stripTags($value), $input) : strip_tags((string) $input);
     }
 
     /**

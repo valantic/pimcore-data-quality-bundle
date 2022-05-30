@@ -26,7 +26,7 @@ class RelationAttribute extends AbstractAttribute
             foreach ($relation as $item) {
                 $ids[] = $item->getId();
             }
-        } elseif($relation instanceof Concrete) {
+        } elseif ($relation instanceof Concrete) {
             $ids[] = $relation->getId();
         }
 

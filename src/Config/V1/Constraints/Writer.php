@@ -12,7 +12,6 @@ class Writer extends AbstractWriter implements ConstraintKeys
 {
     /**
      * Write the bundle's config file.
-     *
      */
     public function __construct(protected Reader $reader, EventDispatcherInterface $eventDispatcher)
     {
@@ -54,7 +53,6 @@ class Writer extends AbstractWriter implements ConstraintKeys
 
     /**
      * Adds a new config entry or edits an existing one for a class-attribute rule if it does not yet exist.
-     *
      */
     public function modifyRule(string $className, string $attributeName, string $constraint, ?string $params = null): bool
     {
