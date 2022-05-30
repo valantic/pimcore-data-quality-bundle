@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
+use Pimcore\Model\DataObject\Concrete;
 use Throwable;
 
 class RelationAttribute extends AbstractAttribute
@@ -25,7 +26,7 @@ class RelationAttribute extends AbstractAttribute
             foreach ($relation as $item) {
                 $ids[] = $item->getId();
             }
-        } else {
+        } elseif($relation instanceof Concrete) {
             $ids[] = $relation->getId();
         }
 
