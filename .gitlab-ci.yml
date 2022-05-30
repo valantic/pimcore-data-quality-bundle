@@ -20,6 +20,13 @@ lint_php:
       - vendor/
       - vendor-bin/**/vendor/
 
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.cobertura.xml
 deploy:
   stage: deploy
   only:

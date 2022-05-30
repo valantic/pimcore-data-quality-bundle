@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
-         backupGlobals="false"
-         colors="true"
-         bootstrap="./vendor/autoload.php"
-         cacheResult="true"
->
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="false" colors="true"
+         bootstrap="./vendor/autoload.php" cacheResult="true">
     <php>
         <ini name="error_reporting" value="-1"/>
         <ini name="intl.default_locale" value="en"/>
@@ -22,28 +17,28 @@
         <const name="PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK" value="true"/>
         <server name="KERNEL_CLASS" value="Valantic\DataQualityBundle\Tests\Kernel"/>
     </php>
-
     <testsuites>
         <testsuite name="Test suite">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory>./src</directory>
-            <exclude>
-                <directory>./src/DependencyInjection</directory>
-                <directory>./src/Installer</directory>
-                <directory>./src/Migrations</directory>
-            </exclude>
-        </whitelist>
-    </filter>
-
     <logging>
-        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
-        <log type="coverage-html" target="out/coverage/html" showUncoveredFiles="false"/>
-        <log type="coverage-clover" target="out/coverage/coverage-xml/index.xml" showUncoveredFiles="false"/>
-        <log type="junit" target="out/coverage/junit.xml" showUncoveredFiles="false"/>
+        <junit outputFile="report.xml"/>
     </logging>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory>./src</directory>
+        </include>
+        <exclude>
+            <directory>./src/DependencyInjection</directory>
+            <directory>./src/Installer</directory>
+            <directory>./src/Migrations</directory>
+        </exclude>
+        <report>
+            <cobertura outputFile="cobertura.xml"/>
+            <clover outputFile="out/coverage/coverage-xml/index.xml"/>
+            <html outputDirectory="coverage/html"/>
+            <text outputFile="php://stdout" showUncoveredFiles="false"/>
+        </report>
+    </coverage>
 </phpunit>

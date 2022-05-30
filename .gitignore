@@ -3,7 +3,9 @@ node_modules/
 .DS_STORE
 .idea/
 .phpunit.result.cache
-out/
+coverage/
+report.xml
+cobertura.xml
 tests/tmp/
 var/cache/
 infection.log
