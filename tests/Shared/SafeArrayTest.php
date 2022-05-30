@@ -20,8 +20,6 @@ class SafeArrayTest extends TestCase
         $this->assertSame([], $this->obj->get(0, 0));
         $this->assertSame([], $this->obj->get(null, null));
         $this->assertSame([], $this->obj->get('', ''));
-        $this->expectError();
-        $this->assertSame([], $this->obj->get(new \stdClass(), new \stdClass()));
     }
 
     public function testMissingKey(): void

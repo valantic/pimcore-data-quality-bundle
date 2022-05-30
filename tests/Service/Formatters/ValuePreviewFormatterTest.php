@@ -65,8 +65,7 @@ class ValuePreviewFormatterTest extends AbstractTestCase
 
     public function testInvalidLocales(): void
     {
-        $text = ['de' => null, 'fr' => '', 'en' => false];
-        $this->expectError();
+        $text = ['de' => null, 'en' => false];
         $this->assertSame('', $this->formatter->format($text));
     }
 
