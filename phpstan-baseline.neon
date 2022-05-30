@@ -116,16 +116,6 @@ parameters:
 			path: src/Controller/MetaConfigController.php
 
 		-
-			message: "#^Call to an undefined static method Valantic\\\\DataQualityBundle\\\\Event\\\\Event\\:\\:__construct\\(\\)\\.$#"
-			count: 1
-			path: src/Event/ConstraintFailureEvent.php
-
-		-
-			message: "#^Call to an undefined static method Valantic\\\\DataQualityBundle\\\\Event\\\\Event\\:\\:__construct\\(\\)\\.$#"
-			count: 1
-			path: src/Event/InvalidConstraintEvent.php
-
-		-
 			message: "#^Cannot call method getIterator\\(\\) on iterable\\.$#"
 			count: 1
 			path: src/Repository/ConstraintDefinitions.php
