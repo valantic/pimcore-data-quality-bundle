@@ -27,6 +27,7 @@ lint_php:
       coverage_report:
         coverage_format: cobertura
         path: coverage.cobertura.xml
+
 deploy:
   stage: deploy
   only:
