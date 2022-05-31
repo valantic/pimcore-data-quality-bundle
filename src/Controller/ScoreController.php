@@ -8,7 +8,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
+use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
 use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
@@ -24,10 +24,10 @@ class ScoreController extends BaseController
     public function showAction(
         Request $request,
         Validate $validation,
-        ConstraintsConfig $constraintsConfig,
         DefinitionInformationFactory $definitionInformationFactory,
         ValueFormatter $valueFormatter,
-        ValuePreviewFormatter $valuePreviewFormatter
+        ValuePreviewFormatter $valuePreviewFormatter,
+        ConfigurationRepository $configurationRepository
     ): JsonResponse {
         $obj = Concrete::getById($request->query->getInt('id'));
 
@@ -56,7 +56,7 @@ class ScoreController extends BaseController
                 [
                     'attribute' => $attribute,
                     'label' => $classInformation->getAttributeLabel($attribute),
-                    'note' => $constraintsConfig->getNoteForObjectAttribute($obj, $attribute),
+                    'note' => $configurationRepository->getNoteForAttribute($obj::class, $attribute),
                     'type' => $classInformation->getAttributeType($attribute),
                 ],
                 $score,
@@ -81,7 +81,7 @@ class ScoreController extends BaseController
      * Check if an object can be scored i.e. if it is configured.
      */
     #[Route('/check', options: ['expose' => true])]
-    public function checkAction(Request $request, ConstraintsConfig $constraintsConfig): JsonResponse
+    public function checkAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         $obj = Concrete::getById($request->query->getInt('id'));
         if (!$obj || !($obj instanceof Concrete)) {
@@ -91,7 +91,7 @@ class ScoreController extends BaseController
         }
 
         return $this->json([
-            'status' => $constraintsConfig->isObjectConfigured($obj),
+            'status' => $configurationRepository->isClassConfigured($obj::class),
         ]);
     }
 }

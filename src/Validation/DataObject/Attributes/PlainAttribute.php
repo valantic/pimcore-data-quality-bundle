@@ -8,9 +8,6 @@ use Throwable;
 
 class PlainAttribute extends AbstractAttribute
 {
-    /**
-     * {@inheritDoc}
-     */
     public function value(): mixed
     {
         try {

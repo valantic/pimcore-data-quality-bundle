@@ -2,21 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Valantic\DataQualityBundle\Constraints\RelationScore;
+namespace Valantic\DataQualityBundle\Constraint\RelationScore;
 
 class OrangeDeepConstraint extends AbstractConstraint
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return OrangeDeepValidator::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getLabel(): string
     {
         return 'OrangeDeepRelationScore';

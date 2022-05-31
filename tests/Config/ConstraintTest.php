@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Tests\Config;
 
-use Valantic\DataQualityBundle\Config\V1\Constraints\ConstraintKeys;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Writer;
+use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
+use const JSON_THROW_ON_ERROR;
 
 class ConstraintTest extends AbstractTestCase
 {
-    protected Reader $reader;
+    protected ConfigurationRepository $configurationRepository;
 
-    protected Writer $writer;
+    /** @var class-string */
+    protected string $className = 'Pimcore\Model\DataObject\Customer';
 
-    protected string $className = 'SomeClass';
+    protected string $attributeName = 'name';
 
-    protected string $attributeName = 'SomeAttribute';
-
-    protected string $constraintName = 'SomeConstraint';
+    protected string $constraintName = 'NotBlank';
 
     protected int $constraintParams = 3;
 
+    /** @var class-string */
     protected string $classNameOther = 'OtherNamespace\\OtherClass';
 
     protected string $attributeNameOther = 'other.attribute';
@@ -30,241 +29,166 @@ class ConstraintTest extends AbstractTestCase
     protected string $constraintNameOther = 'Custom\\OtherConstraint';
 
     protected array $constraintParamsOther = ['arg1' => true, 'arg2' => 'yes', 3, null];
+    /** @var class-string */
+    protected string $classNameConfigured = 'Pimcore\Model\DataObject\Product';
 
     protected function setUp(): void
     {
-        $this->deleteConfig();
-
-        $this->reader = $this->getConstraintsReader();
-        $this->writer = $this->getConstraintsWriter();
-    }
-
-    public function testReaderInstantiated(): void
-    {
-        $this->assertInstanceOf(Reader::class, $this->reader);
+        $this->configurationRepository = $this->getConfigurationRepository();
     }
 
     public function testReadMissingConfig(): void
     {
-        $this->assertIsArray($this->reader->getConfiguredClasses());
-        $this->assertCount(0, $this->reader->getConfiguredClasses());
-    }
-
-    public function testReadCorruptConfig(): void
-    {
-        $this->activateConfig($this::CONFIG_CORRUPT);
-        $this->assertIsArray($this->reader->getConfiguredClasses());
-        $this->assertCount(0, $this->reader->getConfiguredClasses());
-    }
-
-    public function testReadStringConfig(): void
-    {
-        $this->activateConfig($this::CONFIG_STRING);
-        $this->assertIsArray($this->reader->getConfiguredClasses());
-        $this->assertCount(0, $this->reader->getConfiguredClasses());
+        $configurationRepository = $this->getConfigurationRepository(self::CONFIG_EMPTY);
+        $this->assertIsArray($configurationRepository->getConfiguredClasses());
+        $this->assertCount(0, $configurationRepository->getConfiguredClasses());
     }
 
     public function testReadClassesAreConfigured(): void
     {
-        $this->activateConfig($this::CONFIG_FULL);
-        $this->assertIsArray($this->reader->getConfiguredClasses());
-        $this->assertCount(3, $this->reader->getConfiguredClasses());
+        $this->assertIsArray($this->configurationRepository->getConfiguredClasses());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
 
-        foreach ($this->reader->getConfiguredClasses() as $configuredClass) {
-            $this->assertTrue($this->reader->isClassConfigured($configuredClass));
+        foreach ($this->configurationRepository->getConfiguredClasses() as $configuredClass) {
+            $this->assertTrue($this->configurationRepository->isClassConfigured($configuredClass));
         }
     }
 
     public function testReadClassKeys(): void
     {
-        $this->activateConfig($this::CONFIG_FULL);
-        $className = 'Product';
-        $this->assertTrue($this->reader->isClassConfigured($className));
-        $configs = $this->reader->getForClass($className);
+        $this->assertTrue($this->configurationRepository->isClassConfigured($this->classNameConfigured));
 
-        $this->assertSame($this->reader->getConfiguredClassAttributes($className), array_keys($configs));
+        foreach ($this->configurationRepository->getConfiguredAttributes($this->classNameConfigured) as $attribute) {
+            $this->assertTrue($this->configurationRepository->isAttributeConfigured($this->classNameConfigured, $attribute));
 
-        foreach ($configs as $attribute => $config) {
-            $this->assertTrue($this->reader->isClassAttributeConfigured($className, $attribute));
-
-            $this->assertArrayHasKey(ConstraintKeys::KEY_NOTE, $config);
-            $this->assertArrayHasKey(ConstraintKeys::KEY_RULES, $config);
-
-            $this->assertSame($this->reader->getRulesForClassAttribute($className, $attribute), $config[ConstraintKeys::KEY_RULES]);
-            $this->assertSame($this->reader->getNoteForClassAttribute($className, $attribute), $config[ConstraintKeys::KEY_NOTE]);
+            $this->assertIsArray($this->configurationRepository->getRulesForAttribute($this->classNameConfigured, $attribute));
         }
     }
 
     public function testReadMissingClass(): void
     {
-        $this->assertSame([], $this->reader->getForClass($this->classNameOther));
-    }
-
-    public function testWriteMissingConfig(): void
-    {
-        $this->assertTrue($this->writer->ensureConfigExists());
+        $this->assertSame([], $this->configurationRepository->getForClass($this->classNameOther));
     }
 
     public function testWriteToMissingConfigFile(): void
     {
-        $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
-        $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
+        $this->configurationRepository->addClassAttribute($this->className, $this->attributeName);
+        $this->assertTrue($this->configurationRepository->isAttributeConfigured($this->className, $this->attributeName));
     }
 
     public function testWriteNote(): void
     {
-        $this->assertNull($this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
+        $configurationRepository = $this->getConfigurationRepository(self::CONFIG_EMPTY);
+        $this->assertNull($configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->modifyNote($this->className, $this->attributeName, 'lorem'));
-        $this->assertSame('lorem', $this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
-        $this->assertArrayHasKey(ConstraintKeys::KEY_NOTE, $this->reader->getForClass($this->className)[$this->attributeName]);
-        $this->assertSame('lorem', $this->reader->getForClass($this->className)[$this->attributeName][ConstraintKeys::KEY_NOTE]);
+        $configurationRepository->modifyNote($this->className, $this->attributeName, 'lorem');
+        $this->assertSame('lorem', $configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->modifyNote($this->className, $this->attributeName, 'ipsum'));
-        $this->assertSame('ipsum', $this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
+        $configurationRepository->modifyNote($this->className, $this->attributeName, 'ipsum');
+        $this->assertSame('ipsum', $configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->deleteNote($this->className, $this->attributeName));
-        $this->assertTrue($this->writer->deleteNote($this->className, $this->attributeName));
-        $this->assertNull($this->reader->getNoteForClassAttribute($this->className, $this->attributeName));
+        $configurationRepository->deleteNote($this->className, $this->attributeName);
+        $configurationRepository->deleteNote($this->className, $this->attributeName);
+        $this->assertNull($configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->deleteNote($this->className, $this->attributeNameOther));
-        $this->assertNull($this->reader->getNoteForClassAttribute($this->className, $this->attributeNameOther));
+        $configurationRepository->deleteNote($this->className, $this->attributeNameOther);
+        $this->assertNull($configurationRepository->getNoteForAttribute($this->className, $this->attributeNameOther));
 
-        $this->assertNull($this->reader->getNoteForClassAttribute($this->classNameOther, $this->attributeName));
-        $this->assertTrue($this->writer->deleteNote($this->classNameOther, $this->attributeName));
-        $this->assertNull($this->reader->getNoteForClassAttribute($this->classNameOther, $this->attributeName));
+        $this->assertNull($configurationRepository->getNoteForAttribute($this->classNameOther, $this->attributeName));
+        $configurationRepository->deleteNote($this->classNameOther, $this->attributeName);
+        $this->assertNull($configurationRepository->getNoteForAttribute($this->classNameOther, $this->attributeName));
     }
 
     public function testWriteDoubleAdd(): void
     {
-        $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
-        $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
-        $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
-    }
-
-    public function testWriteToCorruptConfigFile(): void
-    {
-        $this->activateConfig(self::CONFIG_CORRUPT);
-        $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
-        $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
-    }
-
-    public function testWriteToInvalidConfigFile(): void
-    {
-        $this->activateConfig(self::CONFIG_STRING);
-
-        $this->assertTrue($this->writer->addClassAttribute($this->className, $this->attributeName));
-        $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
-    }
-
-    public function testWriteDoesNotAffectOtherEntries(): void
-    {
-        $this->activateConfig(self::CONFIG_FULL);
-
-        $this->assertCount(3, $this->reader->getConfiguredClasses());
-
-        $this->writer->addClassAttribute($this->className, $this->attributeName);
-
-        $this->assertCount(4, $this->reader->getConfiguredClasses());
+        $this->configurationRepository->addClassAttribute($this->className, $this->attributeName);
+        $this->configurationRepository->addClassAttribute($this->className, $this->attributeName);
+        $this->assertTrue($this->configurationRepository->isAttributeConfigured($this->className, $this->attributeName));
     }
 
     public function testDeleteEntry(): void
     {
-        $this->writer->addClassAttribute($this->className, $this->attributeName);
-        $this->assertTrue($this->reader->isClassConfigured($this->className));
-        $this->assertTrue($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
+        $this->configurationRepository->addClassAttribute($this->className, $this->attributeName);
+        $this->assertTrue($this->configurationRepository->isClassConfigured($this->className));
+        $this->assertTrue($this->configurationRepository->isAttributeConfigured($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->deleteClassAttribute($this->className, $this->attributeName));
+        $this->configurationRepository->deleteClassAttribute($this->className, $this->attributeName);
 
-        $this->assertFalse($this->reader->isClassAttributeConfigured($this->className, $this->attributeName));
-    }
-
-    public function testDeleteUnknownEntry(): void
-    {
-        $this->assertFalse($this->reader->isClassConfigured($this->className));
-
-        $this->assertTrue($this->writer->deleteClassAttribute($this->className, $this->attributeName));
-
-        $this->assertFalse($this->reader->isClassConfigured($this->className));
+        $this->assertFalse($this->configurationRepository->isAttributeConfigured($this->className, $this->attributeName));
     }
 
     public function testSimpleRule(): void
     {
-        $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
+        $configurationRepository = $this->getConfigurationRepository(self::CONFIG_EMPTY);
+        $this->assertCount(0, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
 
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName);
 
-        $this->assertCount(1, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
+        $this->assertCount(1, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
 
-        $this->assertNull($this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
+        $this->assertNull($configurationRepository->getRulesForAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
     public function testRuleEmptyStringParams(): void
     {
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, ''));
-        $this->assertNull($this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
+        $configurationRepository = $this->getConfigurationRepository(self::CONFIG_EMPTY);
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName, '');
+        $this->assertEmpty($configurationRepository->getRulesForAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
     public function testRuleScalarParams(): void
     {
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, (string) $this->constraintParams));
-        $this->assertSame($this->constraintParams, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintName]);
+        $this->configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName, (string) $this->constraintParams);
+        $this->assertSame($this->constraintParams, $this->configurationRepository->getRulesForAttribute($this->className, $this->attributeName)[$this->constraintName]);
     }
 
     public function testConstraintArrayParams(): void
     {
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR)));
-        $this->assertSame($this->constraintParamsOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName)[$this->constraintNameOther]);
+        $this->configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, JSON_THROW_ON_ERROR));
+        $this->assertSame($this->constraintParamsOther, $this->configurationRepository->getRulesForAttribute($this->className, $this->attributeName)[$this->constraintNameOther]);
     }
 
     public function testMultipleRules(): void
     {
-        $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
-        $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
+        $configurationRepository = $this->getConfigurationRepository(self::CONFIG_EMPTY);
 
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR)));
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR)));
+        $this->assertCount(0, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
+        $this->assertCount(0, $configurationRepository->getRulesForAttribute($this->className, $this->attributeNameOther));
 
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeNameOther, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR)));
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeNameOther, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR)));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, JSON_THROW_ON_ERROR));
 
-        $this->assertCount(2, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
-        $this->assertCount(2, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
+        $configurationRepository->modifyRule($this->className, $this->attributeNameOther, $this->constraintName, json_encode($this->constraintParams, JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeNameOther, $this->constraintNameOther, json_encode($this->constraintParamsOther, JSON_THROW_ON_ERROR));
 
-        $this->assertArrayHasKey($this->constraintName, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
-        $this->assertArrayHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
+        $this->assertCount(2, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
+        $this->assertCount(2, $configurationRepository->getRulesForAttribute($this->className, $this->attributeNameOther));
 
-        $this->assertArrayHasKey($this->constraintName, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
-        $this->assertArrayHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeNameOther));
+        $this->assertArrayHasKey($this->constraintName, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
+        $this->assertArrayHasKey($this->constraintNameOther, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
+
+        $this->assertArrayHasKey($this->constraintName, $configurationRepository->getRulesForAttribute($this->className, $this->attributeNameOther));
+        $this->assertArrayHasKey($this->constraintNameOther, $configurationRepository->getRulesForAttribute($this->className, $this->attributeNameOther));
     }
 
     public function testDeleteRules(): void
     {
-        $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
+        $configurationRepository = $this->getConfigurationRepository(self::CONFIG_EMPTY);
 
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR)));
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR)));
+        $this->assertCount(0, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
 
-        $this->assertArrayHasKey($this->constraintName, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
-        $this->assertArrayHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
-        $this->assertCount(2, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, JSON_THROW_ON_ERROR));
 
-        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));
-        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintNameOther));
+        $this->assertArrayHasKey($this->constraintName, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
+        $this->assertArrayHasKey($this->constraintNameOther, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
+        $this->assertCount(2, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
 
-        $this->assertArrayNotHasKey($this->constraintName, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
-        $this->assertArrayNotHasKey($this->constraintNameOther, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
-        $this->assertCount(0, $this->reader->getRulesForClassAttribute($this->className, $this->attributeName));
-    }
+        $configurationRepository->deleteRule($this->className, $this->attributeName, $this->constraintName);
+        $configurationRepository->deleteRule($this->className, $this->attributeName, $this->constraintNameOther);
 
-    public function testDeleteUnknownRules(): void
-    {
-        $this->assertTrue($this->writer->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR)));
-        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));
-        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintName));
-
-        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeName, $this->constraintNameOther));
-
-        $this->assertTrue($this->writer->deleteRule($this->className, $this->attributeNameOther, $this->constraintNameOther));
+        $this->assertArrayNotHasKey($this->constraintName, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
+        $this->assertArrayNotHasKey($this->constraintNameOther, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
+        $this->assertCount(0, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
     }
 }

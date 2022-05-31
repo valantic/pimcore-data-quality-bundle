@@ -17,9 +17,6 @@ class ValuePreviewFormatter extends ValueFormatter
     {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function format(mixed $input): mixed
     {
         $output = parent::format($input);

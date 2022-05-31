@@ -12,9 +12,6 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    /**
-     * {@inheritDoc}
-     */
     public function getJsPaths(): array
     {
         return [

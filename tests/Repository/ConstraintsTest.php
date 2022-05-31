@@ -22,11 +22,6 @@ class ConstraintsTest extends AbstractTestCase
         $this->customConstraintFull = new SampleConstraintFull();
         $this->customConstraintMinimal = new SampleConstraintMinimal();
         $iter = new \ArrayObject([
-            'string',
-            123,
-            false,
-            null,
-            SampleConstraintFull::class,
             $this->customConstraintFull,
             $this->customConstraintMinimal,
         ]);

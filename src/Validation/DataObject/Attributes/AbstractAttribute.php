@@ -14,11 +14,9 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
-use Valantic\DataQualityBundle\Config\V1\Meta\MetaKeys;
-use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
+use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SafeArray;
@@ -59,32 +57,23 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
 
     /**
      * Validates an attribute of an object.
-     *
-     * @param Concrete $obj Object to validate
-     * @param string $attribute Attribute to validate
-     * @param ConstraintsConfig $constraintsConfig
-     * @param MetaConfig $metaConfig
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ContainerInterface $container
-     * @param array $skippedConstraints
      */
     public function __construct(
         protected Concrete $obj,
         protected string $attribute,
-        protected ConstraintsConfig $constraintsConfig,
-        protected MetaConfig $metaConfig,
         protected EventDispatcherInterface $eventDispatcher,
         DefinitionInformationFactory $definitionInformationFactory,
         protected ContainerInterface $container,
-        protected array $skippedConstraints
+        protected array $skippedConstraints,
+        protected ConfigurationRepository $configurationRepository
     ) {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
-        $this->validationConfig = $constraintsConfig->getRulesForObjectAttribute($obj, $attribute);
-        $this->classInformation = $definitionInformationFactory->make($this->obj->getClassName());
+        $this->validationConfig = $this->configurationRepository->getRulesForAttribute($obj::class, $attribute);
+        $this->classInformation = $definitionInformationFactory->make($this->obj::class);
 
         if (self::$maxNestingLevel < 0) {
-            self::$maxNestingLevel = $this->metaConfig->getForObject($this->obj)[MetaKeys::KEY_NESTING_LIMIT] ?? 1;
+            self::$maxNestingLevel = $this->configurationRepository->getConfiguredNestingLimit($this->obj::class);
         }
 
         if (!isset(self::$validationRootObject)) {
@@ -92,9 +81,6 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function score(): float
     {
         if (!count($this->getConstraints())) {
@@ -104,9 +90,6 @@ abstract class AbstractAttribute implements Validatable, Scorable, Colorable
         return 1 - (count($this->violations) / count($this->getConstraints()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function validate(): void
     {
         try {

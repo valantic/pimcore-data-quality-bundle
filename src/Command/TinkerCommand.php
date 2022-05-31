@@ -13,9 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class TinkerCommand extends AbstractCommand
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function configure(): void
     {
         $this
@@ -23,9 +20,6 @@ class TinkerCommand extends AbstractCommand
             ->setDescription('Developer playground for the ValanticDataQualityBundle');
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->dump('Hello from ' . self::class);

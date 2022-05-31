@@ -8,8 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConfigReader;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
+use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 
@@ -20,21 +19,24 @@ class ConstraintConfigController extends BaseController
      * Returns the config for the admin editor.
      */
     #[Route('/list', options: ['expose' => true], methods: ['GET', 'POST'])]
-    public function listAction(Request $request, ConfigReader $config, ConstraintDefinitions $definitions): JsonResponse
-    {
+    public function listAction(
+        Request $request,
+        ConstraintDefinitions $definitions,
+        ConfigurationRepository $configurationRepository
+    ): JsonResponse {
         $constraintDefinitions = $definitions->all();
         $this->checkPermission(self::CONFIG_NAME);
 
         $filter = $request->get('filterText');
 
         $entries = [];
-        foreach ($config->getConfiguredClasses() as $className) {
-            foreach ($config->getConfiguredClassAttributes($className) as $attribute) {
+        foreach ($configurationRepository->getConfiguredClasses() as $className) {
+            foreach ($configurationRepository->getConfiguredAttributes($className) as $attribute) {
                 if ($filter && stripos($className, (string) $filter) === false && stripos($attribute, (string) $filter) === false) {
                     continue;
                 }
                 $transformedRules = [];
-                foreach ($config->getRulesForClassAttribute($className, $attribute) as $constraint => $args) {
+                foreach ($configurationRepository->getRulesForAttribute($className, $attribute) as $constraint => $args) {
                     $transformedRules[] = [
                         'constraint' => $constraint,
                         'label' => array_key_exists($constraint, $constraintDefinitions) ? ($constraintDefinitions[$constraint]['label'] ?? $constraint) : $constraint,
@@ -46,7 +48,7 @@ class ConstraintConfigController extends BaseController
                     'attributename' => $attribute,
                     'rules' => $transformedRules,
                     'rules_count' => count($transformedRules),
-                    'note' => $config->getNoteForClassAttribute($className, $attribute),
+                    'note' => $configurationRepository->getNoteForAttribute($className, $attribute),
                 ];
             }
         }
@@ -74,8 +76,11 @@ class ConstraintConfigController extends BaseController
      * Return a list of possible attributes to configure for a class (?classname=x).
      */
     #[Route('/attributes', options: ['expose' => true], methods: ['GET'])]
-    public function listAttributesAction(Request $request, ConfigReader $config, DefinitionInformationFactory $definitionInformationFactory): JsonResponse
-    {
+    public function listAttributesAction(
+        Request $request,
+        ConfigurationRepository $configurationRepository,
+        DefinitionInformationFactory $definitionInformationFactory
+    ): JsonResponse {
         $this->checkPermission(self::CONFIG_NAME);
 
         if (!$request->query->has('classname')) {
@@ -89,7 +94,7 @@ class ConstraintConfigController extends BaseController
             return $this->json(['attributes' => []]);
         }
 
-        $names = array_diff($attributes, $config->getConfiguredClassAttributes($classInformation->getName()));
+        $names = array_diff($attributes, $configurationRepository->getConfiguredAttributes($classInformation->getName()));
 
         $attributeNames = [];
         foreach ($names as $name) {
@@ -106,23 +111,25 @@ class ConstraintConfigController extends BaseController
      * Adds a new classname-attributename pair to the config.
      */
     #[Route('/attributes', options: ['expose' => true], methods: ['POST'])]
-    public function addAttributeAction(Request $request, ConfigWriter $config): JsonResponse
+    public function addAttributeAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
             return $this->json(['status' => false]);
         }
 
         $this->checkPermission(self::CONFIG_NAME);
+        $configurationRepository->addClassAttribute(
+            $request->request->get('classname'),
+            $request->request->get('attributename')
+        );
+        $configurationRepository->modifyNote(
+            $request->request->get('classname'),
+            $request->request->get('attributename'),
+            $request->request->get('note'),
+        );
 
         return $this->json([
-            'status' => $config->addClassAttribute(
-                $request->request->get('classname'),
-                $request->request->get('attributename')
-            ) && $config->modifyNote(
-                $request->request->get('classname'),
-                $request->request->get('attributename'),
-                $request->request->get('note'),
-            ),
+            'status' => true,
         ]);
     }
 
@@ -130,19 +137,20 @@ class ConstraintConfigController extends BaseController
      * Deletes a classname-attributename pair from the config.
      */
     #[Route('/attributes', options: ['expose' => true], methods: ['DELETE'])]
-    public function deleteAttributeAction(Request $request, ConfigWriter $config): JsonResponse
+    public function deleteAttributeAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
             return $this->json(['status' => false]);
         }
 
         $this->checkPermission(self::CONFIG_NAME);
+        $configurationRepository->deleteClassAttribute(
+            $request->request->get('classname'),
+            $request->request->get('attributename')
+        );
 
         return $this->json([
-            'status' => $config->deleteClassAttribute(
-                $request->request->get('classname'),
-                $request->request->get('attributename')
-            ),
+            'status' => true,
         ]);
     }
 
@@ -173,21 +181,22 @@ class ConstraintConfigController extends BaseController
      * Adds a new constraint for a class attribute to the config.
      */
     #[Route('/constraints', options: ['expose' => true], methods: ['POST'])]
-    public function addConstraintAction(Request $request, ConfigWriter $config): JsonResponse
+    public function addConstraintAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
             return $this->json(['status' => false]);
         }
 
         $this->checkPermission(self::CONFIG_NAME);
+        $configurationRepository->modifyRule(
+            $request->request->get('classname'),
+            $request->request->get('attributename'),
+            $request->request->get('constraint'),
+            $request->request->get('params')
+        );
 
         return $this->json([
-            'status' => $config->modifyRule(
-                $request->request->get('classname'),
-                $request->request->get('attributename'),
-                $request->request->get('constraint'),
-                $request->request->get('params')
-            ),
+            'status' => true,
         ]);
     }
 
@@ -195,20 +204,21 @@ class ConstraintConfigController extends BaseController
      * Delete a constraint for a class attribute from the config.
      */
     #[Route('/constraints', options: ['expose' => true], methods: ['DELETE'])]
-    public function deleteConstraintAction(Request $request, ConfigWriter $config): JsonResponse
+    public function deleteConstraintAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
             return $this->json(['status' => false]);
         }
 
         $this->checkPermission(self::CONFIG_NAME);
+        $configurationRepository->deleteRule(
+            $request->request->get('classname'),
+            $request->request->get('attributename'),
+            $request->request->get('constraint')
+        );
 
         return $this->json([
-            'status' => $config->deleteRule(
-                $request->request->get('classname'),
-                $request->request->get('attributename'),
-                $request->request->get('constraint')
-            ),
+            'status' => true,
         ]);
     }
 }

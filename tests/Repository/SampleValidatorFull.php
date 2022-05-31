@@ -11,9 +11,6 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class SampleValidatorFull extends ConstraintValidator
 {
-    /**
-     * {@inheritDoc}
-     */
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof SampleConstraintFull) {

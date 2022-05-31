@@ -78,6 +78,8 @@ abstract class DefinitionInformation
 
     /**
      * Gets the canonical class name.
+     *
+     * @return class-string
      */
     public function getName(): string
     {
@@ -231,11 +233,6 @@ abstract class DefinitionInformation
      */
     protected function setName(string $name): void
     {
-        if (str_contains($name, '\\')) {
-            $nameParts = explode('\\', $name);
-            $name = $nameParts[count($nameParts) - 1];
-        }
-        /** @var class-string $name */
         $this->name = $name;
 
         $definition = $this->getDefinition();

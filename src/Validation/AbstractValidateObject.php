@@ -7,8 +7,7 @@ namespace Valantic\DataQualityBundle\Validation;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Reader as ConstraintsConfig;
-use Valantic\DataQualityBundle\Config\V1\Meta\Reader as MetaConfig;
+use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
@@ -34,19 +33,12 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
 
     /**
      * Validate an object and all its attributes.
-     *
-     * @param ConstraintsConfig $constraintsConfig
-     * @param MetaConfig $metaConfig
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param DefinitionInformationFactory $definitionInformationFactory
-     * @param ContainerInterface $container
      */
     public function __construct(
-        protected ConstraintsConfig $constraintsConfig,
-        protected MetaConfig $metaConfig,
         protected EventDispatcherInterface $eventDispatcher,
         protected DefinitionInformationFactory $definitionInformationFactory,
-        protected ContainerInterface $container
+        protected ContainerInterface $container,
+        protected ConfigurationRepository $configurationRepository
     ) {
     }
 

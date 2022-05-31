@@ -2,23 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Valantic\DataQualityBundle\Constraints\RelationScore;
+namespace Valantic\DataQualityBundle\Constraint\RelationScore;
 
-use Valantic\DataQualityBundle\Validation\Colorable;
+use Valantic\DataQualityBundle\Validation\BaseColorable;
 
 class GreenDeepValidator extends AbstractDeepValidator
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function getThresholdKey(): string
     {
-        return Colorable::COLOR_GREEN;
+        return BaseColorable::COLOR_GREEN;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getConstraint(): string
     {
         return GreenDeepConstraint::class;

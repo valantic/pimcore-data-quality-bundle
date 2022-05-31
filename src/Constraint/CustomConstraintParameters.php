@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Valantic\DataQualityBundle\Repository;
+namespace Valantic\DataQualityBundle\Constraint;
 
 interface CustomConstraintParameters
 {

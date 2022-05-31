@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Tests\Repository;
 
-use Valantic\DataQualityBundle\Repository\AbstractCustomConstraint;
+use Valantic\DataQualityBundle\Constraint\AbstractCustomConstraint;
 
 class SampleConstraintMinimal extends AbstractCustomConstraint
 {
@@ -14,9 +14,6 @@ class SampleConstraintMinimal extends AbstractCustomConstraint
 
     public mixed $allowed;
 
-    /**
-     * {@inheritDoc}
-     */
     public function validatedBy()
     {
         return SampleValidatorFull::class;

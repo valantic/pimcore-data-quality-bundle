@@ -6,18 +6,24 @@ namespace Valantic\DataQualityBundle\Tests\Controller;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
-use Valantic\DataQualityBundle\Config\V1\Meta\MetaKeys;
 use Valantic\DataQualityBundle\Controller\MetaConfigController;
+use Valantic\DataQualityBundle\Enum\ThresholdEnum;
+use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
+use const JSON_THROW_ON_ERROR;
 
 class MetaControllerTest extends AbstractTestCase
 {
+    /** @var class-string */
+    protected string $classNameConfigured = 'Pimcore\Model\DataObject\Product';
     /**
      * @var MetaConfigController
      */
     protected MetaConfigController|MockObject $controller;
+    protected ConfigurationRepository $configurationRepository;
 
+    /** @var class-string */
     protected string $className = 'SomeClass';
 
     protected function setUp(): void
@@ -29,12 +35,14 @@ class MetaControllerTest extends AbstractTestCase
             ->method('getClassNames')
             ->willReturn(['Customer', 'Product', 'Category']);
         $this->controller->setContainer(self::$container);
+        $this->configurationRepository = $this->getConfigurationRepository();
     }
 
     public function testListEmpty(): void
     {
+        $configurationRepository = $this->getConfigurationRepository(self::CONFIG_EMPTY);
         $this->controller->setContainer(self::$container);
-        $response = $this->controller->listAction(Request::create('/'), $this->getMetaReader());
+        $response = $this->controller->listAction(Request::create('/'), $configurationRepository);
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -42,17 +50,15 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, false, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
 
         $this->assertSame([], $decoded);
     }
 
     public function testListFull(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
         $this->controller->setContainer(self::$container);
-        $response = $this->controller->listAction(Request::create('/'), $this->getMetaReader());
+        $response = $this->controller->listAction(Request::create('/'), $this->configurationRepository);
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -60,9 +66,9 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertCount(2, $decoded);
+        $this->assertCount(3, $decoded);
 
         foreach ($decoded as $entry) {
             $this->assertArrayHasKey('classname', $entry);
@@ -82,9 +88,10 @@ class MetaControllerTest extends AbstractTestCase
 
     public function testListFiltered(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
-        $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'Product']), $this->getMetaReader());
+        $response = $this->controller->listAction(
+            Request::create('/', 'GET', ['filterText' => 'Product']),
+            $this->configurationRepository
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -92,19 +99,17 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertCount(1, $decoded);
 
-        $this->assertSame('Product', $decoded[0]['classname']);
+        $this->assertSame($this->classNameConfigured, $decoded[0]['classname']);
     }
 
     public function testListMatchesConfig(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
         $this->controller->setContainer(self::$container);
-        $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'Product']), $this->getMetaReader());
+        $response = $this->controller->listAction(Request::create('/', 'GET', ['filterText' => 'Product']), $this->configurationRepository);
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -112,32 +117,27 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR)[0];
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR)[0];
 
-        $reader = $this->getMetaReader();
-        $config = $reader->getForClass($decoded['classname']);
-
-        $this->assertSame($config[MetaKeys::KEY_NESTING_LIMIT], $decoded['nesting_limit']);
-        $this->assertSame($config[MetaKeys::KEY_LOCALES], $decoded['locales']);
-        $this->assertEqualsWithDelta($config[MetaKeys::KEY_THRESHOLD_GREEN] * 100, $decoded['threshold_green'], 0.1);
-        $this->assertEqualsWithDelta($config[MetaKeys::KEY_THRESHOLD_ORANGE] * 100, $decoded['threshold_orange'], 0.1);
+        $this->assertSame($this->configurationRepository->getConfiguredNestingLimit($decoded['classname']), $decoded['nesting_limit']);
+        $this->assertSame($this->configurationRepository->getConfiguredLocales($decoded['classname']), $decoded['locales']);
+        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::THRESHOLD_GREEN) * 100, $decoded['threshold_green'], 0.1);
+        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::THRESHOLD_ORANGE) * 100, $decoded['threshold_orange'], 0.1);
     }
 
     public function testListClasses(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
-        $response = $this->controller->listClassesAction($this->getMetaReader());
+        $response = $this->controller->listClassesAction($this->configurationRepository);
         $content = $response->getContent();
         $this->assertIsString($content);
         $content = (string) $content;
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('classes', $decoded);
-        $this->assertCount(1, $decoded['classes']);
+        $this->assertCount(3, $decoded['classes']);
 
         foreach ($decoded['classes'] as $entry) {
             $this->assertArrayHasKey('name', $entry);
@@ -146,20 +146,17 @@ class MetaControllerTest extends AbstractTestCase
 
     public function testAddMissingData(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
-        $reader = $this->getMetaReader();
-        $this->assertCount(2, $reader->getConfiguredClasses());
-        $response = $this->controller->modifyAction(Request::create('/', 'POST'), $this->getMetaWriter());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
+        $response = $this->controller->modifyAction(Request::create('/', 'POST'), $this->configurationRepository);
 
         $content = $response->getContent();
         $this->assertIsString($content);
         $content = (string) $content;
 
         $this->assertJson($content);
-        $this->assertCount(2, $reader->getConfiguredClasses());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -167,26 +164,26 @@ class MetaControllerTest extends AbstractTestCase
 
     public function testAddPartialData(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
-        $reader = $this->getMetaReader();
-        $this->assertCount(2, $reader->getConfiguredClasses());
-        $response = $this->controller->modifyAction(Request::create('/', 'POST', ['classname' => $this->className]), $this->getMetaWriter());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
+        $response = $this->controller->modifyAction(
+            Request::create('/', 'POST', ['classname' => $this->className]),
+            $this->configurationRepository
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
         $content = (string) $content;
 
         $this->assertJson($content);
-        $this->assertCount(3, $reader->getConfiguredClasses());
-        $this->assertTrue($reader->isClassConfigured($this->className));
+        $this->assertCount(4, $this->configurationRepository->getConfiguredClasses());
+        $this->assertTrue($this->configurationRepository->isClassConfigured($this->className));
 
-        $this->assertSame([], $reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
-        $this->assertSame(0, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_ORANGE]);
-        $this->assertSame(0, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
-        $this->assertSame(1, $reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
+        $this->assertSame([], $this->configurationRepository->getConfiguredLocales($this->className));
+        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_ORANGE));
+        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_GREEN));
+        $this->assertSame(1, $this->configurationRepository->getConfiguredNestingLimit($this->className));
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -194,32 +191,29 @@ class MetaControllerTest extends AbstractTestCase
 
     public function testAddCompleteData(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
-        $reader = $this->getMetaReader();
-        $this->assertCount(2, $reader->getConfiguredClasses());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
         $response = $this->controller->modifyAction(Request::create('/', 'POST', [
             'classname' => $this->className,
             'locales' => ['de', 'en'],
             'threshold_green' => 80,
             'threshold_orange' => 50,
             'nesting_limit' => 2,
-        ]), $this->getMetaWriter());
+        ]), $this->configurationRepository);
 
         $content = $response->getContent();
         $this->assertIsString($content);
         $content = (string) $content;
 
         $this->assertJson($content);
-        $this->assertCount(3, $reader->getConfiguredClasses());
-        $this->assertTrue($reader->isClassConfigured($this->className));
+        $this->assertCount(4, $this->configurationRepository->getConfiguredClasses());
+        $this->assertTrue($this->configurationRepository->isClassConfigured($this->className));
 
-        $this->assertSame(['de', 'en'], $reader->getForClass($this->className)[MetaKeys::KEY_LOCALES]);
-        $this->assertSame(0.5, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_ORANGE]);
-        $this->assertSame(0.8, $reader->getForClass($this->className)[MetaKeys::KEY_THRESHOLD_GREEN]);
-        $this->assertSame(2, $reader->getForClass($this->className)[MetaKeys::KEY_NESTING_LIMIT]);
+        $this->assertSame(['de', 'en'], $this->configurationRepository->getConfiguredLocales($this->className));
+        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_ORANGE));
+        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_GREEN));
+        $this->assertSame(2, $this->configurationRepository->getConfiguredNestingLimit($this->className));
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -227,20 +221,17 @@ class MetaControllerTest extends AbstractTestCase
 
     public function testDeleteMissingData(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
-        $reader = $this->getMetaReader();
-        $this->assertCount(2, $reader->getConfiguredClasses());
-        $response = $this->controller->deleteAction(Request::create('/', 'POST'), $this->getMetaWriter());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
+        $response = $this->controller->deleteAction(Request::create('/', 'POST'), $this->configurationRepository);
 
         $content = $response->getContent();
         $this->assertIsString($content);
         $content = (string) $content;
 
         $this->assertJson($content);
-        $this->assertCount(2, $reader->getConfiguredClasses());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -248,20 +239,18 @@ class MetaControllerTest extends AbstractTestCase
 
     public function testDeleteCompleteData(): void
     {
-        $this->activateConfig(self::CONFIG_FULL);
-
-        $reader = $this->getMetaReader();
-        $this->assertCount(2, $reader->getConfiguredClasses());
-        $response = $this->controller->deleteAction(Request::create('/', 'POST', ['classname' => 'Product']), $this->getMetaWriter());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
+        $response = $this->controller->deleteAction(Request::create('/', 'POST', ['classname' => $this->classNameConfigured]), $this->configurationRepository);
 
         $content = $response->getContent();
         $this->assertIsString($content);
         $content = (string) $content;
 
         $this->assertJson($content);
-        $this->assertCount(1, $reader->getConfiguredClasses());
+        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
+        $this->assertEmpty($this->configurationRepository->getConfigForClass($this->classNameConfigured));
 
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -269,7 +258,6 @@ class MetaControllerTest extends AbstractTestCase
 
     public function testLocalesList(): void
     {
-        $this->activateConfig(self::CONFIG_EMPTY);
         $locales = ['de', 'en'];
 
         $localesList = $this->createMock(LocalesList::class);
@@ -282,7 +270,7 @@ class MetaControllerTest extends AbstractTestCase
         $content = (string) $content;
 
         $this->assertJson($content);
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('locales', $decoded);
         $this->assertSameSize($locales, $decoded['locales']);

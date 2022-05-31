@@ -2,23 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Valantic\DataQualityBundle\Constraints\RelationScore;
+namespace Valantic\DataQualityBundle\Constraint\RelationScore;
 
-use Valantic\DataQualityBundle\Validation\Colorable;
+use Valantic\DataQualityBundle\Validation\BaseColorable;
 
 class OrangeDeepValidator extends AbstractDeepValidator
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function getThresholdKey(): string
     {
-        return Colorable::COLOR_ORANGE;
+        return BaseColorable::COLOR_ORANGE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getConstraint(): string
     {
         return OrangeDeepConstraint::class;

@@ -7,8 +7,8 @@ namespace Valantic\DataQualityBundle\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Valantic\DataQualityBundle\Config\V1\Meta\Reader as ConfigReader;
-use Valantic\DataQualityBundle\Config\V1\Meta\Writer as ConfigWriter;
+use Valantic\DataQualityBundle\Enum\ThresholdEnum;
+use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 
 #[Route('/admin/valantic/data-quality/meta-config')]
@@ -18,14 +18,14 @@ class MetaConfigController extends BaseController
      * Returns the config for the admin editor.
      */
     #[Route('/list', options: ['expose' => true], methods: ['GET', 'POST'])]
-    public function listAction(Request $request, ConfigReader $config): JsonResponse
+    public function listAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         $this->checkPermission(self::CONFIG_NAME);
 
         $filter = $request->get('filterText');
 
         $entries = [];
-        foreach ($config->getConfiguredClasses() as $className) {
+        foreach ($configurationRepository->getConfiguredClasses() as $className) {
             if ($filter) {
                 if (stripos($className, (string) $filter) === false) {
                     continue;
@@ -33,10 +33,10 @@ class MetaConfigController extends BaseController
             }
             $entries[] = [
                 'classname' => $className,
-                'nesting_limit' => $config->getForClass($className)[$config::KEY_NESTING_LIMIT] ?? 1,
-                'locales' => $config->getForClass($className)[$config::KEY_LOCALES] ?? [],
-                'threshold_green' => ($config->getForClass($className)[$config::KEY_THRESHOLD_GREEN] ?? 0) * 100,
-                'threshold_orange' => ($config->getForClass($className)[$config::KEY_THRESHOLD_ORANGE] ?? 0) * 100,
+                'nesting_limit' => $configurationRepository->getConfiguredNestingLimit($className),
+                'locales' => $configurationRepository->getConfiguredLocales($className),
+                'threshold_green' => ($configurationRepository->getConfiguredThreshold($className, ThresholdEnum::THRESHOLD_GREEN)) * 100,
+                'threshold_orange' => ($configurationRepository->getConfiguredThreshold($className, ThresholdEnum::THRESHOLD_ORANGE)) * 100,
             ];
         }
 
@@ -47,19 +47,14 @@ class MetaConfigController extends BaseController
      * Return a list of possible classes to configure.
      */
     #[Route('/classes', options: ['expose' => true], methods: ['GET'])]
-    public function listClassesAction(ConfigReader $reader): JsonResponse
-    {
+    public function listClassesAction(
+        ConfigurationRepository $configurationRepository
+    ): JsonResponse {
         $this->checkPermission(self::CONFIG_NAME);
 
-        $classNames = [];
-        foreach ($this->getClassNames() as $name) {
-            if ($reader->isClassConfigured($name)) {
-                continue;
-            }
-            $classNames[] = ['name' => $name];
-        }
-
-        return $this->json(['classes' => $classNames]);
+        return $this->json([
+            'classes' => array_map(fn($name): array => ['name' => $name], $configurationRepository->getConfiguredClasses()),
+        ]);
     }
 
     /**
@@ -82,20 +77,21 @@ class MetaConfigController extends BaseController
      * Adds or updates the locale config for a class.
      */
     #[Route('/modify', options: ['expose' => true], methods: ['POST'])]
-    public function modifyAction(Request $request, ConfigWriter $config): JsonResponse
+    public function modifyAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         if (empty($request->request->get('classname'))) {
             return $this->json(['status' => false]);
         }
+        $configurationRepository->setClassConfig(
+            $request->request->get('classname'),
+            $request->request->get('locales', []),
+            $request->request->getInt('threshold_green'),
+            $request->request->getInt('threshold_orange'),
+            $request->request->getInt('nesting_limit', 1)
+        );
 
         return $this->json([
-            'status' => $config->update(
-                $request->request->get('classname'),
-                $request->request->get('locales', []),
-                $request->request->getInt('threshold_green'),
-                $request->request->getInt('threshold_orange'),
-                $request->request->getInt('nesting_limit', 1)
-            ),
+            'status' => true,
         ]);
     }
 
@@ -103,14 +99,15 @@ class MetaConfigController extends BaseController
      * Deletes a config entry for a class.
      */
     #[Route('/modify', options: ['expose' => true], methods: ['DELETE'])]
-    public function deleteAction(Request $request, ConfigWriter $config): JsonResponse
+    public function deleteAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         if (empty($request->request->get('classname'))) {
             return $this->json(['status' => false]);
         }
+        $configurationRepository->deleteClassConfig($request->request->get('classname'));
 
         return $this->json([
-            'status' => $config->delete($request->request->get('classname')),
+            'status' => true,
         ]);
     }
 }

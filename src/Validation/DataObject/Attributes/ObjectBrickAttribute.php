@@ -9,9 +9,6 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 
 class ObjectBrickAttribute extends AbstractAttribute
 {
-    /**
-     * {@inheritDoc}
-     */
     public function value(): mixed
     {
         [$attribute, $brick, $brickAttribute] = explode('.', $this->attribute, 3);

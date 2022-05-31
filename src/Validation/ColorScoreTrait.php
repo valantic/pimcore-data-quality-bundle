@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation;
 
+use Valantic\DataQualityBundle\Enum\ThresholdEnum;
+
 trait ColorScoreTrait
 {
-    /**
-     * {@inheritDoc}
-     */
     public function color(): string
     {
         return $this->calculateColor($this->score());
@@ -19,9 +18,9 @@ trait ColorScoreTrait
      */
     protected function calculateColor(float $score): string
     {
-        $config = $this->metaConfig->getForObject($this->obj);
-        $greenThreshold = $config[$this->metaConfig::KEY_THRESHOLD_GREEN] ?? 0;
-        $orangeThreshold = $config[$this->metaConfig::KEY_THRESHOLD_ORANGE] ?? 0;
+        $config = $this->configurationRepository->getForClass($this->obj::class);
+        $greenThreshold = $this->configurationRepository->getConfiguredThreshold($this->obj::class, ThresholdEnum::THRESHOLD_GREEN);
+        $orangeThreshold = $this->configurationRepository->getConfiguredThreshold($this->obj::class, ThresholdEnum::THRESHOLD_ORANGE);
 
         if ($greenThreshold >= 0 && $score >= $greenThreshold) {
             return self::COLOR_GREEN;

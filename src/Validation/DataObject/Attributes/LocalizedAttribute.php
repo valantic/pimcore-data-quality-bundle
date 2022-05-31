@@ -12,9 +12,6 @@ use Valantic\DataQualityBundle\Validation\MultiScorable;
 
 class LocalizedAttribute extends AbstractAttribute implements MultiScorable, MultiColorable
 {
-    /**
-     * {@inheritDoc}
-     */
     public function validate(): void
     {
         if (!$this->classInformation->isLocalizedAttribute($this->attribute)) {
@@ -30,9 +27,6 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function score(): float
     {
         if (!count($this->getConstraints()) || !count($this->getValidatableLocales())) {
@@ -42,9 +36,6 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
         return array_sum($this->scores()) / count($this->getValidatableLocales());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function scores(): array
     {
         if (!count($this->getConstraints())) {
@@ -60,9 +51,6 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
         return $scores;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function colors(): array
     {
         if (!count($this->getConstraints())) {
@@ -79,9 +67,6 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
         return $colors;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function value(): mixed
     {
         $value = [];
@@ -99,15 +84,7 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
 
     protected function getValidatableLocales(): array
     {
-        return array_intersect($this->getLocalesInConfig(), $this->getValidLocales());
-    }
-
-    /**
-     * Returns a list of configured attributes.
-     */
-    protected function getLocalesInConfig(): array
-    {
-        return $this->safeArray($this->metaConfig->getForObject($this->obj), $this->metaConfig::KEY_LOCALES);
+        return array_intersect($this->configurationRepository->getConfiguredLocales($this->obj::class), $this->getValidLocales());
     }
 
     /**

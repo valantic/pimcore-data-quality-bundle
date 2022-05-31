@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Repository;
 
-use IteratorAggregate;
+use Valantic\DataQualityBundle\Constraint\CustomConstraintParameters;
 
 class ConstraintDefinitions
 {
@@ -13,19 +13,11 @@ class ConstraintDefinitions
      */
     protected array $customConstraints;
 
-    public function __construct(iterable $taggedConstraints)
+    public function __construct(?iterable $taggedConstraints)
     {
         $customConstraints = [];
-        try {
-            /**
-             * @var IteratorAggregate $taggedConstraints
-             */
-            foreach ($taggedConstraints->getIterator() as $taggedConstraint) {
-                if ($taggedConstraint instanceof CustomConstraintParameters) {
-                    $customConstraints[] = $taggedConstraint;
-                }
-            }
-        } catch (\Throwable) {
+        foreach ($taggedConstraints?->getIterator() ?: []as $taggedConstraint) {
+            $customConstraints[] = $taggedConstraint;
         }
         $this->customConstraints = $customConstraints;
     }

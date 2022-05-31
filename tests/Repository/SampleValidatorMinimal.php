@@ -11,9 +11,6 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class SampleValidatorMinimal extends ConstraintValidator
 {
-    /**
-     * {@inheritDoc}
-     */
     public function validate($value, Constraint $constraint): void
     {
         if (!($constraint instanceof self)) {

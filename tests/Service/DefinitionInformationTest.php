@@ -51,11 +51,6 @@ class DefinitionInformationTest extends AbstractTestCase
         $this->assertSame($this->name, $this->definitionInformation->getName());
     }
 
-    public function testNamespacedName(): void
-    {
-        $this->assertSame($this->name, $this->definitionInformationFactory->make('Pimcore\Model\DataObject\\' . $this->name)->getName());
-    }
-
     public function testAllAttributesHaveAType(): void
     {
         foreach ($this->definitionInformation->getAllAttributes() as $attribute => $data) {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Valantic\DataQualityBundle\Constraints\RelationScore;
+namespace Valantic\DataQualityBundle\Constraint\RelationScore;
 
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Validator\Constraint;

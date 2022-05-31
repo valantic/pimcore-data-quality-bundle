@@ -9,9 +9,6 @@ use Throwable;
 
 class RelationAttribute extends AbstractAttribute
 {
-    /**
-     * {@inheritDoc}
-     */
     public function value(): mixed
     {
         try {

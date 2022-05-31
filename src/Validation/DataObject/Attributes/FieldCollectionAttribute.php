@@ -10,9 +10,6 @@ use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 
 class FieldCollectionAttribute extends AbstractAttribute
 {
-    /**
-     * {@inheritDoc}
-     */
     public function validate(): void
     {
         if (!$this->classInformation->isFieldcollectionAttribute($this->attribute)) {
@@ -28,9 +25,6 @@ class FieldCollectionAttribute extends AbstractAttribute
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function value(): mixed
     {
         [$attribute, $field, $fieldAttribute] = explode('.', $this->attribute, 3);

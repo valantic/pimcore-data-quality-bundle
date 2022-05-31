@@ -35,9 +35,6 @@ class InvalidConstraintEvent extends Event
         return $this->throwable;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function logMessage(): string
     {
         return sprintf(

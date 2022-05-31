@@ -6,9 +6,6 @@ namespace Valantic\DataQualityBundle\Service\Formatters;
 
 class ValueFormatter implements Formatter
 {
-    /**
-     * {@inheritDoc}
-     */
     public function format(mixed $input): mixed
     {
         $output = $this->stripTags($input);

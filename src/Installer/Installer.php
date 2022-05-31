@@ -6,22 +6,10 @@ namespace Valantic\DataQualityBundle\Installer;
 
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
-use Valantic\DataQualityBundle\Config\V1\Constraints\Writer as ConfigWriter;
 use Valantic\DataQualityBundle\Controller\BaseController;
 
 class Installer extends AbstractInstaller
 {
-    public function __construct(
-        protected ConfigWriter $writer
-    ) {
-        parent::__construct();
-    }
-
-    public function getMigrationVersion(): string
-    {
-        return '20200618112517';
-    }
-
     public function needsReloadAfterInstall(): bool
     {
         return true;
@@ -50,7 +38,6 @@ class Installer extends AbstractInstaller
             'INSERT INTO `users_permission_definitions` (`key`) VALUES (?);',
             [BaseController::CONFIG_NAME]
         );
-        $this->writer->ensureConfigExists();
     }
 
     public function uninstall(): void

@@ -1,5 +1,4 @@
 services:
-    Valantic\DataQualityBundle\Validation\DataObject\Validate: '@valantic_dataquality_validate_dataobject'
     # default configuration for services in *this* file
     _defaults:
         # automatically injects dependencies in your services
@@ -17,6 +16,7 @@ services:
         public: true
         tags: [ 'controller.service_arguments' ]
 
+    Valantic\DataQualityBundle\Validation\DataObject\Validate: '@valantic_dataquality_validate_dataobject'
 
     Valantic\DataQualityBundle\Command\:
         resource: '../../Command'
@@ -50,6 +50,7 @@ services:
         public: true
         class: 'Valantic\DataQualityBundle\Validation\DataObject\Validate'
 
-    Valantic\DataQualityBundle\Constraints\:
-        resource: '../../Constraints'
-        tags: [ 'validator.constraint_validator' ]
+    _instanceof:
+        Valantic\DataQualityBundle\Constraint\CustomConstraintParameters:
+            tags: [ 'validator.constraint_validator' ]
+

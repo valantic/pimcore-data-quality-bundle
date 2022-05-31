@@ -2,21 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Valantic\DataQualityBundle\Constraints\RelationScore;
+namespace Valantic\DataQualityBundle\Constraint\RelationScore;
 
 class GreenConstraint extends AbstractConstraint
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return GreenValidator::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getLabel(): string
     {
         return 'GreenRelationScore';
