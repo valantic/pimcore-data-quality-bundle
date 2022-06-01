@@ -121,22 +121,22 @@ parameters:
 			path: src/DependencyInjection/Configuration.php
 
 		-
-			message: "#^Method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:getForClass\\(\\) should return array\\{constraints\\: array, config\\: array\\} but returns array\\.$#"
+			message: "#^Method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:getForClass\\(\\) should return array\\{attributes\\: array, config\\: array\\} but returns array\\.$#"
 			count: 1
 			path: src/Repository/ConfigurationRepository.php
 
 		-
-			message: "#^Method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:getForClass\\(\\) should return array\\{constraints\\: array, config\\: array\\} but returns array\\{\\}\\.$#"
+			message: "#^Method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:getForClass\\(\\) should return array\\{attributes\\: array, config\\: array\\} but returns array\\{\\}\\.$#"
 			count: 1
 			path: src/Repository/ConfigurationRepository.php
 
 		-
-			message: "#^Offset 'config' on array\\{constraints\\: array, config\\: array\\} on left side of \\?\\? always exists and is not nullable\\.$#"
+			message: "#^Offset 'attributes' on array\\{attributes\\: array, config\\: array\\} on left side of \\?\\? always exists and is not nullable\\.$#"
 			count: 1
 			path: src/Repository/ConfigurationRepository.php
 
 		-
-			message: "#^Offset 'constraints' on array\\{constraints\\: array, config\\: array\\} on left side of \\?\\? always exists and is not nullable\\.$#"
+			message: "#^Offset 'config' on array\\{attributes\\: array, config\\: array\\} on left side of \\?\\? always exists and is not nullable\\.$#"
 			count: 1
 			path: src/Repository/ConfigurationRepository.php
 

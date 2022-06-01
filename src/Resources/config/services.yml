@@ -26,6 +26,9 @@ services:
     Valantic\DataQualityBundle\Installer\Installer:
         public: true
 
+    Valantic\DataQualityBundle\EventListener\KernelTerminateListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate }
 
     Valantic\DataQualityBundle\Service\:
         resource: '../../Service'
@@ -36,15 +39,6 @@ services:
     Valantic\DataQualityBundle\Repository\ConstraintDefinitions:
         arguments:
             - !tagged_iterator validator.constraint_validator
-
-
-    Valantic\DataQualityBundle\Config\V1\Constraints\Reader: ~
-
-    Valantic\DataQualityBundle\Config\V1\Constraints\Writer: ~
-
-    Valantic\DataQualityBundle\Config\V1\Meta\Reader: ~
-
-    Valantic\DataQualityBundle\Config\V1\Meta\Writer: ~
 
     valantic_dataquality_validate_dataobject:
         public: true

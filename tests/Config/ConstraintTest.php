@@ -169,6 +169,8 @@ class ConstraintTest extends AbstractTestCase
 
         $this->assertArrayHasKey($this->constraintName, $configurationRepository->getRulesForAttribute($this->className, $this->attributeNameOther));
         $this->assertArrayHasKey($this->constraintNameOther, $configurationRepository->getRulesForAttribute($this->className, $this->attributeNameOther));
+
+        $configurationRepository->persist();
     }
 
     public function testDeleteRules(): void

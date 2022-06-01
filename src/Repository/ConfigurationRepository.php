@@ -7,6 +7,7 @@ namespace Valantic\DataQualityBundle\Repository;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Yaml\Yaml;
 use Valantic\DataQualityBundle\DependencyInjection\Configuration;
 use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
@@ -21,6 +22,7 @@ class ConfigurationRepository
     protected ParameterBagInterface $parameterBag;
 
     private array $config;
+    private bool $isConfigDirty = false;
 
     public function __construct(
         ParameterBagInterface $parameterBag,
@@ -29,12 +31,27 @@ class ConfigurationRepository
         $this->parameterBag = $parameterBag;
         $config = $this->parameterBag->get(self::CONTAINER_TAG);
 
-        $this->config = is_array($config) ? $config : throw new InvalidArgumentException();
+        $this->setConfig(is_array($config) ? $config : throw new InvalidArgumentException());
     }
 
     public function persist(): void
     {
-        // TODO: write to file
+        if (!$this->isConfigDirty) {
+            return;
+        }
+
+        $yaml = Yaml::dump($this->getConfig(), Yaml::DUMP_OBJECT_AS_MAP);
+
+        if (empty($this->getConfigFile())) {
+            return;
+        }
+
+        file_put_contents($this->getConfigFile(), [Configuration::CONFIG_KEY => $yaml]);
+    }
+
+    public function getConfigFile(): ?string
+    {
+        return $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
     }
 
     /**
@@ -62,7 +79,7 @@ class ConfigurationRepository
      *
      * @param class-string $className
      *
-     * @return array{constraints:array,config:array}
+     * @return array{attributes:array,config:array}
      */
     public function getForClass(string $className): array
     {
@@ -86,9 +103,9 @@ class ConfigurationRepository
     /**
      * @param class-string $className
      */
-    public function getConstraintsForClass(string $className): array
+    public function getAttributesForClass(string $className): array
     {
-        return $this->getForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS] ?? [];
+        return $this->getForClass($className)[Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES] ?? [];
     }
 
     /**
@@ -142,7 +159,7 @@ class ConfigurationRepository
      */
     public function getRulesForAttribute(string $className, string $attribute): array
     {
-        return $this->getForAttribute($className, $attribute)[Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS_RULES] ?? [];
+        return $this->getForAttribute($className, $attribute)[Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES_RULES] ?? [];
     }
 
     /**
@@ -152,7 +169,7 @@ class ConfigurationRepository
      */
     public function getNoteForAttribute(string $className, string $attribute): ?string
     {
-        return $this->getForAttribute($className, $attribute)[Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS_CONSTRAINT_NOTE] ?? null;
+        return $this->getForAttribute($className, $attribute)[Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE] ?? null;
     }
 
     /**
@@ -162,7 +179,7 @@ class ConfigurationRepository
      */
     public function getConfiguredAttributes(string $className): array
     {
-        return array_keys($this->getConstraintsForClass($className));
+        return array_keys($this->getAttributesForClass($className));
     }
 
     /**
@@ -187,13 +204,14 @@ class ConfigurationRepository
         int $thresholdOrange = 0,
         int $nestingLimit = 1
     ): void {
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className] ??= [];
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG] ??= [];
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_LOCALES] = $locales;
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS] ??= [];
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::THRESHOLD_GREEN->value] = $thresholdGreen / 100;
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::THRESHOLD_ORANGE->value] = $thresholdOrange / 100;
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT] = $nestingLimit;
+        $config = $this->getConfig();
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG] ??= [];
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_LOCALES] = $locales;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS] ??= [];
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::THRESHOLD_GREEN->value] = $thresholdGreen / 100;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::THRESHOLD_ORANGE->value] = $thresholdOrange / 100;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT] = $nestingLimit;
+        $this->setConfig($config);
     }
 
     /**
@@ -207,7 +225,9 @@ class ConfigurationRepository
             return;
         }
 
-        unset($this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG]);
+        $config = $this->getConfig();
+        unset($config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG]);
+        $this->setConfig($config);
     }
 
     /**
@@ -217,8 +237,9 @@ class ConfigurationRepository
      */
     public function addClassAttribute(string $className, string $attributeName): void
     {
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className] ??= [];
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS][$attributeName] ??= [];
+        $config = $this->getConfig();
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES][$attributeName] ??= [];
+        $this->setConfig($config);
     }
 
     /**
@@ -232,7 +253,9 @@ class ConfigurationRepository
             return;
         }
 
-        unset($this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS][$attributeName]);
+        $config = $this->getConfig();
+        unset($config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES][$attributeName]);
+        $this->setConfig($config);
     }
 
     /**
@@ -252,8 +275,10 @@ class ConfigurationRepository
             $paramsParsed = null;
         }
 
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS][$attributeName][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS_RULES] ??= [];
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS][$attributeName][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS_RULES][$constraint] = $paramsParsed;
+        $config = $this->getConfig();
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES][$attributeName][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES_RULES] ??= [];
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES][$attributeName][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES_RULES][$constraint] = $paramsParsed;
+        $this->setConfig($config);
     }
 
     /**
@@ -266,7 +291,10 @@ class ConfigurationRepository
         if (!$this->isClassConfigured($className) || !$this->isAttributeConfigured($className, $attributeName)) {
             return;
         }
-        unset($this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS][$attributeName][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS_RULES][$constraint]);
+
+        $config = $this->getConfig();
+        unset($config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES][$attributeName][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES_RULES][$constraint]);
+        $this->setConfig($config);
     }
 
     /**
@@ -276,8 +304,9 @@ class ConfigurationRepository
      */
     public function modifyNote(string $className, string $attributeName, ?string $note = null): void
     {
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS][$attributeName] ??= [];
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS][$attributeName][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS_CONSTRAINT_NOTE] = $note;
+        $config = $this->getConfig();
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES][$attributeName][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE] = $note;
+        $this->setConfig($config);
     }
 
     /**
@@ -291,7 +320,9 @@ class ConfigurationRepository
             return;
         }
 
-        $this->config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS][$attributeName][Configuration::CONFIG_KEY_CLASSES_CONSTRAINTS_CONSTRAINT_NOTE] = null;
+        $config = $this->getConfig();
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES][$attributeName][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE] = null;
+        $this->setConfig($config);
     }
 
     /**
@@ -301,7 +332,18 @@ class ConfigurationRepository
      */
     protected function getForAttribute(string $className, string $attribute): array
     {
-        return $this->getConstraintsForClass($className)[$attribute] ?? [];
+        return $this->getAttributesForClass($className)[$attribute] ?? [];
+    }
+
+    private function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    private function setConfig(array $config): void
+    {
+        $this->config = $config;
+        $this->isConfigDirty = true;
     }
 
     /**
@@ -309,6 +351,6 @@ class ConfigurationRepository
      */
     private function classes(): array
     {
-        return $this->config[Configuration::CONFIG_KEY_CLASSES];
+        return $this->getConfig()[Configuration::CONFIG_KEY_CLASSES];
     }
 }

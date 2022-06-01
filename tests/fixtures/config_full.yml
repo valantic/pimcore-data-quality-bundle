@@ -1,7 +1,7 @@
 valantic_data_quality:
     classes:
         Pimcore\Model\DataObject\Customer:
-            constraints:
+            attributes:
                 email:
                     note: 'mail is important, marketing!'
                     rules:
@@ -37,7 +37,7 @@ valantic_data_quality:
                     orange: 0.5
                 nesting_limit: 4
 
-            constraints:
+            attributes:
                 name:
                     note: ~
                     rules:
@@ -65,7 +65,7 @@ valantic_data_quality:
                     rules:
                         Blank: ~
         Pimcore\Model\DataObject\Category:
-            constraints:
+            attributes:
                 name:
                     note: ''
                     rules:
