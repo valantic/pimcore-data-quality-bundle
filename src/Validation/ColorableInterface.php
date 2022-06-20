@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation;
 
-interface Colorable extends BaseColorable
+interface ColorableInterface extends BaseColorableInterface
 {
     /**
      * Returns a color (red, orange, green) depending on the class configuration

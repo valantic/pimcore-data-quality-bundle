@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation;
 
-interface BaseColorable
+interface BaseColorableInterface
 {
     public const COLOR_RED = 'red';
     public const COLOR_ORANGE = 'orange';

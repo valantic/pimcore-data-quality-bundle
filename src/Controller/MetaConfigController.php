@@ -25,11 +25,13 @@ class MetaConfigController extends BaseController
         $filter = $request->get('filterText');
 
         $entries = [];
+        if (empty($filter)) {
+            return $this->json($entries);
+        }
+
         foreach ($configurationRepository->getConfiguredClasses() as $className) {
-            if ($filter) {
-                if (stripos($className, (string) $filter) === false) {
-                    continue;
-                }
+            if (stripos($className, (string) $filter) === false) {
+                continue;
             }
             $entries[] = [
                 'classname' => $className,
@@ -83,7 +85,7 @@ class MetaConfigController extends BaseController
             return $this->json(['status' => false]);
         }
         $configurationRepository->setClassConfig(
-            $request->request->get('classname'),
+            (string) $request->request->get('classname'),
             $request->request->get('locales', []),
             $request->request->getInt('threshold_green'),
             $request->request->getInt('threshold_orange'),
@@ -104,7 +106,7 @@ class MetaConfigController extends BaseController
         if (empty($request->request->get('classname'))) {
             return $this->json(['status' => false]);
         }
-        $configurationRepository->deleteClassConfig($request->request->get('classname'));
+        $configurationRepository->deleteClassConfig((string) $request->request->get('classname'));
 
         return $this->json([
             'status' => true,

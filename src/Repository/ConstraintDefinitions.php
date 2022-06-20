@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Repository;
 
-use Valantic\DataQualityBundle\Constraint\CustomConstraintParameters;
+use Valantic\DataQualityBundle\Constraint\CustomConstraintParametersInterface;
 
 class ConstraintDefinitions
 {
     /**
-     * @var CustomConstraintParameters[]
+     * @var CustomConstraintParametersInterface[]
      */
     protected array $customConstraints;
 
     public function __construct(?iterable $taggedConstraints)
     {
         $customConstraints = [];
-        foreach ($taggedConstraints?->getIterator() ?: []as $taggedConstraint) {
+        foreach ($taggedConstraints?->getIterator() ?: [] as $taggedConstraint) {
             $customConstraints[] = $taggedConstraint;
         }
         $this->customConstraints = $customConstraints;

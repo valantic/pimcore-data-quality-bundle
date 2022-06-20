@@ -6,7 +6,7 @@ namespace Valantic\DataQualityBundle\Constraint;
 
 use Symfony\Component\Validator\Constraint;
 
-abstract class AbstractCustomConstraint extends Constraint implements CustomConstraintParameters
+abstract class AbstractCustomConstraint extends Constraint implements CustomConstraintParametersInterface
 {
     public function getDefaultOption(): ?string
     {

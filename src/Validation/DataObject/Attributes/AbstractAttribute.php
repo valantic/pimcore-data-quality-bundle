@@ -20,12 +20,12 @@ use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SafeArray;
-use Valantic\DataQualityBundle\Validation\Colorable;
+use Valantic\DataQualityBundle\Validation\ColorableInterface;
 use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
-use Valantic\DataQualityBundle\Validation\Scorable;
-use Valantic\DataQualityBundle\Validation\Validatable;
+use Valantic\DataQualityBundle\Validation\ScorableInterface;
+use Valantic\DataQualityBundle\Validation\ValidatableInterface;
 
-abstract class AbstractAttribute implements Validatable, Scorable, Colorable
+abstract class AbstractAttribute implements ValidatableInterface, ScorableInterface, ColorableInterface
 {
     use ColorScoreTrait;
     use SafeArray;

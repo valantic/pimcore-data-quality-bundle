@@ -18,7 +18,6 @@ trait ColorScoreTrait
      */
     protected function calculateColor(float $score): string
     {
-        $config = $this->configurationRepository->getForClass($this->obj::class);
         $greenThreshold = $this->configurationRepository->getConfiguredThreshold($this->obj::class, ThresholdEnum::THRESHOLD_GREEN);
         $orangeThreshold = $this->configurationRepository->getConfiguredThreshold($this->obj::class, ThresholdEnum::THRESHOLD_ORANGE);
 

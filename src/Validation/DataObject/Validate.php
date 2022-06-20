@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation\DataObject;
 
-use InvalidArgumentException;
 use Pimcore\Model\DataObject\Concrete;
 use Valantic\DataQualityBundle\Validation\AbstractValidateObject;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\FieldCollectionAttribute;
@@ -12,18 +11,14 @@ use Valantic\DataQualityBundle\Validation\DataObject\Attributes\LocalizedAttribu
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ObjectBrickAttribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\PlainAttribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\RelationAttribute;
-use Valantic\DataQualityBundle\Validation\MultiScorable;
+use Valantic\DataQualityBundle\Validation\MultiScorableInterface;
 
-class Validate extends AbstractValidateObject implements MultiScorable
+class Validate extends AbstractValidateObject implements MultiScorableInterface
 {
     protected Concrete $obj;
 
     public function setObject(Concrete $obj): void
     {
-        if (!($obj instanceof Concrete)) {
-            throw new InvalidArgumentException('Please provide a Concrete DataObject.');
-        }
-
         $this->obj = $obj;
         $this->validationConfig = $this->configurationRepository->getForClass($obj::class);
         $this->classInformation = $this->definitionInformationFactory->make($this->obj::class);

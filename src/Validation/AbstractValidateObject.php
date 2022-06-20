@@ -12,7 +12,7 @@ use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
 
-abstract class AbstractValidateObject implements Validatable, Scorable, Colorable
+abstract class AbstractValidateObject implements ValidatableInterface, ScorableInterface, ColorableInterface
 {
     use ColorScoreTrait;
 
@@ -63,19 +63,19 @@ abstract class AbstractValidateObject implements Validatable, Scorable, Colorabl
             $attributeScores[$attribute]['scores'] = [];
             $attributeScores[$attribute]['value'] = $validator->value();
 
-            if ($validator instanceof Scorable) {
+            if ($validator instanceof ScorableInterface) {
                 $attributeScores[$attribute]['score'] = $validator->score();
             }
 
-            if ($validator instanceof MultiScorable) {
+            if ($validator instanceof MultiScorableInterface) {
                 $attributeScores[$attribute]['scores'] = $validator->scores();
             }
 
-            if ($validator instanceof Colorable) {
+            if ($validator instanceof ColorableInterface) {
                 $attributeScores[$attribute]['color'] = $validator->color();
             }
 
-            if ($validator instanceof MultiColorable) {
+            if ($validator instanceof MultiColorableInterface) {
                 $attributeScores[$attribute]['colors'] = $validator->colors();
             }
         }

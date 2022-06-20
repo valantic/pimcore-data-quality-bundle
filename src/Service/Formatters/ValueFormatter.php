@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Service\Formatters;
 
-class ValueFormatter implements Formatter
+class ValueFormatter implements FormatterInterface
 {
     public function format(mixed $input): mixed
     {

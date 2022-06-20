@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Service\Formatters;
 
-interface Formatter
+interface FormatterInterface
 {
     /**
      * Formats $input and returns the formatted value.

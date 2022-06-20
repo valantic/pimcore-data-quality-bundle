@@ -47,8 +47,12 @@ class ScoreController extends BaseController
         $filter = $request->get('filterText');
 
         $attributes = [];
+        if (empty($filter)) {
+            return $this->json($attributes);
+        }
+
         foreach ($validation->attributeScores() as $attribute => $score) {
-            if ($filter && stripos($attribute, (string) $filter) === false) {
+            if (stripos($attribute, (string) $filter) === false) {
                 continue;
             }
 
@@ -84,7 +88,7 @@ class ScoreController extends BaseController
     public function checkAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
     {
         $obj = Concrete::getById($request->query->getInt('id'));
-        if (!$obj || !($obj instanceof Concrete)) {
+        if (!$obj instanceof Concrete) {
             return $this->json([
                 'status' => false,
             ]);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Constraint;
 
-interface CustomConstraintParameters
+interface CustomConstraintParametersInterface
 {
     /**
      * The name of the default parameter.

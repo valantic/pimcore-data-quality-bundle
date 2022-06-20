@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -24,6 +25,6 @@ class TinkerCommand extends AbstractCommand
     {
         $this->dump('Hello from ' . self::class);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

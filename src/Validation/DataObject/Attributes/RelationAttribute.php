@@ -12,7 +12,7 @@ class RelationAttribute extends AbstractAttribute
     public function value(): mixed
     {
         try {
-            $relation = $this->valueInherited($this->obj, null);
+            $relation = $this->valueInherited($this->obj);
         } catch (Throwable) {
             return [];
         }

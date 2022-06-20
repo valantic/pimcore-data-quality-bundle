@@ -11,7 +11,7 @@ class PlainAttribute extends AbstractAttribute
     public function value(): mixed
     {
         try {
-            return $this->valueInherited($this->obj, null);
+            return $this->valueInherited($this->obj);
         } catch (Throwable) {
             return null;
         }

@@ -7,10 +7,10 @@ namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 use Pimcore\Tool;
 use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
-use Valantic\DataQualityBundle\Validation\MultiColorable;
-use Valantic\DataQualityBundle\Validation\MultiScorable;
+use Valantic\DataQualityBundle\Validation\MultiColorableInterface;
+use Valantic\DataQualityBundle\Validation\MultiScorableInterface;
 
-class LocalizedAttribute extends AbstractAttribute implements MultiScorable, MultiColorable
+class LocalizedAttribute extends AbstractAttribute implements MultiScorableInterface, MultiColorableInterface
 {
     public function validate(): void
     {
@@ -67,7 +67,7 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorable, Mul
         return $colors;
     }
 
-    public function value(): mixed
+    public function value(): array
     {
         $value = [];
 

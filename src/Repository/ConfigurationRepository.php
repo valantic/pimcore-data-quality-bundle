@@ -19,16 +19,14 @@ class ConfigurationRepository
 {
     use SafeArray;
     public const CONTAINER_TAG = 'valantic.pimcore_data_quality.config';
-    protected ParameterBagInterface $parameterBag;
 
     private array $config;
     private bool $isConfigDirty = false;
 
     public function __construct(
-        ParameterBagInterface $parameterBag,
+        protected ParameterBagInterface $parameterBag,
         protected DefinitionInformationFactory $definitionInformationFactory
     ) {
-        $this->parameterBag = $parameterBag;
         $config = $this->parameterBag->get(self::CONTAINER_TAG);
 
         $this->setConfig(is_array($config) ? $config : throw new InvalidArgumentException());

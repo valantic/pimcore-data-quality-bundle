@@ -30,11 +30,19 @@ class ConstraintConfigController extends BaseController
         $filter = $request->get('filterText');
 
         $entries = [];
+        if (empty($filter)) {
+            return $this->json($entries);
+        }
         foreach ($configurationRepository->getConfiguredClasses() as $className) {
+            if (stripos($className, (string) $filter) === false) {
+                continue;
+            }
+
             foreach ($configurationRepository->getConfiguredAttributes($className) as $attribute) {
-                if ($filter && stripos($className, (string) $filter) === false && stripos($attribute, (string) $filter) === false) {
+                if (stripos($attribute, (string) $filter) === false) {
                     continue;
                 }
+
                 $transformedRules = [];
                 foreach ($configurationRepository->getRulesForAttribute($className, $attribute) as $constraint => $args) {
                     $transformedRules[] = [
@@ -119,12 +127,12 @@ class ConstraintConfigController extends BaseController
 
         $this->checkPermission(self::CONFIG_NAME);
         $configurationRepository->addClassAttribute(
-            $request->request->get('classname'),
-            $request->request->get('attributename')
+            (string) $request->request->get('classname'),
+            (string) $request->request->get('attributename')
         );
         $configurationRepository->modifyNote(
-            $request->request->get('classname'),
-            $request->request->get('attributename'),
+            (string) $request->request->get('classname'),
+            (string) $request->request->get('attributename'),
             $request->request->get('note'),
         );
 
@@ -145,8 +153,8 @@ class ConstraintConfigController extends BaseController
 
         $this->checkPermission(self::CONFIG_NAME);
         $configurationRepository->deleteClassAttribute(
-            $request->request->get('classname'),
-            $request->request->get('attributename')
+            (string) $request->request->get('classname'),
+            (string) $request->request->get('attributename')
         );
 
         return $this->json([
@@ -189,9 +197,9 @@ class ConstraintConfigController extends BaseController
 
         $this->checkPermission(self::CONFIG_NAME);
         $configurationRepository->modifyRule(
-            $request->request->get('classname'),
-            $request->request->get('attributename'),
-            $request->request->get('constraint'),
+            (string) $request->request->get('classname'),
+            (string) $request->request->get('attributename'),
+            (string) $request->request->get('constraint'),
             $request->request->get('params')
         );
 
@@ -212,9 +220,9 @@ class ConstraintConfigController extends BaseController
 
         $this->checkPermission(self::CONFIG_NAME);
         $configurationRepository->deleteRule(
-            $request->request->get('classname'),
-            $request->request->get('attributename'),
-            $request->request->get('constraint')
+            (string) $request->request->get('classname'),
+            (string) $request->request->get('attributename'),
+            (string) $request->request->get('constraint')
         );
 
         return $this->json([

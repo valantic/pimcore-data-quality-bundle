@@ -10,12 +10,6 @@ class InvalidConstraintEvent extends Event
 {
     public const NAME = 'valantic.data_quality.invalid_constraint';
 
-    /**
-     * InvalidConstraintEvent constructor.
-     *
-     * @param Throwable $throwable
-     * @param string $name
-     */
     public function __construct(protected Throwable $throwable, protected string $name, protected mixed $params)
     {
     }
