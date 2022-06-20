@@ -25,9 +25,6 @@ class MetaConfigController extends BaseController
         $filter = $request->get('filterText');
 
         $entries = [];
-        if (empty($filter)) {
-            return $this->json($entries);
-        }
 
         foreach ($configurationRepository->getConfiguredClasses() as $className) {
             if (stripos($className, (string) $filter) === false) {

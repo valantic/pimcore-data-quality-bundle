@@ -47,9 +47,6 @@ class ScoreController extends BaseController
         $filter = $request->get('filterText');
 
         $attributes = [];
-        if (empty($filter)) {
-            return $this->json($attributes);
-        }
 
         foreach ($validation->attributeScores() as $attribute => $score) {
             if (stripos($attribute, (string) $filter) === false) {

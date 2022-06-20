@@ -30,16 +30,10 @@ class ConstraintConfigController extends BaseController
         $filter = $request->get('filterText');
 
         $entries = [];
-        if (empty($filter)) {
-            return $this->json($entries);
-        }
-        foreach ($configurationRepository->getConfiguredClasses() as $className) {
-            if (stripos($className, (string) $filter) === false) {
-                continue;
-            }
 
+        foreach ($configurationRepository->getConfiguredClasses() as $className) {
             foreach ($configurationRepository->getConfiguredAttributes($className) as $attribute) {
-                if (stripos($attribute, (string) $filter) === false) {
+                if (stripos($className, (string) $filter) === false && stripos($attribute, (string) $filter) === false) {
                     continue;
                 }
 
