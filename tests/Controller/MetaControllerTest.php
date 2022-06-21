@@ -17,6 +17,7 @@ class MetaControllerTest extends AbstractTestCase
 {
     /** @var class-string */
     protected string $classNameConfigured = 'Pimcore\Model\DataObject\Product';
+
     /**
      * @var MetaConfigController
      */

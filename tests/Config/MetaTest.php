@@ -14,6 +14,7 @@ class MetaTest extends AbstractTestCase
 
     /** @var class-string */
     protected string $className = 'SomeClass';
+
     /** @var class-string */
     protected string $classNameConfigured = 'Pimcore\Model\DataObject\Product';
 

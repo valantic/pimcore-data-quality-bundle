@@ -7,7 +7,7 @@ namespace Valantic\DataQualityBundle\Service\Information;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition\Listing;
 
-class FieldCollectionInformation extends DefinitionInformation
+class FieldCollectionInformation extends AbstractDefinitionInformation
 {
     /**
      * {@inheritDoc}

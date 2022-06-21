@@ -14,7 +14,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 
-abstract class DefinitionInformation
+abstract class AbstractDefinitionInformation
 {
     public const TYPE_PLAIN = 'plain';
     public const TYPE_LOCALIZED = 'localized';
@@ -29,19 +29,12 @@ abstract class DefinitionInformation
      * @var class-string
      */
     protected string $name;
-
     protected FieldcollectionDefinition|ClassDefinition|ObjectbrickDefinition $definition;
-
     protected array $localizedAttributes = [];
-
     protected array $objectbrickAttributes = [];
-
     protected array $fieldcollectionAttributes = [];
-
     protected array $classificationstoreAttributes = [];
-
     protected array $relationAttributes = [];
-
     protected array $plainAttributes = [];
 
     /**
@@ -53,11 +46,8 @@ abstract class DefinitionInformation
      * @var FieldCollectionInformation[]
      */
     protected array $fieldcollectionInformationInstances = [];
-
     protected ClassInformation $classInformation;
-
     protected FieldCollectionInformation $fieldCollectionInformation;
-
     protected ObjectBrickInformation $objectBrickInformation;
 
     /**
@@ -221,10 +211,8 @@ abstract class DefinitionInformation
 
     /**
      * Get the definition of the class.
-     *
-     * @return ClassDefinition|FieldcollectionDefinition|ObjectbrickDefinition|null
      */
-    abstract public function getDefinition();
+    abstract public function getDefinition(): ClassDefinition|ObjectbrickDefinition|FieldcollectionDefinition|null;
 
     /**
      * Set the name and preload data.
@@ -265,10 +253,12 @@ abstract class DefinitionInformation
     {
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
-            if ($fieldDefinition instanceof Localizedfields) {
-                foreach ($fieldDefinition->getChildren() as $child) {
-                    $fieldDefinitions[$child->getName()] = $child;
-                }
+            if (!$fieldDefinition instanceof Localizedfields) {
+                continue;
+            }
+
+            foreach ($fieldDefinition->getChildren() as $child) {
+                $fieldDefinitions[$child->getName()] = $child;
             }
         }
 
@@ -283,15 +273,17 @@ abstract class DefinitionInformation
     {
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
-            if ($fieldDefinition instanceof Objectbricks) {
-                foreach ($fieldDefinition->getAllowedTypes() as $type) {
-                    $this->objectBrickInformation->setName($type);
-                    $information = clone $this->objectBrickInformation;
-                    $this->objectbrickInformationInstances[$fieldDefinition->getName() . '.' . $type] = $information;
-                    $attributes = $information->getAllAttributes();
-                    foreach ($attributes as $name => $attribute) {
-                        $fieldDefinitions[$fieldDefinition->getName() . '.' . $type . '.' . $name] = $attribute;
-                    }
+            if (!$fieldDefinition instanceof Objectbricks) {
+                continue;
+            }
+
+            foreach ($fieldDefinition->getAllowedTypes() as $type) {
+                $this->objectBrickInformation->setName($type);
+                $information = clone $this->objectBrickInformation;
+                $this->objectbrickInformationInstances[$fieldDefinition->getName() . '.' . $type] = $information;
+                $attributes = $information->getAllAttributes();
+                foreach ($attributes as $name => $attribute) {
+                    $fieldDefinitions[$fieldDefinition->getName() . '.' . $type . '.' . $name] = $attribute;
                 }
             }
         }
@@ -307,15 +299,17 @@ abstract class DefinitionInformation
     {
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
-            if ($fieldDefinition instanceof Fieldcollections) {
-                foreach ($fieldDefinition->getAllowedTypes() as $type) {
-                    $this->fieldCollectionInformation->setName($type);
-                    $information = clone $this->fieldCollectionInformation;
-                    $this->fieldcollectionInformationInstances[$fieldDefinition->getName() . '.' . $type] = $information;
-                    $attributes = $information->getAllAttributes();
-                    foreach ($attributes as $name => $attribute) {
-                        $fieldDefinitions[$fieldDefinition->getName() . '.' . $type . '.' . $name] = $attribute;
-                    }
+            if (!$fieldDefinition instanceof Fieldcollections) {
+                continue;
+            }
+            foreach ($fieldDefinition->getAllowedTypes() as $type) {
+                $this->fieldCollectionInformation->setName($type);
+                $information = clone $this->fieldCollectionInformation;
+                $this->fieldcollectionInformationInstances[$fieldDefinition->getName() . '.' . $type] = $information;
+                $attributes = $information->getAllAttributes();
+
+                foreach ($attributes as $name => $attribute) {
+                    $fieldDefinitions[$fieldDefinition->getName() . '.' . $type . '.' . $name] = $attribute;
                 }
             }
         }
@@ -348,9 +342,10 @@ abstract class DefinitionInformation
     {
         $fieldDefinitions = [];
         foreach ($this->definition->getFieldDefinitions() as $fieldDefinition) {
-            if ($fieldDefinition instanceof AbstractRelations) {
-                $fieldDefinitions[$fieldDefinition->getName()] = $fieldDefinition;
+            if (!$fieldDefinition instanceof AbstractRelations) {
+                continue;
             }
+            $fieldDefinitions[$fieldDefinition->getName()] = $fieldDefinition;
         }
 
         $this->relationAttributes = $fieldDefinitions;

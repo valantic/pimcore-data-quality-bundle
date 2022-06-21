@@ -7,7 +7,7 @@ namespace Valantic\DataQualityBundle\Service\Information;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\Objectbrick\Definition\Listing;
 
-class ObjectBrickInformation extends DefinitionInformation
+class ObjectBrickInformation extends AbstractDefinitionInformation
 {
     /**
      * {@inheritDoc}

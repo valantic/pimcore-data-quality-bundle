@@ -16,7 +16,7 @@ class DefinitionInformationFactory
     /**
      * @param class-string $name
      */
-    public function make(string $name): DefinitionInformation
+    public function make(string $name): AbstractDefinitionInformation
     {
         $classInformation = $this->classInformation;
         $classInformation->make($this->classInformation, $this->fieldCollectionInformation, $this->objectBrickInformation, $name);

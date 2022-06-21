@@ -12,9 +12,7 @@ class ConstraintsTest extends AbstractTestCase
     // TODO: add tests for custom constraints
 
     protected ConstraintDefinitions $constraints;
-
     protected SampleConstraintFull $customConstraintFull;
-
     protected SampleConstraintMinimal $customConstraintMinimal;
 
     protected function setUp(): void

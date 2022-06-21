@@ -18,14 +18,12 @@ class ConstraintControllerTest extends AbstractTestCase
 
     /** @var class-string */
     protected string $className = 'SomeClass';
+
     /** @var class-string */
     protected string $classNameConfigured = 'Pimcore\Model\DataObject\Product';
-
     protected string $attributeName = 'some_attribute';
-
     protected ConfigurationRepository $configurationRepository;
     protected string $constraintName = 'that_constraint';
-
     protected array $constraintParams = [1, 'hello', false];
 
     protected function setUp(): void

@@ -128,7 +128,7 @@ parameters:
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\|Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Definition\\:\\:getTitle\\(\\)\\.$#"
 			count: 2
-			path: src/Service/Information/DefinitionInformation.php
+			path: src/Service/Information/AbstractDefinitionInformation.php
 
 		-
 			message: "#^Method Valantic\\\\DataQualityBundle\\\\ValanticDataQualityBundle\\:\\:getInstaller\\(\\) should return Valantic\\\\DataQualityBundle\\\\Installer\\\\Installer but returns object\\|null\\.$#"

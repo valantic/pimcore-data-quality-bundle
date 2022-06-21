@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Tests\Service;
 
 use Valantic\DataQualityBundle\Service\Information\ClassInformation;
-use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
+use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Service\Information\FieldCollectionInformation;
 use Valantic\DataQualityBundle\Service\Information\ObjectBrickInformation;
@@ -13,10 +13,8 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class DefinitionInformationTest extends AbstractTestCase
 {
-    protected DefinitionInformation $definitionInformation;
-
+    protected AbstractDefinitionInformation $definitionInformation;
     protected string $name = 'Product';
-
     protected DefinitionInformationFactory $definitionInformationFactory;
 
     protected function setUp(): void
@@ -56,13 +54,13 @@ class DefinitionInformationTest extends AbstractTestCase
         foreach ($this->definitionInformation->getAllAttributes() as $attribute => $data) {
             $this->assertIsString($this->definitionInformation->getAttributeType($attribute), $attribute);
             $this->assertContains($this->definitionInformation->getAttributeType($attribute), [
-                DefinitionInformation::TYPE_PLAIN,
-                DefinitionInformation::TYPE_RELATION,
-                DefinitionInformation::TYPE_LOCALIZED,
-                DefinitionInformation::TYPE_OBJECTBRICK,
-                DefinitionInformation::TYPE_FIELDCOLLECTION,
-                DefinitionInformation::TYPE_CLASSIFICATIONSTORE,
-                DefinitionInformation::TYPE_RELATION,
+                AbstractDefinitionInformation::TYPE_PLAIN,
+                AbstractDefinitionInformation::TYPE_RELATION,
+                AbstractDefinitionInformation::TYPE_LOCALIZED,
+                AbstractDefinitionInformation::TYPE_OBJECTBRICK,
+                AbstractDefinitionInformation::TYPE_FIELDCOLLECTION,
+                AbstractDefinitionInformation::TYPE_CLASSIFICATIONSTORE,
+                AbstractDefinitionInformation::TYPE_RELATION,
             ], $attribute);
         }
     }
@@ -73,15 +71,15 @@ class DefinitionInformationTest extends AbstractTestCase
             $this->assertIsString($this->definitionInformation->getAttributeLabel($attribute));
 
             if (in_array($this->definitionInformation->getAttributeType($attribute), [
-                DefinitionInformation::TYPE_OBJECTBRICK,
-                DefinitionInformation::TYPE_FIELDCOLLECTION,
+                AbstractDefinitionInformation::TYPE_OBJECTBRICK,
+                AbstractDefinitionInformation::TYPE_FIELDCOLLECTION,
             ], true)) {
                 $this->assertSame(2, substr_count($this->definitionInformation->getAttributeLabel($attribute), ' > '));
             }
             if (in_array($this->definitionInformation->getAttributeType($attribute), [
-                DefinitionInformation::TYPE_PLAIN,
-                DefinitionInformation::TYPE_LOCALIZED,
-                DefinitionInformation::TYPE_RELATION,
+                AbstractDefinitionInformation::TYPE_PLAIN,
+                AbstractDefinitionInformation::TYPE_LOCALIZED,
+                AbstractDefinitionInformation::TYPE_RELATION,
             ], true)) {
                 $this->assertSame(0, substr_count($this->definitionInformation->getAttributeLabel($attribute), ' > '));
             }

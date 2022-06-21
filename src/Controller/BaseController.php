@@ -27,10 +27,8 @@ abstract class BaseController extends AdminController
          * Due to the way parent::checkPermission() works, this call is workaround
          * to properly test the controller actions.
          */
-        if (defined('PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK')) {
-            if (PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK) {
-                return;
-            }
+        if (defined('PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK') && PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK) {
+            return;
         }
 
         parent::checkPermission($permission);

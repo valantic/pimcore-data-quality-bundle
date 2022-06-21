@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Event;
 
 use Throwable;
+use const JSON_THROW_ON_ERROR;
 
 class InvalidConstraintEvent extends Event
 {
@@ -34,7 +35,7 @@ class InvalidConstraintEvent extends Event
         return sprintf(
             "Constraint %s with parameters %s failed to execute.\nMessage: %s\nTrace: %s",
             $this->getName(),
-            json_encode($this->getParams(), \JSON_THROW_ON_ERROR),
+            json_encode($this->getParams(), JSON_THROW_ON_ERROR),
             $this->getThrowable()->getMessage(),
             $this->getThrowable()->getTraceAsString()
         );

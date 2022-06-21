@@ -14,6 +14,7 @@ return (new PhpCsFixer\Config())
         '@PSR12:risky' => true,
         'align_multiline_comment' => true,
         'array_indentation' => true,
+        'class_attributes_separation' => ['elements' => ['method' => 'one', 'property' => 'only_if_meta']],
         'concat_space' => ['spacing' => 'one'],
         'function_declaration' => ['closure_function_spacing' => 'none'],
         'increment_style' => ['style' => 'post'],

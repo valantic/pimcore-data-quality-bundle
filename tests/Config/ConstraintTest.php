@@ -14,21 +14,16 @@ class ConstraintTest extends AbstractTestCase
 
     /** @var class-string */
     protected string $className = 'Pimcore\Model\DataObject\Customer';
-
     protected string $attributeName = 'name';
-
     protected string $constraintName = 'NotBlank';
-
     protected int $constraintParams = 3;
 
     /** @var class-string */
     protected string $classNameOther = 'OtherNamespace\\OtherClass';
-
     protected string $attributeNameOther = 'other.attribute';
-
     protected string $constraintNameOther = 'Custom\\OtherConstraint';
-
     protected array $constraintParamsOther = ['arg1' => true, 'arg2' => 'yes', 3, null];
+
     /** @var class-string */
     protected string $classNameConfigured = 'Pimcore\Model\DataObject\Product';
 

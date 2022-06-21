@@ -9,7 +9,7 @@ use Throwable;
 
 class RelationAttribute extends AbstractAttribute
 {
-    public function value(): mixed
+    public function value(): array
     {
         try {
             $relation = $this->valueInherited($this->obj);

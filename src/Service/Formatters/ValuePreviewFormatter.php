@@ -17,7 +17,7 @@ class ValuePreviewFormatter extends ValueFormatter
     {
     }
 
-    public function format(mixed $input): mixed
+    public function format(mixed $input): string|array
     {
         $output = parent::format($input);
         $threshold = 50;
@@ -29,7 +29,9 @@ class ValuePreviewFormatter extends ValueFormatter
         $primaryLanguage = $this->localesList->all()[0];
         if (array_key_exists($primaryLanguage, $output) && !empty($output[$primaryLanguage])) {
             return $this->shorten($output[$primaryLanguage], $threshold);
-        } elseif (array_key_exists($primaryLanguage, $output) && empty($output[$primaryLanguage]) && count(array_filter($output)) > 0) {
+        }
+
+        if (array_key_exists($primaryLanguage, $output) && empty($output[$primaryLanguage]) && count(array_filter($output)) > 0) {
             return $this->shorten(array_values(array_filter($output))[0], $threshold);
         }
 

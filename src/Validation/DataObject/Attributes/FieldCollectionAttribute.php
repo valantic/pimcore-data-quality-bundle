@@ -25,7 +25,7 @@ class FieldCollectionAttribute extends AbstractAttribute
         }
     }
 
-    public function value(): mixed
+    public function value(): array
     {
         [$attribute, $field, $fieldAttribute] = explode('.', $this->attribute, 3);
         $objAttr = $this->obj->get($attribute);

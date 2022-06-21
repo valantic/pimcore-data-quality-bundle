@@ -8,6 +8,7 @@ use Exception;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -17,21 +18,20 @@ use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
-use Valantic\DataQualityBundle\Service\Information\DefinitionInformation;
+use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SafeArray;
 use Valantic\DataQualityBundle\Validation\ColorableInterface;
 use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
 use Valantic\DataQualityBundle\Validation\ScorableInterface;
 use Valantic\DataQualityBundle\Validation\ValidatableInterface;
+use const DEBUG_BACKTRACE_IGNORE_ARGS;
 
 abstract class AbstractAttribute implements ValidatableInterface, ScorableInterface, ColorableInterface
 {
     use ColorScoreTrait;
     use SafeArray;
-
     protected ValidatorInterface $validator;
-
     protected array $validationConfig;
 
     /**
@@ -40,8 +40,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
      * @var array|ConstraintViolationListInterface[]
      */
     protected array $violations = [];
-
-    protected DefinitionInformation $classInformation;
+    protected AbstractDefinitionInformation $classInformation;
 
     /**
      * The maximum nesting level. Used for cycle detection.
@@ -138,11 +137,11 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
                 $reflection = new ReflectionClass($name);
 
                 $subclasses = array_filter($this->skippedConstraints, fn($skippedConstraint) => $reflection->isSubclassOf($skippedConstraint));
-            } catch (\ReflectionException) {
+            } catch (ReflectionException) {
                 $subclasses = [1];
             }
 
-            if (in_array($name, $this->skippedConstraints, true) || !empty($subclasses)) {
+            if (!empty($subclasses) || in_array($name, $this->skippedConstraints, true)) {
                 continue;
             }
 
@@ -185,7 +184,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             count(
                 array_filter(
                     debug_backtrace(
-                        \DEBUG_BACKTRACE_IGNORE_ARGS
+                        DEBUG_BACKTRACE_IGNORE_ARGS
                     ),
                     fn($trace): bool => ($trace['class'] ?? '') === self::class && ($trace['function']) === 'validate'
                 )
