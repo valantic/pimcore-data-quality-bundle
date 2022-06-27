@@ -1,6 +1,6 @@
 {
   "name": "valantic/pimcore-data-quality-bundle",
-  "version": "0.6.7",
+  "version": "1.0.0",
   "description": "Data quality score for Pimcore",
   "type": "pimcore-bundle",
   "require": {
@@ -51,7 +51,6 @@
       ]
     }
   },
-
   "scripts": {
     "post-install-cmd": [
       "@composer bin all install --ansi"
