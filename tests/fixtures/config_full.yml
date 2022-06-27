@@ -1,0 +1,72 @@
+valantic_data_quality:
+    classes:
+        Pimcore\Model\DataObject\Customer:
+            attributes:
+                email:
+                    note: 'mail is important, marketing!'
+                    rules:
+                        Length: { min: 10, max: 200 }
+                        Email: ~
+                name:
+                    note: Note1
+                    rules:
+                        NotBlank: ~
+                        Length: { min: 4, max: 10 }
+                some_attribute:
+                    note: Note
+                    rules:
+                        Length: 7
+                        NotBlank: ~
+            config:
+                locales:
+                    - en
+                    - de
+                thresholds:
+                    green: 0.9
+                    orange: 0.6
+                nesting_limit: 4
+
+        Pimcore\Model\DataObject\Product:
+            config:
+                locales:
+                    - fr
+                    - en
+                    - de
+                thresholds:
+                    green: 0.9
+                    orange: 0.5
+                nesting_limit: 4
+
+            attributes:
+                name:
+                    note: ~
+                    rules:
+                        NotBlank: ~
+                        Length: { min: 3 }
+                title:
+                    note: ~
+                    rules:
+                        NotBlank: ~
+                bars.Barcodes.gtin:
+                    note: ~
+                    rules:
+                        NotBlank: ~
+                        Positive: ~
+                attributes.Attributes.attribute_key:
+                    note: ~
+                    rules:
+                        NotBlank: ~
+                categories:
+                    note: ~
+                    rules:
+                        Count: { min: 1, max: 3 }
+                description:
+                    note: 'Mind. 10, max. 100 Zeichen'
+                    rules:
+                        Blank: ~
+        Pimcore\Model\DataObject\Category:
+            attributes:
+                name:
+                    note: ''
+                    rules:
+                        NotBlank: ~

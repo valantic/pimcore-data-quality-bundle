@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="false" colors="true"
+         bootstrap="./vendor/autoload.php" cacheResult="true">
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <ini name="intl.default_locale" value="en"/>
+        <ini name="intl.error_level" value="0"/>
+        <ini name="memory_limit" value="-1"/>
+        <const name="PIMCORE_APP_ROOT" value="./tests/fixtures/app"/>
+        <const name="PIMCORE_CLASS_DIRECTORY" value="./tests/fixtures"/>
+        <const name="PIMCORE_CONFIGURATION_DIRECTORY" value="./tests/scratch"/>
+        <const name="PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY" value="./tests/tmp/config_custom"/>
+        <const name="PIMCORE_LOG_DIRECTORY" value="./tests/tmp/logs"/>
+        <const name="PIMCORE_PROJECT_ROOT" value="./tests/tmp/project"/>
+        <const name="PIMCORE_SYMFONY_CACHE_DIRECTORY" value="./tests/tmp/cache/symfony"/>
+        <const name="PHPUNIT_SKIP_PIMCORE_PERMISSION_CHECK" value="true"/>
+        <server name="KERNEL_CLASS" value="Valantic\DataQualityBundle\Tests\Kernel"/>
+    </php>
+    <testsuites>
+        <testsuite name="Test suite">
+            <directory suffix="Test.php">./tests</directory>
+        </testsuite>
+    </testsuites>
+    <logging>
+        <junit outputFile="report.xml"/>
+    </logging>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory>./src</directory>
+        </include>
+        <exclude>
+            <directory>./src/DependencyInjection</directory>
+            <directory>./src/Installer</directory>
+            <directory>./src/Migrations</directory>
+        </exclude>
+        <report>
+            <cobertura outputFile="cobertura.xml"/>
+            <clover outputFile="out/coverage/coverage-xml/index.xml"/>
+            <html outputDirectory="coverage/html"/>
+            <text outputFile="php://stdout" showUncoveredFiles="false"/>
+        </report>
+    </coverage>
+</phpunit>

@@ -1,0 +1,50 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    Valantic\DataQualityBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
+    Valantic\DataQualityBundle\Validation\DataObject\Validate: '@valantic_dataquality_validate_dataobject'
+
+    Valantic\DataQualityBundle\Command\:
+        resource: '../../Command'
+        tags: [ 'console.command' ]
+
+
+    Valantic\DataQualityBundle\Installer\Installer:
+        public: true
+
+    Valantic\DataQualityBundle\EventListener\KernelTerminateListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate }
+
+    Valantic\DataQualityBundle\Service\:
+        resource: '../../Service'
+
+    Valantic\DataQualityBundle\Repository\:
+        resource: '../../Repository'
+
+    Valantic\DataQualityBundle\Repository\ConstraintDefinitions:
+        arguments:
+            - !tagged_iterator validator.constraint_validator
+
+    valantic_dataquality_validate_dataobject:
+        public: true
+        class: 'Valantic\DataQualityBundle\Validation\DataObject\Validate'
+
+    _instanceof:
+        Valantic\DataQualityBundle\Constraint\CustomConstraintParameters:
+            tags: [ 'validator.constraint_validator' ]
+

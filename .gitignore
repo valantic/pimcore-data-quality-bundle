@@ -1,0 +1,13 @@
+vendor/
+node_modules/
+.DS_STORE
+.idea/
+.phpunit.result.cache
+coverage/
+report.xml
+cobertura.xml
+tests/tmp/
+var/cache/
+infection.log
+
+.php-cs-fixer.cache
