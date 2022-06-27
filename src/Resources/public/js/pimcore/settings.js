@@ -58,7 +58,6 @@ valantic.dataquality.settings = Class.create({
             if (payload.tab === 'constraints') {
                 this.settingsContainer.setActiveTab(0);
                 if (payload.filter) {
-                    console.log(this.configConstraints);
                     this.configConstraints.filterField.setValue(payload.filter);
                     this.configConstraints.doFilter();
                     this.configConstraints.doFilter();

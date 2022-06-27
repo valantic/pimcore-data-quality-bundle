@@ -58,13 +58,16 @@ valantic.dataquality.objectView = Class.create({
                         if (!data.get('color')) {
                             return;
                         }
-                        this.layout.setTitle(`${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${this.colorMapping(data.get('color'))}">${this.formatAsPercentage(data.get('score'))}</span>)`);
+                        this.layout.setTitle(
+                            `${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${this.colorMapping(data.get('color'))}">${this.formatAsPercentage(data.get('score'))}</span>)`,
+                        );
                     }.bind(this),
                 },
             });
 
             const plugins = ['pimcore.gridfilters'];
 
+            // eslint-disable-next-line max-len
             this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.attributesStore);
 
             this.filterField = new Ext.form.TextField({
