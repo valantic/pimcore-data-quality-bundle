@@ -11,11 +11,17 @@ use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\FieldCollectionAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\LocalizedAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ObjectBrickAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\PlainAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\RelationAttribute;
 
 abstract class AbstractValidateObject implements ValidatableInterface, ScorableInterface, ColorableInterface
 {
     use ColorScoreTrait;
     protected Concrete $obj;
+    protected array $groups = [];
     protected array $validationConfig;
 
     /**
@@ -35,6 +41,11 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         protected DefinitionInformationFactory $definitionInformationFactory,
         protected ContainerInterface $container,
         protected ConfigurationRepository $configurationRepository,
+        protected FieldCollectionAttribute $fieldCollectionAttribute,
+        protected LocalizedAttribute $localizedAttribute,
+        protected ObjectBrickAttribute $objectBrickAttribute,
+        protected PlainAttribute $plainAttribute,
+        protected RelationAttribute $relationAttribute,
     ) {
     }
 
@@ -77,6 +88,11 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         }
 
         return $attributeScores;
+    }
+
+    public function setGroups(array $groups): void
+    {
+        $this->groups = $groups;
     }
 
     /**

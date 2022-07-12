@@ -40,6 +40,6 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
      */
     protected function getComposerPackageName(): string
     {
-        return 'valantic-pimcore/data-quality-bundle';
+        return 'valantic/pimcore-data-quality-bundle';
     }
 }

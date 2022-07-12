@@ -43,6 +43,7 @@ class ScoreController extends BaseController
         $classInformation = $definitionInformationFactory->make($obj::class);
 
         $validation->setObject($obj);
+        $validation->setGroups($request->query->all('groups'));
         $validation->validate();
         $filter = $request->get('filterText');
 

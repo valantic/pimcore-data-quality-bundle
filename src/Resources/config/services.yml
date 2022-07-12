@@ -33,6 +33,9 @@ services:
     Valantic\DataQualityBundle\Service\:
         resource: '../../Service'
 
+    Valantic\DataQualityBundle\Validation\DataObject\Attributes\:
+        resource: '../../Validation/DataObject/Attributes'
+
     Valantic\DataQualityBundle\Repository\:
         resource: '../../Repository'
 
