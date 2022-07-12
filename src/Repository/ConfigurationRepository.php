@@ -37,13 +37,13 @@ class ConfigurationRepository
             return;
         }
 
-        $yaml = Yaml::dump($this->getConfig(), Yaml::DUMP_OBJECT_AS_MAP);
+        $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfig()], Yaml::DUMP_OBJECT_AS_MAP);
 
         if (empty($this->getConfigFile())) {
             return;
         }
 
-        file_put_contents($this->getConfigFile(), [Configuration::CONFIG_KEY => $yaml]);
+        file_put_contents($this->getConfigFile(), $yaml);
     }
 
     public function getConfigFile(): ?string
