@@ -45,6 +45,6 @@ services:
         class: 'Valantic\DataQualityBundle\Validation\DataObject\Validate'
 
     _instanceof:
-        Valantic\DataQualityBundle\Constraint\CustomConstraintParameters:
+        Valantic\DataQualityBundle\Constraint\CustomConstraintParametersInterface:
             tags: [ 'validator.constraint_validator' ]
 
