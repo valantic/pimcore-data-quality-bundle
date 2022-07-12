@@ -13,6 +13,7 @@ use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Throwable;
 use Valantic\DataQualityBundle\Shared\SafeArray;
+
 use const JSON_THROW_ON_ERROR;
 
 class ConfigurationRepository
@@ -24,7 +25,7 @@ class ConfigurationRepository
 
     public function __construct(
         protected ParameterBagInterface $parameterBag,
-        protected DefinitionInformationFactory $definitionInformationFactory
+        protected DefinitionInformationFactory $definitionInformationFactory,
     ) {
         $config = $this->parameterBag->get(self::CONTAINER_TAG);
 
@@ -199,7 +200,7 @@ class ConfigurationRepository
         array $locales = [],
         int $thresholdGreen = 0,
         int $thresholdOrange = 0,
-        int $nestingLimit = 1
+        int $nestingLimit = 1,
     ): void {
         $config = $this->getConfig();
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG] ??= [];

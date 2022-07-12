@@ -11,6 +11,7 @@ use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
+
 use const JSON_THROW_ON_ERROR;
 
 class MetaControllerTest extends AbstractTestCase

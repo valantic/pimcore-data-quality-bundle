@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Event;
 
 use Throwable;
+
 use const JSON_THROW_ON_ERROR;
 
 class InvalidConstraintEvent extends Event

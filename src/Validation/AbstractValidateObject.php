@@ -34,7 +34,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         protected EventDispatcherInterface $eventDispatcher,
         protected DefinitionInformationFactory $definitionInformationFactory,
         protected ContainerInterface $container,
-        protected ConfigurationRepository $configurationRepository
+        protected ConfigurationRepository $configurationRepository,
     ) {
     }
 

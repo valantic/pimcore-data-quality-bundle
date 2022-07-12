@@ -9,7 +9,7 @@ class DefinitionInformationFactory
     public function __construct(
         protected ClassInformation $classInformation,
         protected FieldCollectionInformation $fieldCollectionInformation,
-        protected ObjectBrickInformation $objectBrickInformation
+        protected ObjectBrickInformation $objectBrickInformation,
     ) {
     }
 

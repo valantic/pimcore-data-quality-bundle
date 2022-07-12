@@ -25,6 +25,7 @@ use Valantic\DataQualityBundle\Validation\ColorableInterface;
 use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
 use Valantic\DataQualityBundle\Validation\ScorableInterface;
 use Valantic\DataQualityBundle\Validation\ValidatableInterface;
+
 use const DEBUG_BACKTRACE_IGNORE_ARGS;
 
 abstract class AbstractAttribute implements ValidatableInterface, ScorableInterface, ColorableInterface
@@ -64,7 +65,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         DefinitionInformationFactory $definitionInformationFactory,
         protected ContainerInterface $container,
         protected array $skippedConstraints,
-        protected ConfigurationRepository $configurationRepository
+        protected ConfigurationRepository $configurationRepository,
     ) {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
@@ -146,7 +147,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             }
 
             try {
-                $instance = new $name(...([$params]));
+                $instance = new $name(...[$params]);
                 if (method_exists($instance, 'setContainer')) {
                     $instance->setContainer($this->container);
                 }
@@ -186,7 +187,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
                     debug_backtrace(
                         DEBUG_BACKTRACE_IGNORE_ARGS
                     ),
-                    fn($trace): bool => ($trace['class'] ?? '') === self::class && ($trace['function']) === 'validate'
+                    fn($trace): bool => ($trace['class'] ?? '') === self::class && $trace['function'] === 'validate'
                 )
             ) - 1,
             0

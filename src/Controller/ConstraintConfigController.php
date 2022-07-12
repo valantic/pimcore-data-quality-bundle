@@ -22,7 +22,7 @@ class ConstraintConfigController extends BaseController
     public function listAction(
         Request $request,
         ConstraintDefinitions $definitions,
-        ConfigurationRepository $configurationRepository
+        ConfigurationRepository $configurationRepository,
     ): JsonResponse {
         $constraintDefinitions = $definitions->all();
         $this->checkPermission(self::CONFIG_NAME);
@@ -81,7 +81,7 @@ class ConstraintConfigController extends BaseController
     public function listAttributesAction(
         Request $request,
         ConfigurationRepository $configurationRepository,
-        DefinitionInformationFactory $definitionInformationFactory
+        DefinitionInformationFactory $definitionInformationFactory,
     ): JsonResponse {
         $this->checkPermission(self::CONFIG_NAME);
 

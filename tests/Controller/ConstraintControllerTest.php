@@ -10,6 +10,7 @@ use Valantic\DataQualityBundle\Controller\ConstraintConfigController;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
+
 use const JSON_THROW_ON_ERROR;
 
 class ConstraintControllerTest extends AbstractTestCase
@@ -301,7 +302,7 @@ class ConstraintControllerTest extends AbstractTestCase
 
     public function testListConstraints(): void
     {
-        $response = $this->controller->listConstraintsAction((new ConstraintDefinitions(null)));
+        $response = $this->controller->listConstraintsAction(new ConstraintDefinitions(null));
 
         $content = $response->getContent();
         $this->assertIsString($content);

@@ -34,8 +34,8 @@ class MetaConfigController extends BaseController
                 'classname' => $className,
                 'nesting_limit' => $configurationRepository->getConfiguredNestingLimit($className),
                 'locales' => $configurationRepository->getConfiguredLocales($className),
-                'threshold_green' => ($configurationRepository->getConfiguredThreshold($className, ThresholdEnum::THRESHOLD_GREEN)) * 100,
-                'threshold_orange' => ($configurationRepository->getConfiguredThreshold($className, ThresholdEnum::THRESHOLD_ORANGE)) * 100,
+                'threshold_green' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::THRESHOLD_GREEN) * 100,
+                'threshold_orange' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::THRESHOLD_ORANGE) * 100,
             ];
         }
 
@@ -47,7 +47,7 @@ class MetaConfigController extends BaseController
      */
     #[Route('/classes', options: ['expose' => true], methods: ['GET'])]
     public function listClassesAction(
-        ConfigurationRepository $configurationRepository
+        ConfigurationRepository $configurationRepository,
     ): JsonResponse {
         $this->checkPermission(self::CONFIG_NAME);
 

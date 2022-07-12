@@ -57,7 +57,7 @@ abstract class AbstractDefinitionInformation
         ClassInformation $classInformation,
         FieldCollectionInformation $fieldCollectionInformation,
         ObjectBrickInformation $objectBrickInformation,
-        string $name
+        string $name,
     ): void {
         $this->classInformation = $classInformation;
         $this->fieldCollectionInformation = $fieldCollectionInformation;

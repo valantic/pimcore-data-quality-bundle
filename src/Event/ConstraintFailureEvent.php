@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Event;
 
 use Throwable;
+
 use const JSON_THROW_ON_ERROR;
 
 class ConstraintFailureEvent extends Event
@@ -18,7 +19,7 @@ class ConstraintFailureEvent extends Event
         protected Throwable $throwable,
         protected int|null $id,
         protected string $attribute,
-        protected array $violations
+        protected array $violations,
     ) {
     }
 

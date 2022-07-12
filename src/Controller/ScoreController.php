@@ -27,7 +27,7 @@ class ScoreController extends BaseController
         DefinitionInformationFactory $definitionInformationFactory,
         ValueFormatter $valueFormatter,
         ValuePreviewFormatter $valuePreviewFormatter,
-        ConfigurationRepository $configurationRepository
+        ConfigurationRepository $configurationRepository,
     ): JsonResponse {
         $obj = Concrete::getById($request->query->getInt('id'));
 
