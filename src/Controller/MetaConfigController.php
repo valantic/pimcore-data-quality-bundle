@@ -34,8 +34,8 @@ class MetaConfigController extends BaseController
                 'classname' => $className,
                 'nesting_limit' => $configurationRepository->getConfiguredNestingLimit($className),
                 'locales' => $configurationRepository->getConfiguredLocales($className),
-                'threshold_green' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::THRESHOLD_GREEN) * 100,
-                'threshold_orange' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::THRESHOLD_ORANGE) * 100,
+                'threshold_green' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::green()) * 100,
+                'threshold_orange' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::orange()) * 100,
             ];
         }
 

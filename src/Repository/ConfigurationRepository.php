@@ -206,8 +206,8 @@ class ConfigurationRepository
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_LOCALES] = $locales;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS] ??= [];
-        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::THRESHOLD_GREEN->value] = $thresholdGreen / 100;
-        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::THRESHOLD_ORANGE->value] = $thresholdOrange / 100;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::green()->value] = $thresholdGreen / 100;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::orange()->value] = $thresholdOrange / 100;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT] = $nestingLimit;
         $this->setConfig($config);
     }

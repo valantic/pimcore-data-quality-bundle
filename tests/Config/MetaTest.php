@@ -73,11 +73,11 @@ class MetaTest extends AbstractTestCase
     public function testWriteUpdates(): void
     {
         $this->configurationRepository->setClassConfig($this->className, [], 80, 0, 1);
-        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_GREEN));
+        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
 
         $this->configurationRepository->setClassConfig($this->className, [], 70, 0, 1);
         $this->configurationRepository->setClassConfig($this->className, [], 50, 70, 1);
-        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_GREEN));
+        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
 
         $this->configurationRepository->setClassConfig($this->className, [], 0, 0, 1);
         $this->assertSame([], $this->configurationRepository->getConfiguredLocales($this->className));
