@@ -75,8 +75,12 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     public function __clone(): void
     {
         unset(
-            $this->obj, $this->attribute,
-            $this->groups, $this->skippedConstraints, $this->validationConfig);
+            $this->obj,
+            $this->attribute,
+            $this->groups,
+            $this->skippedConstraints,
+            $this->validationConfig
+        );
     }
 
     public function configure(
@@ -137,7 +141,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected function getConstraints(): array
     {
         if ($this->getNestingLevel() > 2) {
-            dd();
+            exit;
         }
         $constraints = [];
         foreach ($this->getRules() as $name => $params) {

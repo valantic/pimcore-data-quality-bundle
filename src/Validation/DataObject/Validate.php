@@ -15,6 +15,7 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
         $this->obj = $obj;
         $this->validationConfig = $this->configurationRepository->getAttributesForClass($obj::class);
         $this->classInformation = $this->definitionInformationFactory->make($this->obj::class);
+        $this->groups = $this->dataObjectConfigRepository->get($obj::class)->getValidationGroups($obj);
     }
 
     public function validate(): void

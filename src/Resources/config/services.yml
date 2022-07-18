@@ -33,6 +33,9 @@ services:
     Valantic\DataQualityBundle\Service\:
         resource: '../../Service'
 
+    Valantic\DataQualityBundle\Config\:
+        resource: '../../Config'
+
     Valantic\DataQualityBundle\Validation\DataObject\Attributes\:
         resource: '../../Validation/DataObject/Attributes'
 
@@ -47,7 +50,12 @@ services:
         public: true
         class: 'Valantic\DataQualityBundle\Validation\DataObject\Validate'
 
+    Valantic\DataQualityBundle\Repository\DataObjectConfigRepository:
+        arguments:
+            - !tagged_iterator valantic.dataquality.config.dataobject
+
     _instanceof:
         Valantic\DataQualityBundle\Constraint\CustomConstraintParametersInterface:
             tags: [ 'validator.constraint_validator' ]
-
+        Valantic\DataQualityBundle\Config\DataObjectConfigInterface:
+            tags: [ 'valantic.dataquality.config.dataobject' ]

@@ -18,7 +18,7 @@ class FieldCollectionAttribute extends AbstractAttribute
 
         try {
             foreach ($this->value() as $value) {
-                $this->violations = array_merge_recursive($this->violations, $this->validator->validate($value, $this->getConstraints()));
+                $this->violations = array_merge_recursive($this->violations, $this->validator->validate($value, $this->getConstraints(), $this->groups));
             }
         } catch (Throwable $e) {
             $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));

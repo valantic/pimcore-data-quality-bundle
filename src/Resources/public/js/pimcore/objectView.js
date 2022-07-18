@@ -65,6 +65,20 @@ valantic.dataquality.objectView = Class.create({
                 },
             });
 
+            this.rulesStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('valantic_dataquality_score_show'),
+                    extraParams: {
+                        id: this.object.id,
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'rules',
+                    },
+                },
+            });
+
             const plugins = ['pimcore.gridfilters'];
 
             // eslint-disable-next-line max-len
@@ -96,6 +110,10 @@ valantic.dataquality.objectView = Class.create({
                 },
                 {
                     text: t('configure'),
+                    iconCls: 'pimcore_icon_properties',
+                },
+                {
+                    text: t('settings'),
                     iconCls: 'pimcore_icon_properties',
                     handler: function () {
                         try {
@@ -255,6 +273,7 @@ valantic.dataquality.objectView = Class.create({
             });
 
             this.objectStore.load();
+            this.rulesStore.load();
         }
 
         return this.layout;
@@ -263,6 +282,7 @@ valantic.dataquality.objectView = Class.create({
     reload: function () {
         this.attributesStore.reload();
         this.objectStore.reload();
+        this.rulesStore.reload();
     },
 
     showDetail: function (rec) {

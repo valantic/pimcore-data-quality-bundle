@@ -8,6 +8,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Valantic\DataQualityBundle\Config\DataObjectConfigInterface;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
 use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
@@ -69,6 +70,15 @@ class ScoreController extends BaseController
             );
         }
 
+        $groups = [];
+        foreach ($configurationRepository->getConfiguredAttributes($obj::class) as $attribute) {
+            foreach ($configurationRepository->getRulesForAttribute($obj::class, $attribute) as $rule) {
+                foreach ($rule['groups'] ?? [] as $group) {
+                    $groups[] = $group;
+                }
+            }
+        }
+
         return $this->json([
             'object' => [
                 'score' => $validation->score(),
@@ -76,6 +86,7 @@ class ScoreController extends BaseController
                 'scores' => $validation->scores(),
             ],
             'attributes' => $attributes,
+            'groups' => array_unique([DataObjectConfigInterface::VALIDATION_GROUP_DEFAULT, ...$groups]),
         ]);
     }
 

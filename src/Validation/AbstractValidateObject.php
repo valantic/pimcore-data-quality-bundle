@@ -8,6 +8,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
+use Valantic\DataQualityBundle\Repository\DataObjectConfigRepository;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
@@ -46,6 +47,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         protected ObjectBrickAttribute $objectBrickAttribute,
         protected PlainAttribute $plainAttribute,
         protected RelationAttribute $relationAttribute,
+        protected DataObjectConfigRepository $dataObjectConfigRepository,
     ) {
     }
 
