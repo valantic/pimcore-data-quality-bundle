@@ -4,7 +4,7 @@ stages:
 
 lint_php:
   stage: lint
-  image: git.cec.valantic.com:5050/valantic-pimcore/docker-images/php:8.1-alpine
+  image: git.cec.valantic.com:5050/valantic-pimcore/docker-images/php:8.0-alpine
 
   before_script:
     - composer install

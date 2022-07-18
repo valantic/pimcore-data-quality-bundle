@@ -4,7 +4,7 @@
   "description": "Data quality score for Pimcore",
   "type": "pimcore-bundle",
   "require": {
-    "php": "^8.1",
+    "php": "^8.0",
     "ext-json": "*",
     "pimcore/pimcore": "^10.0",
     "symfony/validator": "^5.0"
