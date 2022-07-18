@@ -39,8 +39,8 @@ class MetaTest extends AbstractTestCase
 
         $this->assertIsInt($this->configurationRepository->getConfiguredNestingLimit($this->classNameConfigured));
         $this->assertIsArray($this->configurationRepository->getConfiguredLocales($this->classNameConfigured));
-        $this->assertArrayHasKey(ThresholdEnum::THRESHOLD_ORANGE->value, $this->configurationRepository->getConfiguredThresholds($this->classNameConfigured));
-        $this->assertArrayHasKey(ThresholdEnum::THRESHOLD_GREEN->value, $this->configurationRepository->getConfiguredThresholds($this->classNameConfigured));
+        $this->assertArrayHasKey(ThresholdEnum::orange()->value, $this->configurationRepository->getConfiguredThresholds($this->classNameConfigured));
+        $this->assertArrayHasKey(ThresholdEnum::green()->value, $this->configurationRepository->getConfiguredThresholds($this->classNameConfigured));
     }
 
     public function testReadMissingClass(): void
