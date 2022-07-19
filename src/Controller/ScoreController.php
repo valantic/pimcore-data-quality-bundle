@@ -86,7 +86,10 @@ class ScoreController extends BaseController
                 'scores' => $validation->scores(),
             ],
             'attributes' => $attributes,
-            'groups' => array_unique([DataObjectConfigInterface::VALIDATION_GROUP_DEFAULT, ...$groups]),
+            'groups' => array_map(
+                fn(string $group): array => ['group' => $group],
+                array_unique([DataObjectConfigInterface::VALIDATION_GROUP_DEFAULT, ...$groups])
+            ),
         ]);
     }
 
