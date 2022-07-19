@@ -321,7 +321,7 @@ valantic.dataquality.objectView = Class.create({
     reload: function () {
         this.attributesStore.reload();
         this.objectStore.reload();
-        this.rulesStore.reload();
+        this.groupsStore.reload();
     },
 
     showDetail: function (rec) {
