@@ -144,6 +144,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         if ($this->getNestingLevel() > 2) {
             throw new RuntimeException('Nesting levels deeper than 2 are currently not supported');
         }
+
         $constraints = [];
         foreach ($this->getRules() as $name => $params) {
             if ($this->getNestingLevel() > self::$maxNestingLevel) {
@@ -161,7 +162,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             try {
                 $reflection = new ReflectionClass($name);
 
-                $subclasses = array_filter($this->skippedConstraints, fn($skippedConstraint) => $reflection->isSubclassOf($skippedConstraint));
+                $subclasses = array_filter($this->skippedConstraints, fn($skippedConstraint): bool => $reflection->isSubclassOf($skippedConstraint));
             } catch (ReflectionException) {
                 $subclasses = [1];
             }
