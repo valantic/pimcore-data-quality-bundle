@@ -9,6 +9,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use ReflectionClass;
 use ReflectionException;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -141,7 +142,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected function getConstraints(): array
     {
         if ($this->getNestingLevel() > 2) {
-            exit;
+            throw new RuntimeException('Nesting levels deeper than 2 are currently not supported');
         }
         $constraints = [];
         foreach ($this->getRules() as $name => $params) {
