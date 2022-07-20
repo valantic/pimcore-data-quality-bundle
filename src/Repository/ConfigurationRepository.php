@@ -49,7 +49,12 @@ class ConfigurationRepository
 
     public function getConfigFile(): ?string
     {
-        return $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
+        $path = $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
+        if (str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        return sprintf('%s/%s', PIMCORE_PROJECT_ROOT, $path);
     }
 
     /**
