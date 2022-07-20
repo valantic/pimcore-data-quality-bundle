@@ -4,7 +4,7 @@ namespace Valantic\DataQualityBundle\Config;
 
 use Pimcore\Model\DataObject\Concrete;
 
-final class DefaultDataObjectConfig extends AbstractDataObjectConfigInterface
+final class DefaultDataObjectConfig extends AbstractDataObjectConfig
 {
     public function getClass(): string
     {
