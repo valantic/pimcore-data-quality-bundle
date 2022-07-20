@@ -333,9 +333,9 @@ class ConfigurationRepository
         return $this->getAttributesForClass($className)[$attribute] ?? [];
     }
 
-    private function getConfigFilePath(): ?string
+    private function getConfigFilePath(): string
     {
-        $path = $this->getConfigFile();
+        $path = $this->getConfigFile() ?: throw new RuntimeException();
         if (str_starts_with($path, '/')) {
             return $path;
         }
