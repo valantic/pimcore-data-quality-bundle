@@ -44,17 +44,12 @@ class ConfigurationRepository
             return;
         }
 
-        file_put_contents($this->getConfigFile(), $yaml);
+        file_put_contents($this->getConfigFilePath(), $yaml);
     }
 
     public function getConfigFile(): ?string
     {
-        $path = $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
-        if (str_starts_with($path, '/')) {
-            return $path;
-        }
-
-        return sprintf('%s/%s', PIMCORE_PROJECT_ROOT, $path);
+        return $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
     }
 
     /**
@@ -336,6 +331,16 @@ class ConfigurationRepository
     protected function getForAttribute(string $className, string $attribute): array
     {
         return $this->getAttributesForClass($className)[$attribute] ?? [];
+    }
+
+    private function getConfigFilePath(): ?string
+    {
+        $path = $this->getConfigFile();
+        if (str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        return sprintf('%s/%s', PIMCORE_PROJECT_ROOT, $path);
     }
 
     private function getConfig(): array
