@@ -123,8 +123,8 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertSame($this->configurationRepository->getConfiguredNestingLimit($decoded['classname']), $decoded['nesting_limit']);
         $this->assertSame($this->configurationRepository->getConfiguredLocales($decoded['classname']), $decoded['locales']);
-        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::THRESHOLD_GREEN) * 100, $decoded['threshold_green'], 0.1);
-        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::THRESHOLD_ORANGE) * 100, $decoded['threshold_orange'], 0.1);
+        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::green()) * 100, $decoded['threshold_green'], 0.1);
+        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::orange()) * 100, $decoded['threshold_orange'], 0.1);
     }
 
     public function testListClasses(): void
@@ -181,8 +181,8 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertTrue($this->configurationRepository->isClassConfigured($this->className));
 
         $this->assertSame([], $this->configurationRepository->getConfiguredLocales($this->className));
-        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_ORANGE));
-        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_GREEN));
+        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::orange()));
+        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
         $this->assertSame(1, $this->configurationRepository->getConfiguredNestingLimit($this->className));
 
         $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
@@ -211,8 +211,8 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertTrue($this->configurationRepository->isClassConfigured($this->className));
 
         $this->assertSame(['de', 'en'], $this->configurationRepository->getConfiguredLocales($this->className));
-        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_ORANGE));
-        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::THRESHOLD_GREEN));
+        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::orange()));
+        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
         $this->assertSame(2, $this->configurationRepository->getConfiguredNestingLimit($this->className));
 
         $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);

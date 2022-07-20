@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "464f81bd85d60bc8b67ff00606fe7e78",
+    "content-hash": "ac7efb8275fd4a3de236f38dc28776ba",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -1780,16 +1780,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v6.2.0",
+            "version": "v6.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "d28e6df83830252650da4623c78aaaf98fb385f3"
+                "reference": "018dfc4e1da92ad8a1b90adc4893f476a3b41cb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/d28e6df83830252650da4623c78aaaf98fb385f3",
-                "reference": "d28e6df83830252650da4623c78aaaf98fb385f3",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/018dfc4e1da92ad8a1b90adc4893f476a3b41cb8",
+                "reference": "018dfc4e1da92ad8a1b90adc4893f476a3b41cb8",
                 "shasum": ""
             },
             "require": {
@@ -1836,9 +1836,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v6.2.0"
+                "source": "https://github.com/firebase/php-jwt/tree/v6.3.0"
             },
-            "time": "2022-05-13T20:54:50+00:00"
+            "time": "2022-07-15T16:48:45+00:00"
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
@@ -2118,16 +2118,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.257.0",
+            "version": "v0.258.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "ae109202ee831a1fb70ba824181852e6179c848b"
+                "reference": "71eb32534aba05e373fe317c1373a9645065881c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/ae109202ee831a1fb70ba824181852e6179c848b",
-                "reference": "ae109202ee831a1fb70ba824181852e6179c848b",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/71eb32534aba05e373fe317c1373a9645065881c",
+                "reference": "71eb32534aba05e373fe317c1373a9645065881c",
                 "shasum": ""
             },
             "require": {
@@ -2156,9 +2156,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
-                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.257.0"
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.258.0"
             },
-            "time": "2022-07-08T01:28:13+00:00"
+            "time": "2022-07-18T01:10:11+00:00"
         },
         {
             "name": "google/auth",
@@ -4072,16 +4072,16 @@
         },
         {
             "name": "mpratt/embera",
-            "version": "2.0.26",
+            "version": "2.0.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpratt/Embera.git",
-                "reference": "d0f4fd8550ca07bd2efb55211c8f66b73db77f99"
+                "reference": "9c16a9559fa75d9a9d5efddb17cd34555a6dff5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpratt/Embera/zipball/d0f4fd8550ca07bd2efb55211c8f66b73db77f99",
-                "reference": "d0f4fd8550ca07bd2efb55211c8f66b73db77f99",
+                "url": "https://api.github.com/repos/mpratt/Embera/zipball/9c16a9559fa75d9a9d5efddb17cd34555a6dff5e",
+                "reference": "9c16a9559fa75d9a9d5efddb17cd34555a6dff5e",
                 "shasum": ""
             },
             "require": {
@@ -4130,7 +4130,7 @@
             ],
             "support": {
                 "issues": "https://github.com/mpratt/Embera/issues",
-                "source": "https://github.com/mpratt/Embera/tree/2.0.26"
+                "source": "https://github.com/mpratt/Embera/tree/2.0.27"
             },
             "funding": [
                 {
@@ -4138,7 +4138,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2022-05-15T23:31:41+00:00"
+            "time": "2022-07-15T01:01:46+00:00"
         },
         {
             "name": "mustangostang/spyc",
@@ -5773,16 +5773,16 @@
         },
         {
             "name": "rybakit/twig-deferred-extension",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rybakit/twig-deferred-extension.git",
-                "reference": "9978957bd018554e656bcdf045ab00fb7b134dc9"
+                "reference": "3f8a67fd9d341ac27d216c75824795a0f3559450"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rybakit/twig-deferred-extension/zipball/9978957bd018554e656bcdf045ab00fb7b134dc9",
-                "reference": "9978957bd018554e656bcdf045ab00fb7b134dc9",
+                "url": "https://api.github.com/repos/rybakit/twig-deferred-extension/zipball/3f8a67fd9d341ac27d216c75824795a0f3559450",
+                "reference": "3f8a67fd9d341ac27d216c75824795a0f3559450",
                 "shasum": ""
             },
             "require": {
@@ -5819,7 +5819,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rybakit/twig-deferred-extension/issues",
-                "source": "https://github.com/rybakit/twig-deferred-extension/tree/v3.0.1"
+                "source": "https://github.com/rybakit/twig-deferred-extension/tree/v3.0.2"
             },
             "funding": [
                 {
@@ -5827,7 +5827,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-09-17T21:39:05+00:00"
+            "time": "2022-07-14T22:44:08+00:00"
         },
         {
             "name": "sabre/dav",
@@ -5983,16 +5983,16 @@
         },
         {
             "name": "sabre/http",
-            "version": "5.1.5",
+            "version": "5.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sabre-io/http.git",
-                "reference": "164725c2d2e248384e5b6115510c545e9c47cff9"
+                "reference": "9976ac34ced206bd6579b7b37b401de9fac98dae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sabre-io/http/zipball/164725c2d2e248384e5b6115510c545e9c47cff9",
-                "reference": "164725c2d2e248384e5b6115510c545e9c47cff9",
+                "url": "https://api.github.com/repos/sabre-io/http/zipball/9976ac34ced206bd6579b7b37b401de9fac98dae",
+                "reference": "9976ac34ced206bd6579b7b37b401de9fac98dae",
                 "shasum": ""
             },
             "require": {
@@ -6042,7 +6042,7 @@
                 "issues": "https://github.com/sabre-io/http/issues",
                 "source": "https://github.com/fruux/sabre-http"
             },
-            "time": "2022-07-09T08:38:22+00:00"
+            "time": "2022-07-15T14:51:14+00:00"
         },
         {
             "name": "sabre/uri",
@@ -6103,16 +6103,16 @@
         },
         {
             "name": "sabre/vobject",
-            "version": "4.4.2",
+            "version": "4.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sabre-io/vobject.git",
-                "reference": "b8a44ea1610d9b7012e42a7ff6f1cb66f0b757dd"
+                "reference": "2a043b994fa8d8a655c3d50d73c1ad443d31d677"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sabre-io/vobject/zipball/b8a44ea1610d9b7012e42a7ff6f1cb66f0b757dd",
-                "reference": "b8a44ea1610d9b7012e42a7ff6f1cb66f0b757dd",
+                "url": "https://api.github.com/repos/sabre-io/vobject/zipball/2a043b994fa8d8a655c3d50d73c1ad443d31d677",
+                "reference": "2a043b994fa8d8a655c3d50d73c1ad443d31d677",
                 "shasum": ""
             },
             "require": {
@@ -6203,7 +6203,7 @@
                 "issues": "https://github.com/sabre-io/vobject/issues",
                 "source": "https://github.com/fruux/sabre-vobject"
             },
-            "time": "2022-06-24T11:36:21+00:00"
+            "time": "2022-07-15T15:21:17+00:00"
         },
         {
             "name": "sabre/xml",
@@ -6523,6 +6523,82 @@
                 "source": "https://github.com/sensiolabs/ansi-to-html/tree/v1.2.1"
             },
             "time": "2020-10-06T05:48:55+00:00"
+        },
+        {
+            "name": "spatie/enum",
+            "version": "3.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/enum.git",
+                "reference": "f1a0f464ba909491a53e60a955ce84ad7cd93a2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/enum/zipball/f1a0f464ba909491a53e60a955ce84ad7cd93a2c",
+                "reference": "f1a0f464ba909491a53e60a955ce84ad7cd93a2c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.9.1",
+                "larapack/dd": "^1.1",
+                "phpunit/phpunit": "^9.0",
+                "vimeo/psalm": "^4.3"
+            },
+            "suggest": {
+                "fakerphp/faker": "To use the enum faker provider",
+                "phpunit/phpunit": "To use the enum assertions"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Enum\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brent Roose",
+                    "email": "brent@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Tom Witkowski",
+                    "email": "dev@gummibeer.de",
+                    "homepage": "https://gummibeer.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Enums",
+            "homepage": "https://github.com/spatie/enum",
+            "keywords": [
+                "enum",
+                "enumerable",
+                "spatie"
+            ],
+            "support": {
+                "docs": "https://docs.spatie.be/enum",
+                "issues": "https://github.com/spatie/enum/issues",
+                "source": "https://github.com/spatie/enum"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-04-22T08:51:55+00:00"
         },
         {
             "name": "spatie/image-optimizer",
@@ -11046,26 +11122,26 @@
         },
         {
             "name": "symfony/redis-messenger",
-            "version": "v5.4.6",
+            "version": "v6.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/redis-messenger.git",
-                "reference": "6b14778e0a6295af023fec637c7b38f918c1a08d"
+                "reference": "1f58a8e0e5a37b9d66a38c0bdae24056d76a8bcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/redis-messenger/zipball/6b14778e0a6295af023fec637c7b38f918c1a08d",
-                "reference": "6b14778e0a6295af023fec637c7b38f918c1a08d",
+                "url": "https://api.github.com/repos/symfony/redis-messenger/zipball/1f58a8e0e5a37b9d66a38c0bdae24056d76a8bcc",
+                "reference": "1f58a8e0e5a37b9d66a38c0bdae24056d76a8bcc",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.5",
-                "symfony/deprecation-contracts": "^2.1|^3",
-                "symfony/messenger": "^5.1|^6.0"
+                "ext-redis": "*",
+                "php": ">=8.0.2",
+                "symfony/messenger": "^5.4|^6.0"
             },
             "require-dev": {
-                "symfony/property-access": "^4.4|^5.0|^6.0",
-                "symfony/serializer": "^4.4|^5.0|^6.0"
+                "symfony/property-access": "^5.4|^6.0",
+                "symfony/serializer": "^5.4|^6.0"
             },
             "type": "symfony-messenger-bridge",
             "autoload": {
@@ -11093,7 +11169,7 @@
             "description": "Symfony Redis extension Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/redis-messenger/tree/v5.4.6"
+                "source": "https://github.com/symfony/redis-messenger/tree/v6.0.7"
             },
             "funding": [
                 {
@@ -11109,7 +11185,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-03-04T15:46:40+00:00"
+            "time": "2022-03-31T17:22:53+00:00"
         },
         {
             "name": "symfony/routing",
@@ -13627,16 +13703,16 @@
     "packages-dev": [
         {
             "name": "bamarni/composer-bin-plugin",
-            "version": "1.7.0",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bamarni/composer-bin-plugin.git",
-                "reference": "c1bbee3662a2a84c6aad84b7c6daefcae29e5690"
+                "reference": "24764700027bcd3cb072e5f8005d4a150fe714fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bamarni/composer-bin-plugin/zipball/c1bbee3662a2a84c6aad84b7c6daefcae29e5690",
-                "reference": "c1bbee3662a2a84c6aad84b7c6daefcae29e5690",
+                "url": "https://api.github.com/repos/bamarni/composer-bin-plugin/zipball/24764700027bcd3cb072e5f8005d4a150fe714fe",
+                "reference": "24764700027bcd3cb072e5f8005d4a150fe714fe",
                 "shasum": ""
             },
             "require": {
@@ -13656,7 +13732,7 @@
             },
             "type": "composer-plugin",
             "extra": {
-                "class": "Bamarni\\Composer\\Bin\\Plugin"
+                "class": "Bamarni\\Composer\\Bin\\BamarniBinPlugin"
             },
             "autoload": {
                 "psr-4": {
@@ -13678,9 +13754,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bamarni/composer-bin-plugin/issues",
-                "source": "https://github.com/bamarni/composer-bin-plugin/tree/1.7.0"
+                "source": "https://github.com/bamarni/composer-bin-plugin/tree/1.8.0"
             },
-            "time": "2022-07-10T17:28:16+00:00"
+            "time": "2022-07-14T10:29:51+00:00"
         },
         {
             "name": "composer/pcre",
@@ -14780,16 +14856,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "b7648d4ee9321665acaf112e49da9fd93df8fbd5"
+                "reference": "8dbba631fa32f4b289404469c2afd6122fd61d67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b7648d4ee9321665acaf112e49da9fd93df8fbd5",
-                "reference": "b7648d4ee9321665acaf112e49da9fd93df8fbd5",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8dbba631fa32f4b289404469c2afd6122fd61d67",
+                "reference": "8dbba631fa32f4b289404469c2afd6122fd61d67",
                 "shasum": ""
             },
             "require": {
@@ -14815,7 +14891,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.8.0"
+                "source": "https://github.com/phpstan/phpstan/tree/1.8.1"
             },
             "funding": [
                 {
@@ -14835,7 +14911,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-29T08:53:31+00:00"
+            "time": "2022-07-12T16:08:06+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
@@ -15373,12 +15449,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "2a1896038681217c0ee6363cb472aad856396eea"
+                "reference": "0144c1225b5e4da02cf2c27a0e2cb2705168c47c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2a1896038681217c0ee6363cb472aad856396eea",
-                "reference": "2a1896038681217c0ee6363cb472aad856396eea",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0144c1225b5e4da02cf2c27a0e2cb2705168c47c",
+                "reference": "0144c1225b5e4da02cf2c27a0e2cb2705168c47c",
                 "shasum": ""
             },
             "conflict": {
@@ -15440,7 +15516,7 @@
                 "contao/managed-edition": "<=1.5",
                 "craftcms/cms": "<3.7.36",
                 "croogo/croogo": "<3.0.7",
-                "cuyz/valinor": ">=0.5,<0.7",
+                "cuyz/valinor": "<0.12",
                 "czproject/git-php": "<4.0.3",
                 "darylldoyle/safe-svg": "<1.9.10",
                 "datadog/dd-trace": ">=0.30,<0.30.2",
@@ -15530,6 +15606,7 @@
                 "ibexa/core": ">=4,<4.0.7|>=4.1,<4.1.4",
                 "ibexa/post-install": "<=1.0.4",
                 "icecoder/icecoder": "<=8.1",
+                "idno/known": "<=1.3.1",
                 "illuminate/auth": ">=4,<4.0.99|>=4.1,<=4.1.31|>=4.2,<=4.2.22|>=5,<=5.0.35|>=5.1,<=5.1.46|>=5.2,<=5.2.45|>=5.3,<=5.3.31|>=5.4,<=5.4.36|>=5.5,<5.5.10",
                 "illuminate/cookie": ">=4,<=4.0.11|>=4.1,<=4.1.99999|>=4.2,<=4.2.99999|>=5,<=5.0.99999|>=5.1,<=5.1.99999|>=5.2,<=5.2.99999|>=5.3,<=5.3.99999|>=5.4,<=5.4.99999|>=5.5,<=5.5.49|>=5.6,<=5.6.99999|>=5.7,<=5.7.99999|>=5.8,<=5.8.99999|>=6,<6.18.31|>=7,<7.22.4",
                 "illuminate/database": "<6.20.26|>=7,<7.30.5|>=8,<8.40",
@@ -15610,7 +15687,7 @@
                 "october/cms": "= 1.1.1|= 1.0.471|= 1.0.469|>=1.0.319,<1.0.469",
                 "october/october": ">=1.0.319,<1.0.466|>=2.1,<2.1.12",
                 "october/rain": "<1.0.472|>=1.1,<1.1.2",
-                "october/system": "<1.0.475|>=1.1,<1.1.11|>=2,<2.1.27",
+                "october/system": "<1.0.476|>=1.1,<1.1.12|>=2,<2.2.15",
                 "onelogin/php-saml": "<2.10.4",
                 "oneup/uploader-bundle": "<1.9.3|>=2,<2.1.5",
                 "open-web-analytics/open-web-analytics": "<1.7.4",
@@ -15618,8 +15695,10 @@
                 "openid/php-openid": "<2.3",
                 "openmage/magento-lts": "<19.4.15|>=20,<20.0.13",
                 "orchid/platform": ">=9,<9.4.4",
+                "oro/commerce": ">=5,<5.0.4",
                 "oro/crm": ">=1.7,<1.7.4|>=3.1,<4.1.17|>=4.2,<4.2.7",
                 "oro/platform": ">=1.7,<1.7.4|>=3.1,<3.1.29|>=4.1,<4.1.17|>=4.2,<4.2.8",
+                "packbackbooks/lti-1-3-php-library": "<5",
                 "padraic/humbug_get_contents": "<1.1.2",
                 "pagarme/pagarme-php": ">=0,<3",
                 "pagekit/pagekit": "<=1.0.18",
@@ -15765,7 +15844,7 @@
                 "thinkcmf/thinkcmf": "<=5.1.7",
                 "tinymce/tinymce": "<5.10",
                 "titon/framework": ">=0,<9.9.99",
-                "topthink/framework": "<6.0.12",
+                "topthink/framework": "<=6.0.12",
                 "topthink/think": "<=6.0.9",
                 "topthink/thinkphp": "<=3.2.3",
                 "tribalsystems/zenario": "<9.2.55826",
@@ -15793,6 +15872,7 @@
                 "webcoast/deferred-image-processing": "<1.0.2",
                 "wikimedia/parsoid": "<0.12.2",
                 "willdurand/js-translation-bundle": "<2.1.1",
+                "wintercms/winter": "<1.0.475|>=1.1,<1.1.9",
                 "wp-cli/wp-cli": "<2.5",
                 "wp-graphql/wp-graphql": "<0.3.5",
                 "wpanel/wpanel4-cms": "<=4.3.1",
@@ -15872,7 +15952,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-07-12T11:07:36+00:00"
+            "time": "2022-07-15T22:04:13+00:00"
         },
         {
             "name": "sanmai/later",
@@ -17084,7 +17164,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1",
+        "php": "^8.0",
         "ext-json": "*"
     },
     "platform-dev": [],
