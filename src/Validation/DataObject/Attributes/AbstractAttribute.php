@@ -19,6 +19,7 @@ use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
+use Valantic\DataQualityBundle\Repository\DataObjectConfigRepository;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SafeArray;
@@ -68,6 +69,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         protected DefinitionInformationFactory $definitionInformationFactory,
         protected ContainerInterface $container,
         protected ConfigurationRepository $configurationRepository,
+        protected DataObjectConfigRepository $dataObjectConfigRepository,
     ) {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();

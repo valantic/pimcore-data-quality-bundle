@@ -13,5 +13,8 @@ interface DataObjectConfigInterface
 
     public function getValidationGroups(Concrete $obj): array;
 
+    /** @return string[] */
+    public function getLocales(Concrete $obj): array;
+
     public static function isDefault(): bool;
 }
