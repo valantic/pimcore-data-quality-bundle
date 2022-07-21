@@ -24,12 +24,13 @@ use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SafeArray;
 use Valantic\DataQualityBundle\Validation\ColorableInterface;
 use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
+use Valantic\DataQualityBundle\Validation\PassFailInterface;
 use Valantic\DataQualityBundle\Validation\ScorableInterface;
 use Valantic\DataQualityBundle\Validation\ValidatableInterface;
 
 use const DEBUG_BACKTRACE_IGNORE_ARGS;
 
-abstract class AbstractAttribute implements ValidatableInterface, ScorableInterface, ColorableInterface
+abstract class AbstractAttribute implements ValidatableInterface, ScorableInterface, ColorableInterface, PassFailInterface
 {
     use ColorScoreTrait;
     use SafeArray;
@@ -121,6 +122,11 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         } catch (Throwable $e) {
             $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
         }
+    }
+
+    public function passes(): bool
+    {
+        return $this->score() === 1.0;
     }
 
     /**

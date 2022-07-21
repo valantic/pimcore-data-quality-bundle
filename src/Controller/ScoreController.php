@@ -62,10 +62,10 @@ class ScoreController extends BaseController
                     'note' => $configurationRepository->getNoteForAttribute($obj::class, $attribute),
                     'type' => $classInformation->getAttributeType($attribute),
                 ],
-                $score,
+                $score->jsonSerialize(),
                 [
-                    'value' => $valueFormatter->format($score['value']),
-                    'value_preview' => $valuePreviewFormatter->format($score['value']),
+                    'value' => $valueFormatter->format($score->value),
+                    'value_preview' => $valuePreviewFormatter->format($score->value),
                 ]
             );
         }
@@ -80,11 +80,7 @@ class ScoreController extends BaseController
         }
 
         return $this->json([
-            'object' => [
-                'score' => $validation->score(),
-                'color' => $validation->color(),
-                'scores' => $validation->scores(),
-            ],
+            'object' => $validation->objectScore(),
             'attributes' => $attributes,
             'groups' => array_map(
                 fn(string $group): array => ['group' => $group],

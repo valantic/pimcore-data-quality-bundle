@@ -145,8 +145,3 @@ parameters:
 			count: 1
 			path: src/Validation/DataObject/Attributes/FieldCollectionAttribute.php
 
-		-
-			message: "#^Strict comparison using \\=\\=\\= between int\\<1, max\\> and 0 will always evaluate to false\\.$#"
-			count: 1
-			path: src/Validation/DataObject/Validate.php
-

@@ -129,7 +129,5 @@ $validation->setObject($obj);
 $validation->validate();
 
 $validation->attributeScores();
-$validation->score();
-$validation->color();
-$validation->scores();
+$validation->objectScore();
 ```
