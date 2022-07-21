@@ -230,7 +230,7 @@ valantic.dataquality.settings_meta = Class.create({
             fieldLabel: t('valantic_dataquality_config_column_classname'),
             name: 'classname',
             editable: true,
-            displayField: 'name',
+            displayField: 'short',
             valueField: 'name',
             store: classesStore,
             mode: 'local',

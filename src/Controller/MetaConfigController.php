@@ -30,6 +30,7 @@ class MetaConfigController extends BaseController
             if (stripos($className, (string) $filter) === false) {
                 continue;
             }
+
             $entries[] = [
                 'classname' => $className,
                 'nesting_limit' => $configurationRepository->getConfiguredNestingLimit($className),
@@ -52,7 +53,11 @@ class MetaConfigController extends BaseController
         $this->checkPermission(self::CONFIG_NAME);
 
         return $this->json([
-            'classes' => array_map(fn($name): array => ['name' => $name], $configurationRepository->getConfiguredClasses()),
+            // TODO: list available classes
+            'classes' => array_map(
+                fn($name): array => ['name' => $name, 'short' => $this->classBasename($name)],
+                $this->getClassNames()
+            ),
         ]);
     }
 
