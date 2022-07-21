@@ -17,6 +17,10 @@ class ConstraintDefinitions
     {
         $customConstraints = [];
         foreach ($taggedConstraints?->getIterator() ?: [] as $taggedConstraint) {
+            if (!$taggedConstraint instanceof CustomConstraintParametersInterface) {
+                continue;
+            }
+
             $customConstraints[] = $taggedConstraint;
         }
         $this->customConstraints = $customConstraints;

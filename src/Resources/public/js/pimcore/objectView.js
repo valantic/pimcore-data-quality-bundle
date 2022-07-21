@@ -15,7 +15,21 @@ valantic.dataquality.objectView = Class.create({
                 });
             }
 
-            this.attributesStore = new Ext.data.Store({
+            this.activeGroups = [];
+            const baseStoreProxyConfig = (rootProperty) => ({
+                type: 'ajax',
+                url: Routing.generate('valantic_dataquality_score_show'),
+                extraParams: {
+                    id: this.object.id,
+                    'groups[]': this.activeGroups,
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty,
+                },
+            });
+
+            this.attributesStoreConfig = () => new Ext.data.Store({
                 model: modelName,
                 sorters: [
                     {
@@ -27,34 +41,15 @@ valantic.dataquality.objectView = Class.create({
                         direction: 'ASC',
                     },
                 ],
-                proxy: {
-                    type: 'ajax',
-                    url: Routing.generate('valantic_dataquality_score_show'),
-                    extraParams: {
-                        id: this.object.id,
-                    },
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'attributes',
-                    },
-                },
+                proxy: baseStoreProxyConfig('attributes'),
             });
 
-            this.objectStore = new Ext.data.Store({
-                proxy: {
-                    type: 'ajax',
-                    url: Routing.generate('valantic_dataquality_score_show'),
-                    extraParams: {
-                        id: this.object.id,
-                    },
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'object',
-                    },
-                },
+            this.objectStoreConfig = () => new Ext.data.Store({
+                proxy: baseStoreProxyConfig('object'),
                 listeners: {
                     load: function (store) {
-                        const data = store.getData().getAt(0);
+                        const data = store.getData()
+                            .getAt(0);
                         if (!data.get('color')) {
                             return;
                         }
@@ -64,6 +59,14 @@ valantic.dataquality.objectView = Class.create({
                     }.bind(this),
                 },
             });
+
+            this.groupsStoreConfig = () => new Ext.data.Store({
+                proxy: baseStoreProxyConfig('groups'),
+            });
+
+            this.attributesStore = this.attributesStoreConfig();
+            this.objectStore = this.objectStoreConfig();
+            this.groupsStore = this.groupsStoreConfig();
 
             const plugins = ['pimcore.gridfilters'];
 
@@ -98,11 +101,61 @@ valantic.dataquality.objectView = Class.create({
                     text: t('configure'),
                     iconCls: 'pimcore_icon_properties',
                     handler: function () {
+                        const formPanel = new Ext.form.FormPanel({
+                            bodyStyle: 'padding:10px;',
+                            items: [new Ext.ux.form.MultiSelect({
+                                fieldLabel: t('valantic_dataquality_config_constraint_groups'),
+                                name: 'groups[]',
+                                editable: true,
+                                displayField: 'group',
+                                valueField: 'group',
+                                store: this.groupsStore,
+                                mode: 'local',
+                                triggerAction: 'all',
+                                width: 250,
+                                value: this.activeGroups,
+                            })],
+                        });
+
+                        const configWin = new Ext.Window({
+                            modal: true,
+                            width: 300,
+                            height: 400,
+                            closable: true,
+                            items: [formPanel],
+                            buttons: [{
+                                text: t('apply'),
+                                iconCls: 'pimcore_icon_accept',
+                                handler: function () {
+                                    const values = formPanel.getForm()
+                                        .getFieldValues();
+
+                                    this.activeGroups = values['groups[]'];
+
+                                    this.attributesStore = this.attributesStoreConfig();
+                                    this.objectStore = this.objectStoreConfig();
+
+                                    this.attributesStore.reload();
+                                    this.objectStore.reload();
+
+                                    configWin.close();
+                                }.bind(this),
+                            }],
+                        });
+
+                        configWin.show();
+                    }.bind(this),
+                },
+                {
+                    text: t('settings'),
+                    iconCls: 'pimcore_icon_properties',
+                    handler: function () {
                         try {
-                            pimcore.globalmanager.get('valantic_dataquality_settings').activate({
-                                tab: 'constraints',
-                                filter: this.object.data.general.o_className,
-                            });
+                            pimcore.globalmanager.get('valantic_dataquality_settings')
+                                .activate({
+                                    tab: 'constraints',
+                                    filter: this.object.data.general.o_className,
+                                });
                         } catch (e) {
                             pimcore.globalmanager.add('valantic_dataquality_settings', new valantic.dataquality.settings({
                                 tab: 'constraints',
@@ -165,10 +218,13 @@ valantic.dataquality.objectView = Class.create({
                             const preview = record.get('value_preview');
                             let val = record.get('value');
                             if (Array.isArray(val)) {
-                                val = `<ul>${val.map((v) => `<li>${v}</li>`).join('')}</ul>`;
+                                val = `<ul>${val.map((v) => `<li>${v}</li>`)
+                                    .join('')}</ul>`;
                             }
                             if ((typeof val === 'object' && val !== null)) {
-                                val = `<div>${Object.keys(val).map((k) => `<h4>${k}</h4><p>${val[k]}</p>`).join('')}</div>`;
+                                val = `<div>${Object.keys(val)
+                                    .map((k) => `<h4>${k}</h4><p>${val[k]}</p>`)
+                                    .join('')}</div>`;
                             }
                             return `<div class="show-when-wrapped" style="display:none;">${val}</div><div class="hide-when-wrapped">${preview}</div>`;
                         },
@@ -185,7 +241,8 @@ valantic.dataquality.objectView = Class.create({
                                 icon: '/bundles/pimcoreadmin/img/flat-color-icons/view_details.svg',
                                 handler: function (gridRef, rowIndex, colIndex) {
                                     // eslint-disable-next-line no-param-reassign
-                                    const cell = gridRef.getRow(rowIndex).querySelector(`${`td:nth-child(${colIndex}`})`);
+                                    const cell = gridRef.getRow(rowIndex)
+                                        .querySelector(`${`td:nth-child(${colIndex}`})`);
                                     const wrapClass = 'x-wrap-cell';
                                     if (!cell.classList.contains(wrapClass)) {
                                         cell.classList.add(wrapClass);
@@ -255,6 +312,7 @@ valantic.dataquality.objectView = Class.create({
             });
 
             this.objectStore.load();
+            this.groupsStore.load();
         }
 
         return this.layout;
@@ -263,6 +321,7 @@ valantic.dataquality.objectView = Class.create({
     reload: function () {
         this.attributesStore.reload();
         this.objectStore.reload();
+        this.groupsStore.reload();
     },
 
     showDetail: function (rec) {

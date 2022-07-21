@@ -9,6 +9,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use ReflectionClass;
 use ReflectionException;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -34,6 +35,10 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     use SafeArray;
     protected ValidatorInterface $validator;
     protected array $validationConfig;
+    protected Concrete $obj;
+    protected string $attribute;
+    protected array $groups;
+    protected array $skippedConstraints;
 
     /**
      * Violations found during validation.
@@ -59,19 +64,38 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
      * Validates an attribute of an object.
      */
     public function __construct(
-        protected Concrete $obj,
-        protected string $attribute,
         protected EventDispatcherInterface $eventDispatcher,
-        DefinitionInformationFactory $definitionInformationFactory,
+        protected DefinitionInformationFactory $definitionInformationFactory,
         protected ContainerInterface $container,
-        protected array $skippedConstraints,
         protected ConfigurationRepository $configurationRepository,
     ) {
         $validationBuilder = Validation::createValidatorBuilder();
         $this->validator = $validationBuilder->getValidator();
-        $this->validationConfig = $this->configurationRepository->getRulesForAttribute($obj::class, $attribute);
-        $this->classInformation = $definitionInformationFactory->make($this->obj::class);
+    }
 
+    public function __clone(): void
+    {
+        unset(
+            $this->obj,
+            $this->attribute,
+            $this->groups,
+            $this->skippedConstraints,
+            $this->validationConfig
+        );
+    }
+
+    public function configure(
+        Concrete $obj,
+        string $attribute,
+        array $groups,
+        array $skippedConstraints,
+    ): void {
+        $this->obj = $obj;
+        $this->attribute = $attribute;
+        $this->groups = $groups;
+        $this->skippedConstraints = $skippedConstraints;
+        $this->validationConfig = $this->configurationRepository->getRulesForAttribute($obj::class, $attribute);
+        $this->classInformation = $this->definitionInformationFactory->make($this->obj::class);
         if (self::$maxNestingLevel < 0) {
             self::$maxNestingLevel = $this->configurationRepository->getConfiguredNestingLimit($this->obj::class);
         }
@@ -93,7 +117,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     public function validate(): void
     {
         try {
-            $this->violations = $this->validator->validate($this->value(), $this->getConstraints());
+            $this->violations = $this->validator->validate($this->value(), $this->getConstraints(), $this->groups);
         } catch (Throwable $e) {
             $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
         }
@@ -118,8 +142,9 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected function getConstraints(): array
     {
         if ($this->getNestingLevel() > 2) {
-            dd();
+            throw new RuntimeException('Nesting levels deeper than 2 are currently not supported');
         }
+
         $constraints = [];
         foreach ($this->getRules() as $name => $params) {
             if ($this->getNestingLevel() > self::$maxNestingLevel) {
@@ -137,7 +162,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             try {
                 $reflection = new ReflectionClass($name);
 
-                $subclasses = array_filter($this->skippedConstraints, fn($skippedConstraint) => $reflection->isSubclassOf($skippedConstraint));
+                $subclasses = array_filter($this->skippedConstraints, fn($skippedConstraint): bool => $reflection->isSubclassOf($skippedConstraint));
             } catch (ReflectionException) {
                 $subclasses = [1];
             }

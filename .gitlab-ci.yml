@@ -24,9 +24,24 @@ lint_php:
     when: always
     reports:
       junit: report.xml
-      # coverage_report:
-      #   coverage_format: cobertura
-      #   path: coverage.cobertura.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.cobertura.xml
+
+lint_js:
+  stage: lint
+  image: git.cec.valantic.com:5050/valantic-pimcore/docker-images/node:lts
+
+  before_script:
+    - npm i
+
+  script:
+    - npm run lint
+
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
 
 deploy:
   stage: deploy

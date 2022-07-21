@@ -6,84 +6,43 @@ namespace Valantic\DataQualityBundle\Validation\DataObject;
 
 use Pimcore\Model\DataObject\Concrete;
 use Valantic\DataQualityBundle\Validation\AbstractValidateObject;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\FieldCollectionAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\LocalizedAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ObjectBrickAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\PlainAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\RelationAttribute;
 use Valantic\DataQualityBundle\Validation\MultiScorableInterface;
 
 class Validate extends AbstractValidateObject implements MultiScorableInterface
 {
-    protected Concrete $obj;
-
     public function setObject(Concrete $obj): void
     {
         $this->obj = $obj;
-        $this->validationConfig = $this->configurationRepository->getForClass($obj::class);
+        $this->validationConfig = $this->configurationRepository->getAttributesForClass($obj::class);
         $this->classInformation = $this->definitionInformationFactory->make($this->obj::class);
+        $this->groups = $this->dataObjectConfigRepository->get($obj::class)->getValidationGroups($obj);
     }
 
     public function validate(): void
     {
         $validators = [];
         foreach ($this->getValidatableAttributes() as $attribute) {
+            $arguments = [
+                $this->obj,
+                $attribute,
+                $this->groups,
+                $this->skippedConstraints,
+            ];
+
             if ($this->classInformation->isPlainAttribute($attribute)) {
-                $validator = new PlainAttribute(
-                    $this->obj,
-                    $attribute,
-                    $this->eventDispatcher,
-                    $this->definitionInformationFactory,
-                    $this->container,
-                    $this->skippedConstraints,
-                    $this->configurationRepository,
-                );
+                $validator = clone $this->plainAttribute;
+            } elseif ($this->classInformation->isLocalizedAttribute($attribute)) {
+                $validator = clone $this->localizedAttribute;
+            } elseif ($this->classInformation->isObjectbrickAttribute($attribute)) {
+                $validator = clone $this->objectBrickAttribute;
+            } elseif ($this->classInformation->isFieldcollectionAttribute($attribute)) {
+                $validator = clone $this->fieldCollectionAttribute;
+            } elseif ($this->classInformation->isRelationAttribute($attribute)) {
+                $validator = clone $this->relationAttribute;
             }
-            if ($this->classInformation->isLocalizedAttribute($attribute)) {
-                $validator = new LocalizedAttribute(
-                    $this->obj,
-                    $attribute,
-                    $this->eventDispatcher,
-                    $this->definitionInformationFactory,
-                    $this->container,
-                    $this->skippedConstraints,
-                    $this->configurationRepository,
-                );
-            }
-            if ($this->classInformation->isObjectbrickAttribute($attribute)) {
-                $validator = new ObjectBrickAttribute(
-                    $this->obj,
-                    $attribute,
-                    $this->eventDispatcher,
-                    $this->definitionInformationFactory,
-                    $this->container,
-                    $this->skippedConstraints,
-                    $this->configurationRepository,
-                );
-            }
-            if ($this->classInformation->isFieldcollectionAttribute($attribute)) {
-                $validator = new FieldCollectionAttribute(
-                    $this->obj,
-                    $attribute,
-                    $this->eventDispatcher,
-                    $this->definitionInformationFactory,
-                    $this->container,
-                    $this->skippedConstraints,
-                    $this->configurationRepository,
-                );
-            }
-            if ($this->classInformation->isRelationAttribute($attribute)) {
-                $validator = new RelationAttribute(
-                    $this->obj,
-                    $attribute,
-                    $this->eventDispatcher,
-                    $this->definitionInformationFactory,
-                    $this->container,
-                    $this->skippedConstraints,
-                    $this->configurationRepository,
-                );
-            }
+
             if (isset($validator)) {
+                $validator->configure(...$arguments);
                 $validator->validate();
                 $validators[$attribute] = $validator;
             }

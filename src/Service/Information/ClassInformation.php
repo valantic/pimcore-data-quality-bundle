@@ -15,6 +15,13 @@ class ClassInformation extends AbstractDefinitionInformation
      */
     public function getDefinition(): ?ClassDefinition
     {
-        return ClassDefinition::getByName($this->name);
+        return ClassDefinition::getByName($this->classBasename($this->name));
+    }
+
+    private function classBasename(string|object $class): string
+    {
+        $class = is_object($class) ? $class::class : $class;
+
+        return basename(str_replace('\\', '/', $class));
     }
 }

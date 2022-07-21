@@ -44,7 +44,7 @@ class ConfigurationRepository
             return;
         }
 
-        file_put_contents($this->getConfigFile(), $yaml);
+        file_put_contents($this->getConfigFilePath(), $yaml);
     }
 
     public function getConfigFile(): ?string
@@ -331,6 +331,16 @@ class ConfigurationRepository
     protected function getForAttribute(string $className, string $attribute): array
     {
         return $this->getAttributesForClass($className)[$attribute] ?? [];
+    }
+
+    private function getConfigFilePath(): string
+    {
+        $path = $this->getConfigFile() ?: throw new RuntimeException();
+        if (str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        return sprintf('%s/%s', PIMCORE_PROJECT_ROOT, $path);
     }
 
     private function getConfig(): array

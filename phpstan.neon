@@ -8,6 +8,6 @@ parameters:
     level: 8
 
     bootstrapFiles:
-        - phpstan.php
+        - vendor/pimcore/pimcore/stubs/dynamic-constants.php
 
     checkMissingIterableValueType: false
