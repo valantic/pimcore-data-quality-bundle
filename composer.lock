@@ -293,16 +293,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.3.2",
+            "version": "1.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "fd5dd441932a7e10ca6e5b490e272d34c8430640"
+                "reference": "30897edbfb15e784fe55587b4f73ceefd3c4d98c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/fd5dd441932a7e10ca6e5b490e272d34c8430640",
-                "reference": "fd5dd441932a7e10ca6e5b490e272d34c8430640",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/30897edbfb15e784fe55587b4f73ceefd3c4d98c",
+                "reference": "30897edbfb15e784fe55587b4f73ceefd3c4d98c",
                 "shasum": ""
             },
             "require": {
@@ -349,7 +349,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.3.2"
+                "source": "https://github.com/composer/ca-bundle/tree/1.3.3"
             },
             "funding": [
                 {
@@ -365,7 +365,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-24T11:56:16+00:00"
+            "time": "2022-07-20T07:14:26+00:00"
         },
         {
             "name": "dasprid/enum",
@@ -3045,16 +3045,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "34a68067b7ae3b836ea5e57e1fc432478372a4f5"
+                "reference": "1a941703dfb649f9b821e7bc425e782f576a805e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/34a68067b7ae3b836ea5e57e1fc432478372a4f5",
-                "reference": "34a68067b7ae3b836ea5e57e1fc432478372a4f5",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/1a941703dfb649f9b821e7bc425e782f576a805e",
+                "reference": "1a941703dfb649f9b821e7bc425e782f576a805e",
                 "shasum": ""
             },
             "require": {
@@ -3115,7 +3115,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.1.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.1.1"
             },
             "funding": [
                 {
@@ -3131,7 +3131,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-29T17:29:54+00:00"
+            "time": "2022-07-18T09:59:40+00:00"
         },
         {
             "name": "league/flysystem-bundle",
@@ -4453,68 +4453,6 @@
             "time": "2022-06-29T21:43:55+00:00"
         },
         {
-            "name": "ocramius/package-versions",
-            "version": "2.5.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Ocramius/PackageVersions.git",
-                "reference": "6707caff2e84a2368f29fdf2cb28a6b5a9e3ab53"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/6707caff2e84a2368f29fdf2cb28a6b5a9e3ab53",
-                "reference": "6707caff2e84a2368f29fdf2cb28a6b5a9e3ab53",
-                "shasum": ""
-            },
-            "require": {
-                "composer-runtime-api": "^2.2.0",
-                "php": "~8.0.0 || ~8.1.0"
-            },
-            "replace": {
-                "composer/package-versions-deprecated": "*"
-            },
-            "require-dev": {
-                "composer/composer": "^2.2.0",
-                "doctrine/coding-standard": "^9.0.0",
-                "ext-zip": "^1.15.0",
-                "phpunit/phpunit": "^9.5.9",
-                "roave/infection-static-analysis-plugin": "^1.10.0",
-                "vimeo/psalm": "^4.10.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "PackageVersions\\": "src/PackageVersions"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com"
-                }
-            ],
-            "description": "Provides efficient querying for installed package versions (no runtime IO)",
-            "support": {
-                "issues": "https://github.com/Ocramius/PackageVersions/issues",
-                "source": "https://github.com/Ocramius/PackageVersions/tree/2.5.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/Ocramius",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/ocramius/package-versions",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-03-05T18:04:57+00:00"
-        },
-        {
             "name": "onnov/detect-encoding",
             "version": "v2.0.0",
             "source": {
@@ -4765,16 +4703,16 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.24.0",
+            "version": "1.24.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "ebe8745c92a7cac4514d040758393b5399633b83"
+                "reference": "69991111e05fca3ff7398e1e7fca9ebed33efec6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/ebe8745c92a7cac4514d040758393b5399633b83",
-                "reference": "ebe8745c92a7cac4514d040758393b5399633b83",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/69991111e05fca3ff7398e1e7fca9ebed33efec6",
+                "reference": "69991111e05fca3ff7398e1e7fca9ebed33efec6",
                 "shasum": ""
             },
             "require": {
@@ -4863,9 +4801,9 @@
             ],
             "support": {
                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
-                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.24.0"
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.24.1"
             },
-            "time": "2022-07-09T13:49:09+00:00"
+            "time": "2022-07-18T19:50:48+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -4978,28 +4916,29 @@
         },
         {
             "name": "pimcore/pimcore",
-            "version": "v10.4.5",
+            "version": "v10.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pimcore/pimcore.git",
-                "reference": "ca2fddc9f5dac3b223569de74c72d47d7fb4e37a"
+                "reference": "bf022270642f26cf957d06ba252dea515c7298b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pimcore/pimcore/zipball/ca2fddc9f5dac3b223569de74c72d47d7fb4e37a",
-                "reference": "ca2fddc9f5dac3b223569de74c72d47d7fb4e37a",
+                "url": "https://api.github.com/repos/pimcore/pimcore/zipball/bf022270642f26cf957d06ba252dea515c7298b8",
+                "reference": "bf022270642f26cf957d06ba252dea515c7298b8",
                 "shasum": ""
             },
             "require": {
                 "amnuts/opcache-gui": "^3.0.1",
                 "cbschuld/browser.php": "^1.9.6",
                 "colinmollenhour/credis": "^1.10.0",
+                "composer-runtime-api": "^2.0",
                 "composer/ca-bundle": "^1.2",
                 "defuse/php-encryption": "^2.2.0",
                 "doctrine/annotations": "^1.12",
                 "doctrine/collections": "^1.6.5",
                 "doctrine/dbal": "^2.12",
-                "doctrine/doctrine-bundle": "^2.2.1",
+                "doctrine/doctrine-bundle": "^2.6.3",
                 "doctrine/doctrine-migrations-bundle": "^3.0.2",
                 "doctrine/inflector": "^1.4.2 || ^2",
                 "doctrine/persistence": "^2.1.0",
@@ -5015,6 +4954,7 @@
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "ext-mysqli": "*",
+                "ext-pdo": "*",
                 "ext-pdo_mysql": "*",
                 "ext-simplexml": "*",
                 "ext-zip": "*",
@@ -5038,12 +4978,11 @@
                 "myclabs/deep-copy": "^1.10.1",
                 "neitanod/forceutf8": "^2.0.4",
                 "nesbot/carbon": "^2.27",
-                "ocramius/package-versions": "^2.3",
                 "onnov/detect-encoding": "^2.0",
                 "pear/net_url2": "^2.2",
                 "php": "^8.0",
                 "phpoffice/phpspreadsheet": "^1.15",
-                "presta/sitemap-bundle": "^2.1",
+                "presta/sitemap-bundle": "^2.1 || ^3.2",
                 "psr/simple-cache": "^1.0.0",
                 "rybakit/twig-deferred-extension": "^3.0",
                 "sabre/dav": "^4.1.2",
@@ -5055,7 +4994,7 @@
                 "symfony-cmf/routing-bundle": "^2.4.2",
                 "symfony/asset": "^5.3",
                 "symfony/browser-kit": "^5.2.0",
-                "symfony/cache": "^5.2.0",
+                "symfony/cache": "^5.4",
                 "symfony/config": "^5.3",
                 "symfony/console": "^5.3.0",
                 "symfony/contracts": "^2.3",
@@ -5063,30 +5002,31 @@
                 "symfony/debug-bundle": "^5.2.0",
                 "symfony/dependency-injection": "^5.3.3",
                 "symfony/doctrine-bridge": "^5.2.0",
-                "symfony/doctrine-messenger": "^5.2.0",
+                "symfony/doctrine-messenger": "^5.2.0 || ^6.0",
                 "symfony/dom-crawler": "^5.2.0",
                 "symfony/dotenv": "^5.2.0",
                 "symfony/error-handler": "^5.2.0",
-                "symfony/event-dispatcher": "^5.2.0",
+                "symfony/event-dispatcher": "^5.4.0",
                 "symfony/expression-language": "^5.2.0",
                 "symfony/filesystem": "^5.2.0",
                 "symfony/finder": "^5.2.0",
                 "symfony/form": "^5.2.0",
-                "symfony/framework-bundle": "^5.3.0",
+                "symfony/framework-bundle": "^5.4.0",
                 "symfony/http-client": "^5.2.0",
                 "symfony/http-foundation": "^5.3.0",
                 "symfony/http-kernel": "^5.3",
                 "symfony/inflector": "^5.2.0",
                 "symfony/intl": "^5.2.0",
-                "symfony/lock": "^5.2.0",
+                "symfony/lock": "^5.4.0",
                 "symfony/mailer": "^5.2.0",
                 "symfony/messenger": "^5.4.0",
                 "symfony/mime": "^5.2.0",
                 "symfony/monolog-bridge": "^5.2.0",
                 "symfony/monolog-bundle": "^3.5",
-                "symfony/notifier": "^5.2.0",
+                "symfony/notifier": "^5.4.0",
                 "symfony/options-resolver": "^5.2.0",
                 "symfony/password-hasher": "^5.3",
+                "symfony/polyfill-intl-icu": "^1.21",
                 "symfony/polyfill-php81": "^1.23.0",
                 "symfony/process": "^5.2.0",
                 "symfony/property-access": "^5.3",
@@ -5094,8 +5034,8 @@
                 "symfony/proxy-manager-bridge": "^5.2.0",
                 "symfony/rate-limiter": "^5.2.0",
                 "symfony/routing": "^5.3",
-                "symfony/security-bundle": "^5.3.0",
-                "symfony/security-core": "^5.3.0",
+                "symfony/security-bundle": "^5.4.0",
+                "symfony/security-core": "^5.4.0",
                 "symfony/security-csrf": "^5.3",
                 "symfony/security-guard": "^5.3",
                 "symfony/security-http": "^5.3",
@@ -5135,7 +5075,7 @@
                 "codeception/phpunit-wrapper": "^9",
                 "composer/composer": "*",
                 "elasticsearch/elasticsearch": "^7.11",
-                "phpstan/phpstan": "^1.7.3",
+                "phpstan/phpstan": "^1.8.1",
                 "phpstan/phpstan-symfony": "^1.2.2",
                 "phpunit/phpunit": "^9.3",
                 "spiritix/php-chrome-html2pdf": "^1.6"
@@ -5198,49 +5138,51 @@
                 "source": "https://github.com/pimcore/pimcore",
                 "wiki": "https://pimcore.com/docs/latest/"
             },
-            "time": "2022-07-06T12:44:36+00:00"
+            "time": "2022-07-20T14:38:31+00:00"
         },
         {
             "name": "presta/sitemap-bundle",
-            "version": "v2.5.0",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/prestaconcept/PrestaSitemapBundle.git",
-                "reference": "fb83304ce365699b879cf7e998f1d5bbec8ddb27"
+                "reference": "ad23fe594ff0fedb4e7be638873a19c39eb6ed7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/prestaconcept/PrestaSitemapBundle/zipball/fb83304ce365699b879cf7e998f1d5bbec8ddb27",
-                "reference": "fb83304ce365699b879cf7e998f1d5bbec8ddb27",
+                "url": "https://api.github.com/repos/prestaconcept/PrestaSitemapBundle/zipball/ad23fe594ff0fedb4e7be638873a19c39eb6ed7b",
+                "reference": "ad23fe594ff0fedb4e7be638873a19c39eb6ed7b",
                 "shasum": ""
             },
             "require": {
                 "ext-simplexml": "*",
-                "php": ">=7.1.0",
-                "symfony/console": "^3.4|~4.0|~5.0",
-                "symfony/framework-bundle": "^3.4|~4.0|~5.0"
+                "php": ">=7.1.3",
+                "symfony/console": "^4.4|^5.0|^6.0",
+                "symfony/framework-bundle": "^4.4|^5.0|^6.0"
             },
             "require-dev": {
                 "doctrine/annotations": "^1.0",
-                "phpunit/phpunit": "^7.5",
-                "symfony/browser-kit": "^4.4",
-                "symfony/phpunit-bridge": "^4.4",
-                "symfony/yaml": "^4.4"
+                "phpstan/phpstan": "^0.12.82",
+                "phpunit/phpunit": "^7.5|^8.0",
+                "sensio/framework-extra-bundle": "^5.5|^6.1",
+                "squizlabs/php_codesniffer": "^3.5",
+                "symfony/browser-kit": "^4.4|^5.0|^6.0",
+                "symfony/messenger": "^4.4|^5.0|^6.0",
+                "symfony/phpunit-bridge": "^4.4|^5.0|^6.0",
+                "symfony/yaml": "^4.4|^5.0|^6.0"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.x-dev",
+                    "3.x": "3.x-dev",
+                    "2.x": "2.x-dev",
                     "1.x": "1.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Presta\\SitemapBundle\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
+                    "Presta\\SitemapBundle\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5262,9 +5204,9 @@
             ],
             "support": {
                 "issues": "https://github.com/prestaconcept/PrestaSitemapBundle/issues",
-                "source": "https://github.com/prestaconcept/PrestaSitemapBundle/tree/v2.5.0"
+                "source": "https://github.com/prestaconcept/PrestaSitemapBundle/tree/v3.3.0"
             },
-            "time": "2021-02-25T13:54:55+00:00"
+            "time": "2022-01-24T07:37:28+00:00"
         },
         {
             "name": "psr/cache",
@@ -7866,32 +7808,31 @@
         },
         {
             "name": "symfony/doctrine-messenger",
-            "version": "v5.4.10",
+            "version": "v6.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/doctrine-messenger.git",
-                "reference": "2f0f9f01988880552604984380503be965987649"
+                "reference": "a2320304c45c014f3f8e0c612fcb3f4bbed57282"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/2f0f9f01988880552604984380503be965987649",
-                "reference": "2f0f9f01988880552604984380503be965987649",
+                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/a2320304c45c014f3f8e0c612fcb3f4bbed57282",
+                "reference": "a2320304c45c014f3f8e0c612fcb3f4bbed57282",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.5",
-                "symfony/messenger": "^5.1|^6.0",
+                "doctrine/dbal": "^2.13|^3.0",
+                "php": ">=8.0.2",
+                "symfony/messenger": "^5.4|^6.0",
                 "symfony/service-contracts": "^1.1|^2|^3"
             },
             "conflict": {
-                "doctrine/dbal": "<2.13",
                 "doctrine/persistence": "<1.3"
             },
             "require-dev": {
-                "doctrine/dbal": "^2.13|^3.0",
                 "doctrine/persistence": "^1.3|^2|^3",
-                "symfony/property-access": "^4.4|^5.0|^6.0",
-                "symfony/serializer": "^4.4|^5.0|^6.0"
+                "symfony/property-access": "^5.4|^6.0",
+                "symfony/serializer": "^5.4|^6.0"
             },
             "type": "symfony-messenger-bridge",
             "autoload": {
@@ -7919,7 +7860,7 @@
             "description": "Symfony Doctrine Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/doctrine-messenger/tree/v5.4.10"
+                "source": "https://github.com/symfony/doctrine-messenger/tree/v6.0.10"
             },
             "funding": [
                 {
@@ -7935,7 +7876,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-09T12:22:40+00:00"
+            "time": "2022-06-09T12:50:38+00:00"
         },
         {
             "name": "symfony/dom-crawler",
@@ -13069,16 +13010,16 @@
         },
         {
             "name": "thecodingmachine/safe",
-            "version": "v2.2.1",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thecodingmachine/safe.git",
-                "reference": "2a8d758fd17763faf86e4aa798193e17b9fac38c"
+                "reference": "440284f9592c9df402832452a6871a8b3c48d97e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thecodingmachine/safe/zipball/2a8d758fd17763faf86e4aa798193e17b9fac38c",
-                "reference": "2a8d758fd17763faf86e4aa798193e17b9fac38c",
+                "url": "https://api.github.com/repos/thecodingmachine/safe/zipball/440284f9592c9df402832452a6871a8b3c48d97e",
+                "reference": "440284f9592c9df402832452a6871a8b3c48d97e",
                 "shasum": ""
             },
             "require": {
@@ -13201,9 +13142,9 @@
             "description": "PHP core functions that throw exceptions instead of returning FALSE on error",
             "support": {
                 "issues": "https://github.com/thecodingmachine/safe/issues",
-                "source": "https://github.com/thecodingmachine/safe/tree/v2.2.1"
+                "source": "https://github.com/thecodingmachine/safe/tree/v2.2.2"
             },
-            "time": "2022-06-09T15:36:45+00:00"
+            "time": "2022-07-20T17:46:34+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -14856,16 +14797,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.8.1",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "8dbba631fa32f4b289404469c2afd6122fd61d67"
+                "reference": "c53312ecc575caf07b0e90dee43883fdf90ca67c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8dbba631fa32f4b289404469c2afd6122fd61d67",
-                "reference": "8dbba631fa32f4b289404469c2afd6122fd61d67",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c53312ecc575caf07b0e90dee43883fdf90ca67c",
+                "reference": "c53312ecc575caf07b0e90dee43883fdf90ca67c",
                 "shasum": ""
             },
             "require": {
@@ -14891,7 +14832,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.8.1"
+                "source": "https://github.com/phpstan/phpstan/tree/1.8.2"
             },
             "funding": [
                 {
@@ -14911,7 +14852,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-07-12T16:08:06+00:00"
+            "time": "2022-07-20T09:57:31+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
