@@ -71,6 +71,32 @@ meta:
 
 All options can be configured in Pimcore's backend.
 
+## Custom Configuration
+
+Certain config options can be dynamically overriden on a per-object basis. This can be achieved by either implementing `\Valantic\DataQualityBundle\Config\DataObjectConfigInterface` or extending `\Valantic\DataQualityBundle\Config\AbstractDataObjectConfig`.
+
+### Validation Groups
+
+To support e.g. workflows, you may return the validation group(s) to use as follows:
+
+```php
+public function getValidationGroups(Concrete $obj): array
+{
+    return ['in_legal_review'];
+}
+```
+
+### Locales
+
+To override the locales configured for this class on a per-object basis, you may return an array of locales:
+
+```php
+public function getLocales(Concrete $obj): array
+{
+    return ['sv_SE', 'en_SG'];
+}
+```
+
 ## Custom Constraints
 
 To create your own constraint, please follow [Symfony's tutorial](https://symfony.com/doc/4.4/validation/custom_constraint.html). Your **constraint** should extend `Valantic\DataQualityBundle\Repository\AbstractCustomConstraint` and may implement the following methods:
