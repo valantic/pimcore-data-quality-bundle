@@ -10,10 +10,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
+use Valantic\DataQualityBundle\Shared\SortOrderTrait;
 
 #[Route('/admin/valantic/data-quality/meta-config')]
 class MetaConfigController extends BaseController
 {
+    use SortOrderTrait;
+
     /**
      * Returns the config for the admin editor.
      */
@@ -40,24 +43,23 @@ class MetaConfigController extends BaseController
             ];
         }
 
-        return $this->json($entries);
+        return $this->json($this->sortBySortOrder($entries, 'classname'));
     }
 
     /**
      * Return a list of possible classes to configure.
      */
     #[Route('/classes', options: ['expose' => true], methods: ['GET'])]
-    public function listClassesAction(
-        ConfigurationRepository $configurationRepository,
-    ): JsonResponse {
+    public function listClassesAction(): JsonResponse
+    {
         $this->checkPermission(self::CONFIG_NAME);
+        $classes = array_map(
+            fn($name): array => ['name' => $name, 'short' => $this->classBasename($name)],
+            $this->getClassNames()
+        );
 
         return $this->json([
-            // TODO: list available classes
-            'classes' => array_map(
-                fn($name): array => ['name' => $name, 'short' => $this->classBasename($name)],
-                $this->getClassNames()
-            ),
+            'classes' => $this->sortBySortOrder($classes, 'short'),
         ]);
     }
 

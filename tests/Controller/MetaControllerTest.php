@@ -129,7 +129,7 @@ class MetaControllerTest extends AbstractTestCase
 
     public function testListClasses(): void
     {
-        $response = $this->controller->listClassesAction($this->configurationRepository);
+        $response = $this->controller->listClassesAction();
         $content = $response->getContent();
         $this->assertIsString($content);
         $content = (string) $content;
