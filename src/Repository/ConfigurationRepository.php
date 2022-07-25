@@ -38,18 +38,13 @@ class ConfigurationRepository
             return;
         }
 
-        $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfig()], Yaml::DUMP_OBJECT_AS_MAP);
+        $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfigRaw()], Yaml::DUMP_OBJECT_AS_MAP);
 
         if (empty($this->getConfigFile())) {
             return;
         }
 
-        file_put_contents($this->getConfigFilePath(), $yaml);
-    }
-
-    public function getConfigFile(): ?string
-    {
-        return $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
+        file_put_contents($this->getConfigFile(), $yaml);
     }
 
     /**
@@ -333,19 +328,28 @@ class ConfigurationRepository
         return $this->getAttributesForClass($className)[$attribute] ?? [];
     }
 
-    private function getConfigFilePath(): string
+    private function getConfigFile(): ?string
     {
-        $path = $this->getConfigFile() ?: throw new RuntimeException();
-        if (str_starts_with($path, '/')) {
-            return $path;
-        }
-
-        return sprintf('%s/%s', PIMCORE_PROJECT_ROOT, $path);
+        return $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
     }
 
     private function getConfig(): array
     {
         return $this->config;
+    }
+
+    private function getConfigRaw(): array
+    {
+        if ($this->getConfigFile() === null) {
+            return $this->getConfig();
+        }
+
+        return array_merge(
+            $this->getConfig(),
+            [
+                Configuration::CONFIG_KEY_CONFIG_FILE => Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY][Configuration::CONFIG_KEY_CONFIG_FILE],
+            ]
+        );
     }
 
     private function setConfig(array $config): void
