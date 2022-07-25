@@ -11,10 +11,13 @@ use Throwable;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
+use Valantic\DataQualityBundle\Shared\SortOrderTrait;
 
 #[Route('/admin/valantic/data-quality/constraint-config')]
 class ConstraintConfigController extends BaseController
 {
+    use SortOrderTrait;
+
     /**
      * Returns the config for the admin editor.
      */
@@ -51,11 +54,12 @@ class ConstraintConfigController extends BaseController
                     'rules' => $transformedRules,
                     'rules_count' => count($transformedRules),
                     'note' => $configurationRepository->getNoteForAttribute($className, $attribute),
+                    'sort' => $className.'::'.$attribute,
                 ];
             }
         }
 
-        return $this->json($entries);
+        return $this->json($this->sortBySortOrder($entries, 'sort'));
     }
 
     /**
@@ -71,7 +75,7 @@ class ConstraintConfigController extends BaseController
             $this->getClassNames()
         );
 
-        return $this->json(['classes' => $classNames]);
+        return $this->json(['classes' => $this->sortBySortOrder($classNames, 'name')]);
     }
 
     /**
@@ -106,7 +110,9 @@ class ConstraintConfigController extends BaseController
             ];
         }
 
-        return $this->json(['attributes' => $attributeNames]);
+        return $this->json([
+            'attributes' => $this->sortBySortOrder($attributeNames, 'name'),
+        ]);
     }
 
     /**
@@ -176,7 +182,9 @@ class ConstraintConfigController extends BaseController
             ];
         }
 
-        return $this->json(['constraints' => $constraints]);
+        return $this->json([
+            'constraints' => $this->sortBySortOrder($constraints, 'name'),
+        ]);
     }
 
     /**

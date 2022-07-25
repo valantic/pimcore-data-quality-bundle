@@ -13,11 +13,14 @@ use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
 use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
+use Valantic\DataQualityBundle\Shared\SortOrderTrait;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 
 #[Route('/admin/valantic/data-quality/score')]
 class ScoreController extends BaseController
 {
+    use SortOrderTrait;
+
     /**
      * Show score of an object (passed via ?id=n) for the admin backend.
      */
@@ -81,7 +84,7 @@ class ScoreController extends BaseController
 
         return $this->json([
             'object' => $validation->objectScore(),
-            'attributes' => $attributes,
+            'attributes' => $this->sortBySortOrder($attributes, 'label'),
             'groups' => array_map(
                 fn(string $group): array => ['group' => $group],
                 array_unique([DataObjectConfigInterface::VALIDATION_GROUP_DEFAULT, ...$groups])
