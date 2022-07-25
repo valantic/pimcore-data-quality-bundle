@@ -84,7 +84,10 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorableInter
 
     protected function getValidatableLocales(): array
     {
-        return array_intersect($this->configurationRepository->getConfiguredLocales($this->obj::class), $this->getValidLocales());
+        return array_intersect(
+            $this->dataObjectConfigRepository->get($this->obj::class)->getLocales($this->obj),
+            $this->getValidLocales()
+        );
     }
 
     /**
