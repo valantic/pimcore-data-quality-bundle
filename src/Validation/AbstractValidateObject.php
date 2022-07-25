@@ -73,19 +73,19 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
             $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
 
             if ($validator instanceof ScorableInterface) {
-                $score->score = $validator->score();
+                $score->setScore($validator->score());
             }
 
             if ($validator instanceof MultiScorableInterface) {
-                $score->scores = $validator->scores();
+                $score->setScores($validator->scores());
             }
 
             if ($validator instanceof ColorableInterface) {
-                $score->color = $validator->color();
+                $score->setColor($validator->color());
             }
 
             if ($validator instanceof MultiColorableInterface) {
-                $score->colors = $validator->colors();
+                $score->setColors($validator->colors());
             }
 
             $attributeScores[$attribute] = $score;

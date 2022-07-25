@@ -64,8 +64,8 @@ class ScoreController extends BaseController
                 ],
                 $score->jsonSerialize(),
                 [
-                    'value' => $valueFormatter->format($score->value),
-                    'value_preview' => $valuePreviewFormatter->format($score->value),
+                    'value' => $valueFormatter->format($score->getValue()),
+                    'value_preview' => $valuePreviewFormatter->format($score->getValue()),
                 ]
             );
         }
