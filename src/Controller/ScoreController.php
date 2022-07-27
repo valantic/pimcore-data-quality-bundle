@@ -76,10 +76,10 @@ class ScoreController extends BaseController
                             'note' => $configurationRepository->getNoteForAttribute($obj::class, $attribute),
                             'type' => $classInformation->getAttributeType($attribute),
                         ],
-                        $score,
+                        $score->jsonSerialize(),
                         [
-                            'value' => $valueFormatter->format($score['value']),
-                            'value_preview' => $valuePreviewFormatter->format($score['value']),
+                            'value' => $valueFormatter->format($score->getValue()),
+                            'value_preview' => $valuePreviewFormatter->format($score->getValue()),
                         ]
                     );
                 }
@@ -115,24 +115,23 @@ class ScoreController extends BaseController
         CacheInterface $cache,
         CacheService $cacheService,
     ): JsonResponse {
-        /*return $cache->get(
+        return $cache->get(
             $this->getCacheKey($request),
             function(ItemInterface $item) use ($cacheService, $request, $configurationRepository) {
-                $item->expiresAfter(10);*/
-        $obj = Concrete::getById($request->query->getInt('id'));
-        if (!$obj instanceof Concrete) {
-            return $this->json([
-                'status' => false,
-            ]);
-        }
+                $obj = Concrete::getById($request->query->getInt('id'));
+                if (!$obj instanceof Concrete) {
+                    return $this->json([
+                        'status' => false,
+                    ]);
+                }
 
-        //  $item->tag($cacheService->getTags($obj));
+                $item->tag($cacheService->getTags($obj));
 
-        return $this->json([
-            'status' => $configurationRepository->isClassConfigured($obj::class),
-        ]);
-        /* }
-        );*/
+                return $this->json([
+                    'status' => $configurationRepository->isClassConfigured($obj::class),
+                ]);
+            }
+        );
     }
 
     protected function getCacheKey(Request $request): string

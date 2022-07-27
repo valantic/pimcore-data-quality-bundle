@@ -71,9 +71,8 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     public function attributeScores(): array
     {
         return $this->cache->get(
-            md5(sprintf('%s_%s_%s',__METHOD__, $this->obj->getId(), implode('', $this->groups))),
+            md5(sprintf('%s_%s_%s', __METHOD__, $this->obj->getId(), implode('', $this->groups))),
             function(): array {
-
                 $attributeScores = [];
                 foreach ($this->validators as $attribute => $validator) {
                     $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
@@ -97,7 +96,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
                     $attributeScores[$attribute] = $score;
                 }
 
-        return $attributeScores;
+                return $attributeScores;
             }
         );
     }
