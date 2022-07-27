@@ -59,3 +59,9 @@ services:
             tags: [ 'validator.constraint_validator' ]
         Valantic\DataQualityBundle\Config\DataObjectConfigInterface:
             tags: [ 'valantic.dataquality.config.dataobject' ]
+
+    Valantic\DataQualityBundle\EventListener\CacheListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: handle }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: handle }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: handle }

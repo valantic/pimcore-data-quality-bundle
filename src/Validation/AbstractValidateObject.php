@@ -7,6 +7,7 @@ namespace Valantic\DataQualityBundle\Validation;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectConfigRepository;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
@@ -48,6 +49,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         protected PlainAttribute $plainAttribute,
         protected RelationAttribute $relationAttribute,
         protected DataObjectConfigRepository $dataObjectConfigRepository,
+        protected TagAwareCacheInterface $cache,
     ) {
     }
 
@@ -64,32 +66,37 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
      */
     public function attributeScores(): array
     {
-        $attributeScores = [];
-        foreach ($this->validators as $attribute => $validator) {
-            $attributeScores[$attribute]['color'] = null;
-            $attributeScores[$attribute]['colors'] = [];
-            $attributeScores[$attribute]['score'] = null;
-            $attributeScores[$attribute]['scores'] = [];
-            $attributeScores[$attribute]['value'] = $validator->value();
+        return $this->cache->get(
+            md5(sprintf('%s_%s_%s',__METHOD__, $this->obj->getId(), implode('', $this->groups))),
+            function(): array {
+                $attributeScores = [];
+                foreach ($this->validators as $attribute => $validator) {
+                    $attributeScores[$attribute]['color'] = null;
+                    $attributeScores[$attribute]['colors'] = [];
+                    $attributeScores[$attribute]['score'] = null;
+                    $attributeScores[$attribute]['scores'] = [];
+                    $attributeScores[$attribute]['value'] = $validator->value();
 
-            if ($validator instanceof ScorableInterface) {
-                $attributeScores[$attribute]['score'] = $validator->score();
+                    if ($validator instanceof ScorableInterface) {
+                        $attributeScores[$attribute]['score'] = $validator->score();
+                    }
+
+                    if ($validator instanceof MultiScorableInterface) {
+                        $attributeScores[$attribute]['scores'] = $validator->scores();
+                    }
+
+                    if ($validator instanceof ColorableInterface) {
+                        $attributeScores[$attribute]['color'] = $validator->color();
+                    }
+
+                    if ($validator instanceof MultiColorableInterface) {
+                        $attributeScores[$attribute]['colors'] = $validator->colors();
+                    }
+                }
+
+                return $attributeScores;
             }
-
-            if ($validator instanceof MultiScorableInterface) {
-                $attributeScores[$attribute]['scores'] = $validator->scores();
-            }
-
-            if ($validator instanceof ColorableInterface) {
-                $attributeScores[$attribute]['color'] = $validator->color();
-            }
-
-            if ($validator instanceof MultiColorableInterface) {
-                $attributeScores[$attribute]['colors'] = $validator->colors();
-            }
-        }
-
-        return $attributeScores;
+        );
     }
 
     public function setGroups(array $groups): void
