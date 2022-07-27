@@ -8,6 +8,8 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Valantic\DataQualityBundle\Model\AttributeScore;
+use Valantic\DataQualityBundle\Model\ObjectScore;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectConfigRepository;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
@@ -19,7 +21,7 @@ use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ObjectBrickAttri
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\PlainAttribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\RelationAttribute;
 
-abstract class AbstractValidateObject implements ValidatableInterface, ScorableInterface, ColorableInterface
+abstract class AbstractValidateObject implements ValidatableInterface, ScorableInterface, ColorableInterface, PassFailInterface
 {
     use ColorScoreTrait;
     protected Concrete $obj;
@@ -63,45 +65,64 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
 
     /**
      * Get the scores for the individual attributes.
+     *
+     * @return array<string,AttributeScore>
      */
     public function attributeScores(): array
     {
         return $this->cache->get(
             md5(sprintf('%s_%s_%s',__METHOD__, $this->obj->getId(), implode('', $this->groups))),
             function(): array {
+
                 $attributeScores = [];
                 foreach ($this->validators as $attribute => $validator) {
-                    $attributeScores[$attribute]['color'] = null;
-                    $attributeScores[$attribute]['colors'] = [];
-                    $attributeScores[$attribute]['score'] = null;
-                    $attributeScores[$attribute]['scores'] = [];
-                    $attributeScores[$attribute]['value'] = $validator->value();
+                    $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
 
                     if ($validator instanceof ScorableInterface) {
-                        $attributeScores[$attribute]['score'] = $validator->score();
+                        $score->setScore($validator->score());
                     }
 
                     if ($validator instanceof MultiScorableInterface) {
-                        $attributeScores[$attribute]['scores'] = $validator->scores();
+                        $score->setScores($validator->scores());
                     }
 
                     if ($validator instanceof ColorableInterface) {
-                        $attributeScores[$attribute]['color'] = $validator->color();
+                        $score->setColor($validator->color());
                     }
 
                     if ($validator instanceof MultiColorableInterface) {
-                        $attributeScores[$attribute]['colors'] = $validator->colors();
+                        $score->setColors($validator->colors());
                     }
+
+                    $attributeScores[$attribute] = $score;
                 }
 
-                return $attributeScores;
+        return $attributeScores;
             }
+        );
+    }
+
+    /**
+     * Get the scores for the whole object.
+     */
+    public function objectScore(): ObjectScore
+    {
+        return new ObjectScore(
+            $this->color(),
+            $this->score(),
+            $this instanceof MultiScorableInterface ? $this->scores() : [],
+            $this->passes(),
         );
     }
 
     public function setGroups(array $groups): void
     {
         $this->groups = $groups;
+    }
+
+    public function passes(): bool
+    {
+        return $this->score() === 1.0;
     }
 
     /**

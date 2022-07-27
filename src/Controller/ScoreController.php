@@ -94,11 +94,7 @@ class ScoreController extends BaseController
                 }
 
                 return $this->json([
-                    'object' => [
-                        'score' => $validation->score(),
-                        'color' => $validation->color(),
-                        'scores' => $validation->scores(),
-                    ],
+                    'object' => $validation->objectScore(),
                     'attributes' => $this->sortBySortOrder($attributes, 'label'),
                     'groups' => array_map(
                         fn(string $group): array => ['group' => $group],
