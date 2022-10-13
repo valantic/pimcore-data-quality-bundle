@@ -249,7 +249,7 @@ class MetaControllerTest extends AbstractTestCase
         $content = (string) $content;
 
         $this->assertJson($content);
-        $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
+        $this->assertCount(2, $this->configurationRepository->getConfiguredClasses());
         $this->assertEmpty($this->configurationRepository->getConfigForClass($this->classNameConfigured));
 
         $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
