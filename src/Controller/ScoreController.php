@@ -8,7 +8,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Valantic\DataQualityBundle\Config\DataObjectConfigInterface;
@@ -112,7 +111,7 @@ class ScoreController extends BaseController
     public function checkAction(
         Request $request,
         ConfigurationRepository $configurationRepository,
-        CacheInterface $cache,
+        TagAwareCacheInterface $cache,
         CacheService $cacheService,
     ): JsonResponse {
         return $cache->get(
