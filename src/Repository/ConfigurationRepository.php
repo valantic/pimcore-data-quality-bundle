@@ -198,6 +198,7 @@ class ConfigurationRepository
         int $nestingLimit = 1,
     ): void {
         $config = $this->getConfig();
+        $config[Configuration::CONFIG_KEY_CLASSES][$className] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_LOCALES] = $locales;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS] ??= [];
@@ -219,7 +220,9 @@ class ConfigurationRepository
         }
 
         $config = $this->getConfig();
-        unset($config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG]);
+
+        unset($config[Configuration::CONFIG_KEY_CLASSES][$className]);
+
         $this->setConfig($config);
     }
 
