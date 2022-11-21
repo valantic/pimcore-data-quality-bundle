@@ -32,6 +32,18 @@ valantic.dataquality.settings_constraints = Class.create({
                 },
             );
 
+            this.classesStore = new Ext.data.Store({
+                fields: ['name'],
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('valantic_dataquality_constraintconfig_listclasses'),
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'classes',
+                    },
+                },
+            });
+
             this.filterField = new Ext.form.TextField({
                 xtype: 'textfield',
                 width: 200,
@@ -147,6 +159,7 @@ valantic.dataquality.settings_constraints = Class.create({
 
             this.layout.on('activate', function () {
                 this.store.load();
+                this.classesStore.load();
             }.bind(this));
         }
 
@@ -295,17 +308,6 @@ valantic.dataquality.settings_constraints = Class.create({
 
     onModifyMain: function (tree, possibleRecord, onlyDefinedIfEdit) {
         const record = onlyDefinedIfEdit ? possibleRecord : null;
-        const classesStore = new Ext.data.Store({
-            fields: ['name'],
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('valantic_dataquality_constraintconfig_listclasses'),
-                reader: {
-                    type: 'json',
-                    rootProperty: 'classes',
-                },
-            },
-        });
 
         const attributesStore = new Ext.data.Store({
             fields: ['name'],
@@ -343,7 +345,7 @@ valantic.dataquality.settings_constraints = Class.create({
             editable: true,
             displayField: 'short',
             valueField: 'name',
-            store: classesStore,
+            store: this.classesStore,
             mode: 'local',
             triggerAction: 'all',
             width: 250,
