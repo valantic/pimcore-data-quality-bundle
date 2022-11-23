@@ -20,16 +20,13 @@ class ConfigurationRepository
 {
     use SafeArray;
     public const CONTAINER_TAG = 'valantic.pimcore_data_quality.config';
-    protected array $config;
+    protected ?array $config = null;
     protected bool $isConfigDirty = false;
 
     public function __construct(
         protected ParameterBagInterface $parameterBag,
         protected DefinitionInformationFactory $definitionInformationFactory,
     ) {
-        $config = $this->parameterBag->get(self::CONTAINER_TAG);
-
-        $this->setConfig(is_array($config) ? $config : throw new InvalidArgumentException());
     }
 
     public function persist(): void
@@ -38,7 +35,7 @@ class ConfigurationRepository
             return;
         }
 
-        $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfigRaw()], Yaml::DUMP_OBJECT_AS_MAP);
+        $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfig()], Yaml::DUMP_OBJECT_AS_MAP);
 
         if (empty($this->getConfigFile())) {
             return;
@@ -333,26 +330,37 @@ class ConfigurationRepository
 
     private function getConfigFile(): ?string
     {
-        return $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
+        $pathsToCheck = [
+            Configuration::CONFIGURATION_DIRECTORY,
+            PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
+            PIMCORE_CONFIGURATION_DIRECTORY,
+        ];
+
+        foreach ($pathsToCheck as $path) {
+            $file = $path.'/data_quality.yaml';
+            if (file_exists($file)) {
+                return $file;
+            }
+        }
+
+        return null;
     }
 
     private function getConfig(): array
     {
-        return $this->config;
-    }
+        if ($this->config === null) {
+            /** @var array $containerConfig */
+            $containerConfig = $this->parameterBag->get(self::CONTAINER_TAG);
 
-    private function getConfigRaw(): array
-    {
-        if ($this->getConfigFile() === null) {
-            return $this->getConfig();
+            $additionalConfig = [];
+            if ($this->getConfigFile() !== null) {
+                $additionalConfig = Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY];
+            }
+
+            $this->config = array_merge_recursive($containerConfig, $additionalConfig);
         }
 
-        return array_merge(
-            $this->getConfig(),
-            [
-                Configuration::CONFIG_KEY_CONFIG_FILE => Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY][Configuration::CONFIG_KEY_CONFIG_FILE],
-            ]
-        );
+        return $this->config ?: [];
     }
 
     private function setConfig(array $config): void
