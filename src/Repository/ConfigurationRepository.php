@@ -195,6 +195,7 @@ class ConfigurationRepository
         int $nestingLimit = 1,
     ): void {
         $config = $this->getConfig();
+        $config[Configuration::CONFIG_KEY_CLASSES] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_LOCALES] = $locales;
@@ -354,7 +355,7 @@ class ConfigurationRepository
 
             $additionalConfig = [];
             if ($this->getConfigFile() !== null) {
-                $additionalConfig = Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY];
+                $additionalConfig = Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY] ?? [];
             }
 
             $this->config = array_merge_recursive($containerConfig, $additionalConfig);
@@ -374,6 +375,6 @@ class ConfigurationRepository
      */
     private function classes(): array
     {
-        return $this->getConfig()[Configuration::CONFIG_KEY_CLASSES];
+        return $this->getConfig()[Configuration::CONFIG_KEY_CLASSES] ?? [];
     }
 }
