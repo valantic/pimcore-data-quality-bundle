@@ -8,6 +8,6 @@ abstract class AbstractDataObjectConfig implements DataObjectConfigInterface
 {
     public function getValidationGroups(Concrete $obj): array
     {
-        return [self::VALIDATION_GROUP_DEFAULT];
+        return [];
     }
 }
