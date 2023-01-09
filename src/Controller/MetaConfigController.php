@@ -54,7 +54,7 @@ class MetaConfigController extends BaseController
     {
         $this->checkPermission(self::CONFIG_NAME);
         $classes = array_map(
-            fn($name): array => ['name' => $name, 'short' => $this->classBasename($name)],
+            fn ($name): array => ['name' => $name, 'short' => $this->classBasename($name)],
             $this->getClassNames()
         );
 

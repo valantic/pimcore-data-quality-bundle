@@ -22,7 +22,7 @@ abstract class BaseController extends AdminController
         $classes = $classesList->load();
 
         return array_map(
-            fn(ClassDefinition $classDefinition): string => sprintf('Pimcore\Model\DataObject\%s', $classDefinition->getName()),
+            fn (ClassDefinition $classDefinition): string => sprintf('Pimcore\Model\DataObject\%s', $classDefinition->getName()),
             $classes
         );
     }

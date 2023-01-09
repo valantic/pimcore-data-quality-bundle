@@ -54,9 +54,9 @@ class Configuration implements ConfigurationInterface
             ->defaultValue([])
             ->validate()
             ->ifTrue(
-                fn(array $rules): bool => array_reduce(
+                fn (array $rules): bool => array_reduce(
                     array_keys($rules),
-                    fn($carry, $className): bool => $carry || !(class_exists($className) || class_exists(self::SYMFONY_CONSTRAINTS_NAMESPACE . $className)),
+                    fn ($carry, $className): bool => $carry || !(class_exists($className) || class_exists(self::SYMFONY_CONSTRAINTS_NAMESPACE . $className)),
                     false
                 )
             )

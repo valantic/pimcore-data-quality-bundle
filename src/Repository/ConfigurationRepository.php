@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Repository;
 
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Yaml\Yaml;
 use Valantic\DataQualityBundle\DependencyInjection\Configuration;
@@ -13,8 +11,6 @@ use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Throwable;
 use Valantic\DataQualityBundle\Shared\SafeArray;
-
-use const JSON_THROW_ON_ERROR;
 
 class ConfigurationRepository
 {
@@ -77,10 +73,10 @@ class ConfigurationRepository
             $classInformation = $this->definitionInformationFactory->make($className);
             $className = $classInformation->getName();
             if (empty($className)) {
-                throw new RuntimeException(sprintf('Could not look up %s.', $className));
+                throw new \RuntimeException(sprintf('Could not look up %s.', $className));
             }
         } catch (Throwable) {
-            throw new InvalidArgumentException();
+            throw new \InvalidArgumentException();
         }
 
         if (!$this->isClassConfigured($className)) {
@@ -260,7 +256,7 @@ class ConfigurationRepository
     public function modifyRule(string $className, string $attributeName, string $constraint, ?string $params = null): void
     {
         try {
-            $paramsParsed = json_decode($params ?: '', true, 512, JSON_THROW_ON_ERROR);
+            $paramsParsed = json_decode($params ?: '', true, 512, \JSON_THROW_ON_ERROR);
         } catch (Throwable) {
             $paramsParsed = $params;
         }

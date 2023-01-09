@@ -12,8 +12,6 @@ use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
-use const JSON_THROW_ON_ERROR;
-
 class MetaControllerTest extends AbstractTestCase
 {
     /** @var class-string */
@@ -52,7 +50,7 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, false, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertSame([], $decoded);
     }
@@ -68,7 +66,7 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(3, $decoded);
 
@@ -101,7 +99,7 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(1, $decoded);
 
@@ -119,7 +117,7 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR)[0];
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR)[0];
 
         $this->assertSame($this->configurationRepository->getConfiguredNestingLimit($decoded['classname']), $decoded['nesting_limit']);
         $this->assertSame($this->configurationRepository->getConfiguredLocales($decoded['classname']), $decoded['locales']);
@@ -136,7 +134,7 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('classes', $decoded);
         $this->assertCount(3, $decoded['classes']);
@@ -158,7 +156,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertJson($content);
         $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -185,7 +183,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
         $this->assertSame(1, $this->configurationRepository->getConfiguredNestingLimit($this->className));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -215,7 +213,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
         $this->assertSame(2, $this->configurationRepository->getConfiguredNestingLimit($this->className));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -233,7 +231,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertJson($content);
         $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -252,7 +250,7 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertCount(2, $this->configurationRepository->getConfiguredClasses());
         $this->assertEmpty($this->configurationRepository->getConfigForClass($this->classNameConfigured));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -272,7 +270,7 @@ class MetaControllerTest extends AbstractTestCase
         $content = (string) $content;
 
         $this->assertJson($content);
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('locales', $decoded);
         $this->assertSameSize($locales, $decoded['locales']);

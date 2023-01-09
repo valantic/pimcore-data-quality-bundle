@@ -2,7 +2,6 @@
 
 namespace Valantic\DataQualityBundle\Shared;
 
-use InvalidArgumentException;
 use Valantic\DataQualityBundle\Enum\UtilConstants;
 
 trait SortOrderTrait
@@ -32,17 +31,17 @@ trait SortOrderTrait
         // Sorting by $sortOrderField
         uasort(
             $sortBySortOrder,
-            fn(array $a, array $b): int => $a[$sortOrderField] <=> $b[$sortOrderField]
+            fn (array $a, array $b): int => $a[$sortOrderField] <=> $b[$sortOrderField]
         );
 
         // Sorting by $sortByFallback
         uasort(
             $sortByFallback,
-            fn(array $a, array $b): int => strnatcasecmp($a[$fallbackField], $b[$fallbackField])
+            fn (array $a, array $b): int => strnatcasecmp($a[$fallbackField], $b[$fallbackField])
         );
 
         if (!in_array($sortDirection, UtilConstants::SORT_ORDER_DIRS, true)) {
-            throw new InvalidArgumentException(sprintf('Unknown sort order %s, please use one of: %s', $sortDirection, implode(', ', UtilConstants::SORT_ORDER_DIRS)));
+            throw new \InvalidArgumentException(sprintf('Unknown sort order %s, please use one of: %s', $sortDirection, implode(', ', UtilConstants::SORT_ORDER_DIRS)));
         }
 
         if ($sortDirection === UtilConstants::SORT_ORDER_DIR_DESC) {

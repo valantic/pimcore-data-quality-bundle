@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Enum;
 
-use InvalidArgumentException;
 use Spatie\Enum\Enum;
 
 /**
@@ -18,7 +17,7 @@ class ThresholdEnum extends Enum
         return match ($this->value) {
             'green' => 0.9,
             'orange' => 0.5,
-            default => throw new InvalidArgumentException(),
+            default => throw new \InvalidArgumentException(),
         };
     }
 

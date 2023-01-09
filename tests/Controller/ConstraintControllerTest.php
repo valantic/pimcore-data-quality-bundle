@@ -11,8 +11,6 @@ use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
-use const JSON_THROW_ON_ERROR;
-
 class ConstraintControllerTest extends AbstractTestCase
 {
     protected MockObject|ConstraintConfigController $controller;
@@ -54,7 +52,7 @@ class ConstraintControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(10, $decoded);
 
@@ -88,7 +86,7 @@ class ConstraintControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(6, $decoded);
 
@@ -112,7 +110,7 @@ class ConstraintControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
         $this->assertCount(1, $decoded);
 
         $entry = $decoded[0];
@@ -137,7 +135,7 @@ class ConstraintControllerTest extends AbstractTestCase
 
         $this->assertJson($content);
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('classes', $decoded);
         $this->assertCount(3, $decoded['classes']);
@@ -160,7 +158,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $content = (string) $content;
 
         $this->assertJson($content);
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(1, $decoded);
         $this->assertArrayHasKey('attributes', $decoded);
@@ -180,7 +178,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $content = (string) $content;
 
         $this->assertJson($content);
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(1, $decoded);
         $this->assertArrayHasKey('attributes', $decoded);
@@ -204,7 +202,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertJson($content);
         $this->assertCount(0, $this->configurationRepository->getConfiguredAttributes($this->className));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -229,7 +227,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertSame([], $this->configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
         $this->assertNull($this->configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -255,7 +253,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertSame([], $this->configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
         $this->assertSame('NOTE', $this->configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -273,7 +271,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertJson($content);
         $this->assertCount(6, $this->configurationRepository->getConfiguredAttributes($this->classNameConfigured));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -294,7 +292,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertJson($content);
         $this->assertCount(5, $this->configurationRepository->getConfiguredAttributes($this->classNameConfigured));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -309,7 +307,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $content = (string) $content;
 
         $this->assertJson($content);
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertCount(1, $decoded);
         $this->assertArrayHasKey('constraints', $decoded);
@@ -345,7 +343,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertJson($content);
         $this->assertCount(0, $this->configurationRepository->getConfiguredAttributes($this->className));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -370,7 +368,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertTrue($this->configurationRepository->isAttributeConfigured($this->className, $this->attributeName));
         $this->assertSame([$this->constraintName => null], $this->configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -383,7 +381,7 @@ class ConstraintControllerTest extends AbstractTestCase
             'classname' => $this->className,
             'attributename' => $this->attributeName,
             'constraint' => $this->constraintName,
-            'params' => json_encode($this->constraintParams, JSON_THROW_ON_ERROR),
+            'params' => json_encode($this->constraintParams, \JSON_THROW_ON_ERROR),
         ]), $this->configurationRepository);
 
         $content = $response->getContent();
@@ -396,7 +394,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertTrue($this->configurationRepository->isAttributeConfigured($this->className, $this->attributeName));
         $this->assertSame([$this->constraintName => $this->constraintParams], $this->configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
@@ -417,7 +415,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertJson($content);
         $this->assertCount(2, $this->configurationRepository->getRulesForAttribute($this->classNameConfigured, 'name'));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertFalse($decoded['status']);
@@ -439,7 +437,7 @@ class ConstraintControllerTest extends AbstractTestCase
         $this->assertJson($content);
         $this->assertCount(1, $this->configurationRepository->getRulesForAttribute($this->classNameConfigured, 'name'));
 
-        $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
