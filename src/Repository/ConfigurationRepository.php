@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Repository;
 
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Yaml\Yaml;
 use Valantic\DataQualityBundle\DependencyInjection\Configuration;
@@ -14,22 +12,17 @@ use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Throwable;
 use Valantic\DataQualityBundle\Shared\SafeArray;
 
-use const JSON_THROW_ON_ERROR;
-
 class ConfigurationRepository
 {
     use SafeArray;
     public const CONTAINER_TAG = 'valantic.pimcore_data_quality.config';
-    protected array $config;
+    protected ?array $config = null;
     protected bool $isConfigDirty = false;
 
     public function __construct(
         protected ParameterBagInterface $parameterBag,
         protected DefinitionInformationFactory $definitionInformationFactory,
     ) {
-        $config = $this->parameterBag->get(self::CONTAINER_TAG);
-
-        $this->setConfig(is_array($config) ? $config : throw new InvalidArgumentException());
     }
 
     public function persist(): void
@@ -38,7 +31,7 @@ class ConfigurationRepository
             return;
         }
 
-        $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfigRaw()], Yaml::DUMP_OBJECT_AS_MAP);
+        $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfig()], Yaml::DUMP_OBJECT_AS_MAP);
 
         if (empty($this->getConfigFile())) {
             return;
@@ -80,10 +73,10 @@ class ConfigurationRepository
             $classInformation = $this->definitionInformationFactory->make($className);
             $className = $classInformation->getName();
             if (empty($className)) {
-                throw new RuntimeException(sprintf('Could not look up %s.', $className));
+                throw new \RuntimeException(sprintf('Could not look up %s.', $className));
             }
         } catch (Throwable) {
-            throw new InvalidArgumentException();
+            throw new \InvalidArgumentException();
         }
 
         if (!$this->isClassConfigured($className)) {
@@ -198,6 +191,7 @@ class ConfigurationRepository
         int $nestingLimit = 1,
     ): void {
         $config = $this->getConfig();
+        $config[Configuration::CONFIG_KEY_CLASSES] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_LOCALES] = $locales;
@@ -262,7 +256,7 @@ class ConfigurationRepository
     public function modifyRule(string $className, string $attributeName, string $constraint, ?string $params = null): void
     {
         try {
-            $paramsParsed = json_decode($params ?: '', true, 512, JSON_THROW_ON_ERROR);
+            $paramsParsed = json_decode($params ?: '', true, 512, \JSON_THROW_ON_ERROR);
         } catch (Throwable) {
             $paramsParsed = $params;
         }
@@ -333,26 +327,37 @@ class ConfigurationRepository
 
     private function getConfigFile(): ?string
     {
-        return $this->getConfig()[Configuration::CONFIG_KEY_CONFIG_FILE];
+        $pathsToCheck = [
+            Configuration::CONFIGURATION_DIRECTORY,
+            PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
+            PIMCORE_CONFIGURATION_DIRECTORY,
+        ];
+
+        foreach ($pathsToCheck as $path) {
+            $file = $path.'/data_quality.yaml';
+            if (file_exists($file)) {
+                return $file;
+            }
+        }
+
+        return null;
     }
 
     private function getConfig(): array
     {
-        return $this->config;
-    }
+        if ($this->config === null) {
+            /** @var array $containerConfig */
+            $containerConfig = $this->parameterBag->get(self::CONTAINER_TAG);
 
-    private function getConfigRaw(): array
-    {
-        if ($this->getConfigFile() === null) {
-            return $this->getConfig();
+            $additionalConfig = [];
+            if ($this->getConfigFile() !== null) {
+                $additionalConfig = Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY] ?? [];
+            }
+
+            $this->config = array_merge_recursive($containerConfig, $additionalConfig);
         }
 
-        return array_merge(
-            $this->getConfig(),
-            [
-                Configuration::CONFIG_KEY_CONFIG_FILE => Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY][Configuration::CONFIG_KEY_CONFIG_FILE],
-            ]
-        );
+        return $this->config ?: [];
     }
 
     private function setConfig(array $config): void
@@ -366,6 +371,6 @@ class ConfigurationRepository
      */
     private function classes(): array
     {
-        return $this->getConfig()[Configuration::CONFIG_KEY_CLASSES];
+        return $this->getConfig()[Configuration::CONFIG_KEY_CLASSES] ?? [];
     }
 }

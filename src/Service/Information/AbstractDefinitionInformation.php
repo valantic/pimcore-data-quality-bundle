@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Service\Information;
 
-use InvalidArgumentException;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
@@ -225,7 +224,7 @@ abstract class AbstractDefinitionInformation
 
         $definition = $this->getDefinition();
         if (!$definition) {
-            throw new InvalidArgumentException('Failed to load definition');
+            throw new \InvalidArgumentException('Failed to load definition');
         }
         $this->definition = $definition;
 

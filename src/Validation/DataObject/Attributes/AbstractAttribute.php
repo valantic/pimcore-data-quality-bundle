@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
-use Exception;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
-use ReflectionClass;
 use ReflectionException;
-use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Throwable;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
@@ -28,8 +24,6 @@ use Valantic\DataQualityBundle\Validation\ColorScoreTrait;
 use Valantic\DataQualityBundle\Validation\PassFailInterface;
 use Valantic\DataQualityBundle\Validation\ScorableInterface;
 use Valantic\DataQualityBundle\Validation\ValidatableInterface;
-
-use const DEBUG_BACKTRACE_IGNORE_ARGS;
 
 abstract class AbstractAttribute implements ValidatableInterface, ScorableInterface, ColorableInterface, PassFailInterface
 {
@@ -121,7 +115,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     {
         try {
             $this->violations = $this->validator->validate($this->value(), $this->getConstraints(), $this->groups);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
         }
     }
@@ -150,7 +144,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected function getConstraints(): array
     {
         if ($this->getNestingLevel() > 2) {
-            throw new RuntimeException('Nesting levels deeper than 2 are currently not supported');
+            throw new \RuntimeException('Nesting levels deeper than 2 are currently not supported');
         }
 
         $constraints = [];
@@ -168,9 +162,9 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             }
 
             try {
-                $reflection = new ReflectionClass($name);
+                $reflection = new \ReflectionClass($name);
 
-                $subclasses = array_filter($this->skippedConstraints, fn($skippedConstraint): bool => $reflection->isSubclassOf($skippedConstraint));
+                $subclasses = array_filter($this->skippedConstraints, fn ($skippedConstraint): bool => $reflection->isSubclassOf($skippedConstraint));
             } catch (ReflectionException) {
                 $subclasses = [1];
             }
@@ -185,7 +179,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
                     $instance->setContainer($this->container);
                 }
                 $constraints[] = $instance;
-            } catch (Throwable $throwable) {
+            } catch (\Throwable $throwable) {
                 $this->eventDispatcher->dispatch(new InvalidConstraintEvent($throwable, $name, $params));
             }
         }
@@ -196,7 +190,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     /**
      * Traverses the inheritance tree until a value has been found.
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function valueInherited(Concrete $obj, ?string $locale = null): mixed
     {
@@ -218,9 +212,9 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             count(
                 array_filter(
                     debug_backtrace(
-                        DEBUG_BACKTRACE_IGNORE_ARGS
+                        \DEBUG_BACKTRACE_IGNORE_ARGS
                     ),
-                    fn($trace): bool => ($trace['class'] ?? '') === self::class && $trace['function'] === 'validate'
+                    fn ($trace): bool => ($trace['class'] ?? '') === self::class && $trace['function'] === 'validate'
                 )
             ) - 1,
             0

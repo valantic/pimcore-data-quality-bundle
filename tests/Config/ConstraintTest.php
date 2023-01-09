@@ -7,8 +7,6 @@ namespace Valantic\DataQualityBundle\Tests\Config;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
-use const JSON_THROW_ON_ERROR;
-
 class ConstraintTest extends AbstractTestCase
 {
     protected ConfigurationRepository $configurationRepository;
@@ -140,7 +138,7 @@ class ConstraintTest extends AbstractTestCase
 
     public function testConstraintArrayParams(): void
     {
-        $this->configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, JSON_THROW_ON_ERROR));
+        $this->configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR));
         $this->assertSame($this->constraintParamsOther, $this->configurationRepository->getRulesForAttribute($this->className, $this->attributeName)[$this->constraintNameOther]);
     }
 
@@ -151,11 +149,11 @@ class ConstraintTest extends AbstractTestCase
         $this->assertCount(0, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
         $this->assertCount(0, $configurationRepository->getRulesForAttribute($this->className, $this->attributeNameOther));
 
-        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, JSON_THROW_ON_ERROR));
-        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR));
 
-        $configurationRepository->modifyRule($this->className, $this->attributeNameOther, $this->constraintName, json_encode($this->constraintParams, JSON_THROW_ON_ERROR));
-        $configurationRepository->modifyRule($this->className, $this->attributeNameOther, $this->constraintNameOther, json_encode($this->constraintParamsOther, JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeNameOther, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeNameOther, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR));
 
         $this->assertCount(2, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
         $this->assertCount(2, $configurationRepository->getRulesForAttribute($this->className, $this->attributeNameOther));
@@ -175,8 +173,8 @@ class ConstraintTest extends AbstractTestCase
 
         $this->assertCount(0, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
 
-        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, JSON_THROW_ON_ERROR));
-        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintName, json_encode($this->constraintParams, \JSON_THROW_ON_ERROR));
+        $configurationRepository->modifyRule($this->className, $this->attributeName, $this->constraintNameOther, json_encode($this->constraintParamsOther, \JSON_THROW_ON_ERROR));
 
         $this->assertArrayHasKey($this->constraintName, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));
         $this->assertArrayHasKey($this->constraintNameOther, $configurationRepository->getRulesForAttribute($this->className, $this->attributeName));

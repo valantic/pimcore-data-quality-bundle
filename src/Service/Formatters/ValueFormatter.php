@@ -21,7 +21,7 @@ class ValueFormatter implements FormatterInterface
      */
     protected function stripTags(mixed $input): array|string
     {
-        return is_array($input) ? array_map(fn($value) => $this->stripTags($value), $input) : strip_tags((string) $input);
+        return is_array($input) ? array_map(fn ($value) => $this->stripTags($value), $input) : strip_tags((string) $input);
     }
 
     /**
@@ -31,7 +31,7 @@ class ValueFormatter implements FormatterInterface
      */
     protected function trim(mixed $input): array|string
     {
-        return is_array($input) ? array_map(fn($value) => $this->trim($value), $input) : trim($input);
+        return is_array($input) ? array_map(fn ($value) => $this->trim($value), $input) : trim($input);
     }
 
     /**
@@ -42,7 +42,7 @@ class ValueFormatter implements FormatterInterface
     protected function shorten(mixed $input, int $threshold = 80): array|string
     {
         if (is_array($input)) {
-            return array_map(fn($value) => $this->shorten($value, $threshold), $input);
+            return array_map(fn ($value) => $this->shorten($value, $threshold), $input);
         }
 
         if (strlen($input) <= $threshold) {

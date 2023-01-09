@@ -11,6 +11,7 @@ use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 
 class Configuration implements ConfigurationInterface
 {
+    public const CONFIGURATION_DIRECTORY = '';
     public const CONFIG_KEY = 'valantic_data_quality';
     public const CONFIG_KEY_CLASSES = 'classes';
     public const CONFIG_KEY_CLASSES_CONFIG = 'config';
@@ -20,7 +21,6 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_CLASSES_ATTRIBUTES = 'attributes';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_RULES = 'rules';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE = 'note';
-    public const CONFIG_KEY_CONFIG_FILE = 'config_file';
     public const CONFIG_VALUE_CLASSES_CONFIG_NESTING_LIMIT = 1;
     protected const SYMFONY_CONSTRAINTS_NAMESPACE = 'Symfony\\Component\\Validator\\Constraints\\';
 
@@ -29,15 +29,6 @@ class Configuration implements ConfigurationInterface
         return (new TreeBuilder(self::CONFIG_KEY))
             ->getRootNode()
             ->children()
-            ->scalarNode(self::CONFIG_KEY_CONFIG_FILE)
-            ->info('File where the bundle settings are stored. If empty, changes made via the UI/API are not persisted.')
-            ->example('%kernel.project_dir%/config/data_quality.yaml')
-            ->defaultNull()
-            ->validate()
-            ->ifTrue(fn(string $path) => $path !== null && !file_exists($path))
-            ->thenInvalid('Value must be empty or point to a valid file')
-            ->end()
-            ->end()
             ->arrayNode(self::CONFIG_KEY_CLASSES)
             ->arrayPrototype()
             ->info('One entry per data object class defining constraints and config. Key is the FQN of the class.')
@@ -63,9 +54,9 @@ class Configuration implements ConfigurationInterface
             ->defaultValue([])
             ->validate()
             ->ifTrue(
-                fn(array $rules): bool => array_reduce(
+                fn (array $rules): bool => array_reduce(
                     array_keys($rules),
-                    fn($carry, $className): bool => $carry || !(class_exists($className) || class_exists(self::SYMFONY_CONSTRAINTS_NAMESPACE . $className)),
+                    fn ($carry, $className): bool => $carry || !(class_exists($className) || class_exists(self::SYMFONY_CONSTRAINTS_NAMESPACE . $className)),
                     false
                 )
             )

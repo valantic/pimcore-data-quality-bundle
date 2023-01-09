@@ -2,9 +2,7 @@
 
 namespace Valantic\DataQualityBundle\Model;
 
-use JsonSerializable;
-
-class AttributeScore implements JsonSerializable
+class AttributeScore implements \JsonSerializable
 {
     public function __construct(
         private ?string $color = null,
