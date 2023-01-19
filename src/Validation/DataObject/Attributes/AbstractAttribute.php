@@ -35,6 +35,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected string $attribute;
     protected array $groups;
     protected array $skippedConstraints;
+    protected bool $ignoreFallbackLanguage;
 
     /**
      * Violations found during validation.
@@ -77,7 +78,8 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             $this->attribute,
             $this->groups,
             $this->skippedConstraints,
-            $this->validationConfig
+            $this->validationConfig,
+            $this->ignoreFallbackLanguage
         );
     }
 
@@ -86,13 +88,16 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         string $attribute,
         array $groups,
         array $skippedConstraints,
+        bool $ignoreFallbackLanguage
     ): void {
         $this->obj = $obj;
         $this->attribute = $attribute;
         $this->groups = $groups;
+        $this->ignoreFallbackLanguage = $ignoreFallbackLanguage;
         $this->skippedConstraints = $skippedConstraints;
         $this->validationConfig = $this->configurationRepository->getRulesForAttribute($obj::class, $attribute);
         $this->classInformation = $this->definitionInformationFactory->make($this->obj::class);
+
         if (self::$maxNestingLevel < 0) {
             self::$maxNestingLevel = $this->configurationRepository->getConfiguredNestingLimit($this->obj::class);
         }
@@ -194,9 +199,13 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
      */
     protected function valueInherited(Concrete $obj, ?string $locale = null): mixed
     {
+        $this->setGetFallbackValues(!$this->ignoreFallbackLanguage);
+
         if (!$obj->getParentId() || !($obj->getParent() instanceof Concrete) || $obj->get($this->attribute, $locale)) {
             return $obj->get($this->attribute, $locale);
         }
+
+        $this->setGetFallbackValues(false);
 
         return $this->valueInherited($obj->getParent(), $locale);
     }
@@ -219,5 +228,16 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             ) - 1,
             0
         );
+    }
+
+    /**
+     * Sets pimcore setting to get language fallback values
+     *
+     * @param boolean $value
+     * @return void
+     */
+    protected function setGetFallbackValues(bool $value): void
+    {
+        \Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues($value);
     }
 }

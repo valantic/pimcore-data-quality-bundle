@@ -35,6 +35,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     protected array $validators = [];
     protected AbstractDefinitionInformation $classInformation;
     protected array $skippedConstraints = [];
+    protected $ignoreFallbackLanguage = null;
 
     /**
      * Validate an object and all its attributes.
@@ -70,6 +71,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     {
         $attributeScores = [];
         foreach ($this->validators as $attribute => $validator) {
+
             $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
 
             if ($validator instanceof ScorableInterface) {
@@ -110,6 +112,11 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     public function setGroups(array $groups): void
     {
         $this->groups = $groups;
+    }
+
+    public function setIgnoreFallbackLanguage(bool $ignoreFallbackLanguage): void
+    {
+        $this->ignoreFallbackLanguage = $ignoreFallbackLanguage;
     }
 
     public function passes(): bool

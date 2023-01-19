@@ -139,6 +139,14 @@ class ConfigurationRepository
     }
 
     /**
+     * @param class-string $className
+     */
+    public function getIgnoreFallbackLanguage(string $className): bool
+    {
+        return (bool)$this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE] ?? Configuration::CONFIG_VALUE_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE;
+    }
+
+    /**
      * Given a class name, return the corresponding rules for $attribute.
      *
      * @param class-string $className Base name or ::class
@@ -189,6 +197,7 @@ class ConfigurationRepository
         int $thresholdGreen = 0,
         int $thresholdOrange = 0,
         int $nestingLimit = 1,
+        bool $ignoreFallbackLanguage = false
     ): void {
         $config = $this->getConfig();
         $config[Configuration::CONFIG_KEY_CLASSES] ??= [];
@@ -199,6 +208,8 @@ class ConfigurationRepository
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::green()->value] = $thresholdGreen / 100;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::orange()->value] = $thresholdOrange / 100;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT] = $nestingLimit;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE] = $ignoreFallbackLanguage;
+
         $this->setConfig($config);
     }
 
@@ -334,7 +345,8 @@ class ConfigurationRepository
         ];
 
         foreach ($pathsToCheck as $path) {
-            $file = $path.'/data_quality.yaml';
+            $file = $path . '/data_quality.yaml';
+
             if (file_exists($file)) {
                 return $file;
             }

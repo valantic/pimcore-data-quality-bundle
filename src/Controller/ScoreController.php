@@ -33,6 +33,7 @@ class ScoreController extends BaseController
         ValuePreviewFormatter $valuePreviewFormatter,
         ConfigurationRepository $configurationRepository,
     ): JsonResponse {
+
         $obj = Concrete::getById($request->query->getInt('id'));
 
         if (!$obj) {
@@ -48,6 +49,14 @@ class ScoreController extends BaseController
 
         $validation->setObject($obj);
         $validation->setGroups($request->query->all('groups'));
+
+        $ignoreFallbackLanguage = $configurationRepository->getIgnoreFallbackLanguage($obj::class);
+
+        if (!empty($request->query->get('ignoreFallbackLanguage'))) {
+            $ignoreFallbackLanguage = $request->query->get('ignoreFallbackLanguage') == 'true' ? true : false;
+        }
+
+        $validation->setIgnoreFallbackLanguage($ignoreFallbackLanguage);
         $validation->validate();
         $filter = $request->get('filterText');
 
@@ -89,6 +98,9 @@ class ScoreController extends BaseController
                 fn (string $group): array => ['group' => $group],
                 array_unique([DataObjectConfigInterface::VALIDATION_GROUP_DEFAULT, ...$groups])
             ),
+            'settings' => [
+                "ignoreFallbackLanguage" => $ignoreFallbackLanguage
+            ]
         ]);
     }
 

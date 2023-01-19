@@ -25,4 +25,9 @@ final class DefaultDataObjectConfig extends AbstractDataObjectConfig
     {
         return true;
     }
+
+    public function getIgnoreFallbackLanguage(Concrete $obj): bool
+    {
+        return false;
+    }
 }

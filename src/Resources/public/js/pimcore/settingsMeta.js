@@ -14,7 +14,7 @@ valantic.dataquality.settings_meta = Class.create({
             const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('valantic_dataquality_metaconfig_list'),
-                ['classname', 'locales', 'threshold_green', 'threshold_orange', 'nesting_limit'],
+                ['classname', 'locales', 'threshold_green', 'threshold_orange', 'nesting_limit', 'ignore_fallback_language'],
                 itemsPerPage,
                 {
                     autoLoad: true,
@@ -117,6 +117,13 @@ valantic.dataquality.settings_meta = Class.create({
                     filter: 'number',
                     flex: 50,
                 },
+                {
+                    text: t('valantic_dataquality_config_column_ignore_fallback_language'),
+                    sortable: true,
+                    dataIndex: 'ignore_fallback_language',
+                    filter: 'number',
+                    flex: 50,
+                }
             ];
 
             const plugins = ['pimcore.gridfilters'];
@@ -272,15 +279,24 @@ valantic.dataquality.settings_meta = Class.create({
             minValue: 0,
         };
 
+        const ignoreFallbackLanguage = {
+            xtype: 'checkboxfield',
+            fieldLabel: t('valantic_dataquality_config_column_ignore_fallback_language'),
+            name: 'ignore_fallback_language',
+            editable: true,
+            width: 250,
+            value: record ? record.get('ignore_fallback_language') : false
+        };
+
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
-            items: [classnameCombo, localeCombo, greenRange, orangeRange, nestingLimitRange],
+            items: [classnameCombo, localeCombo, greenRange, orangeRange, nestingLimitRange, ignoreFallbackLanguage],
         });
 
         const modifyWin = new Ext.Window({
             modal: true,
             width: 300,
-            height: 400,
+            height: 470,
             closable: true,
             items: [formPanel],
             buttons: [{

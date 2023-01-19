@@ -16,12 +16,14 @@ valantic.dataquality.objectView = Class.create({
             }
 
             this.activeGroups = [];
+            this.activeIgnoreFallbackLanguage = null;
             const baseStoreProxyConfig = (rootProperty) => ({
                 type: 'ajax',
                 url: Routing.generate('valantic_dataquality_score_show'),
                 extraParams: {
                     id: this.object.id,
                     'groups[]': this.activeGroups,
+                    ignoreFallbackLanguage: this.activeIgnoreFallbackLanguage
                 },
                 reader: {
                     type: 'json',
@@ -50,6 +52,7 @@ valantic.dataquality.objectView = Class.create({
                     load: function (store) {
                         const data = store.getData()
                             .getAt(0);
+
                         if (!data.get('color')) {
                             return;
                         }
@@ -64,9 +67,23 @@ valantic.dataquality.objectView = Class.create({
                 proxy: baseStoreProxyConfig('groups'),
             });
 
+            this.settingsStoreConfig = () => new Ext.data.Store({
+                proxy: baseStoreProxyConfig('settings'),
+                listeners: {
+                    load: function (store) {
+                        const data = store.getData()
+                            .getAt(0);
+
+                        this.activeIgnoreFallbackLanguage = data.data.ignoreFallbackLanguage;
+
+                    }.bind(this),
+                },
+            });
+
             this.attributesStore = this.attributesStoreConfig();
             this.objectStore = this.objectStoreConfig();
             this.groupsStore = this.groupsStoreConfig();
+            this.settingsStore = this.settingsStoreConfig();
 
             const plugins = ['pimcore.gridfilters'];
 
@@ -114,7 +131,16 @@ valantic.dataquality.objectView = Class.create({
                                 triggerAction: 'all',
                                 width: 250,
                                 value: this.activeGroups,
-                            })],
+                            }),
+                            new Ext.form.field.Checkbox({
+                                fieldLabel: t('valantic_dataquality_config_constraint_ignore_fallback_languages'),
+                                name: 'ignoreFallbackLanguage',
+                                editable: true,
+                                mode: 'local',
+                                displayField: 'ignoreFallbackLanguage',
+                                valueField: 'ignoreFallbackLanguage',
+                                value: this.activeIgnoreFallbackLanguage
+                            })]
                         });
 
                         const configWin = new Ext.Window({
@@ -131,6 +157,7 @@ valantic.dataquality.objectView = Class.create({
                                         .getFieldValues();
 
                                     this.activeGroups = values['groups[]'];
+                                    this.activeIgnoreFallbackLanguage = values['ignoreFallbackLanguage'];
 
                                     this.attributesStore = this.attributesStoreConfig();
                                     this.objectStore = this.objectStoreConfig();
@@ -313,6 +340,7 @@ valantic.dataquality.objectView = Class.create({
 
             this.objectStore.load();
             this.groupsStore.load();
+            this.settingsStore.load();
         }
 
         return this.layout;

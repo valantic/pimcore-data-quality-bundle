@@ -17,11 +17,14 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_CLASSES_CONFIG = 'config';
     public const CONFIG_KEY_CLASSES_CONFIG_LOCALES = 'locales';
     public const CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT = 'nesting_limit';
+    public const CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE = 'ignore_fallback_language';
     public const CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS = 'thresholds';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES = 'attributes';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_RULES = 'rules';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE = 'note';
     public const CONFIG_VALUE_CLASSES_CONFIG_NESTING_LIMIT = 1;
+    public const CONFIG_VALUE_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE = false;
+
     protected const SYMFONY_CONSTRAINTS_NAMESPACE = 'Symfony\\Component\\Validator\\Constraints\\';
 
     public function getConfigTreeBuilder(): TreeBuilder
