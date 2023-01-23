@@ -53,7 +53,7 @@ class ScoreController extends BaseController
         $ignoreFallbackLanguage = $configurationRepository->getIgnoreFallbackLanguage($obj::class);
 
         if (!empty($request->query->get('ignoreFallbackLanguage'))) {
-            $ignoreFallbackLanguage = $request->query->get('ignoreFallbackLanguage') == 'true' ? true : false;
+            $ignoreFallbackLanguage = $request->query->getBoolean('ignoreFallbackLanguage');
         }
 
         $validation->setIgnoreFallbackLanguage($ignoreFallbackLanguage);

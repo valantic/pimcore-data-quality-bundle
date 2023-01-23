@@ -35,7 +35,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     protected array $validators = [];
     protected AbstractDefinitionInformation $classInformation;
     protected array $skippedConstraints = [];
-    protected $ignoreFallbackLanguage = null;
+    protected ?bool $ignoreFallbackLanguage = null;
 
     /**
      * Validate an object and all its attributes.

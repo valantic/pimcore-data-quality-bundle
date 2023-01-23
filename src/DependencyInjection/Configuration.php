@@ -92,6 +92,10 @@ class Configuration implements ConfigurationInterface
             ->min(0)
             ->defaultValue(self::CONFIG_VALUE_CLASSES_CONFIG_NESTING_LIMIT)
             ->end()
+            ->booleanNode(self::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE)
+            ->info('Value to determine whether or not to ignore fallback language')
+            ->defaultValue(false)
+            ->end()
             ->end();
     }
 }

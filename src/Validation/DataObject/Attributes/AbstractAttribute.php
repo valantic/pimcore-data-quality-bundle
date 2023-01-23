@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\ElementInterface;
 use ReflectionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -205,7 +206,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             return $obj->get($this->attribute, $locale);
         }
 
-        $this->setGetFallbackValues(false);
+        $this->setGetFallbackValues($this->ignoreFallbackLanguage);
 
         return $this->valueInherited($obj->getParent(), $locale);
     }
@@ -238,6 +239,6 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
      */
     protected function setGetFallbackValues(bool $value): void
     {
-        \Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues($value);
+        Localizedfield::setGetFallbackValues($value);
     }
 }

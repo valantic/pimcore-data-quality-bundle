@@ -95,7 +95,7 @@ class MetaConfigController extends BaseController
             $request->request->getInt('threshold_green'),
             $request->request->getInt('threshold_orange'),
             $request->request->getInt('nesting_limit', 1),
-            $request->request->get('ignore_fallback_language') == 'true' ? true : false
+            $request->request->getBoolean('ignore_fallback_language')
         );
 
         return $this->json([
