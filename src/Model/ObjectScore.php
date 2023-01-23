@@ -9,6 +9,7 @@ class ObjectScore implements \JsonSerializable
         private null|float|int $score = null,
         private array $scores = [],
         private bool $passes = false,
+        private array $colors = []
     ) {
     }
 
@@ -20,6 +21,18 @@ class ObjectScore implements \JsonSerializable
     public function setColor(?string $color): ObjectScore
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    public function getColors(): array
+    {
+        return $this->colors;
+    }
+
+    public function setColors(array $colors): ObjectScore
+    {
+        $this->colors = $colors;
 
         return $this;
     }
@@ -67,6 +80,7 @@ class ObjectScore implements \JsonSerializable
             'passes' => $this->getPasses(),
             'score' => $this->getScore(),
             'scores' => $this->getScores(),
+            'colors' => $this->getColors()
         ];
     }
 }

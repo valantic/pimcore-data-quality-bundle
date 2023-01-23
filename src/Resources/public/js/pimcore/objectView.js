@@ -46,6 +46,8 @@ valantic.dataquality.objectView = Class.create({
                 proxy: baseStoreProxyConfig('attributes'),
             });
 
+            this.globalScores = null;
+            this.globalColors = null;
             this.objectStoreConfig = () => new Ext.data.Store({
                 proxy: baseStoreProxyConfig('object'),
                 listeners: {
@@ -59,6 +61,9 @@ valantic.dataquality.objectView = Class.create({
                         this.layout.setTitle(
                             `${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${this.colorMapping(data.get('color'))}">${this.formatAsPercentage(data.get('score'))}</span>)`,
                         );
+
+                        this.globalScores = data.get('scores');
+                        this.globalColors = data.get('colors');
                     }.bind(this),
                 },
             });
@@ -308,12 +313,16 @@ valantic.dataquality.objectView = Class.create({
                 stripeRows: true,
                 listeners: {
                     rowclick: function (recordGrid, record) {
-                        this.showDetail(record);
+                        const label = t('valantic_dataquality_view_locales_for', null, { name: record.get('label') });
+                        const note = record.get('note');
+                        this.showDetail(record.data.scores, record.data.colors, label, note);
                     }.bind(this),
                 },
             });
 
+
             grid.on('beforerender', function () {
+                this.showDetail(this.globalScores, this.globalColors, t('valantic_dataquality_view_global_locales'));
                 this.attributesStore.load();
             }.bind(this));
 
@@ -323,8 +332,7 @@ valantic.dataquality.objectView = Class.create({
                 region: 'east',
                 minWidth: 350,
                 width: 350,
-                split: true,
-                layout: 'fit',
+                split: true
             });
 
             this.layout = new Ext.Panel({
@@ -341,6 +349,7 @@ valantic.dataquality.objectView = Class.create({
             this.objectStore.load();
             this.groupsStore.load();
             this.settingsStore.load();
+
         }
 
         return this.layout;
@@ -352,14 +361,16 @@ valantic.dataquality.objectView = Class.create({
         this.groupsStore.reload();
     },
 
-    showDetail: function (rec) {
+    showDetail: function (scores, colors, label, note = null) {
         const data = [];
-        Object.keys(rec.data.scores)
+
+        Object.keys(scores)
             .forEach((locale) => data.push({
                 locale,
-                score: rec.data.scores[locale],
-                color: rec.data.colors[locale],
+                score: scores[locale],
+                color: colors[locale],
             }));
+
         const store = new Ext.data.Store({
             proxy: {
                 type: 'memory',
@@ -380,7 +391,7 @@ valantic.dataquality.objectView = Class.create({
 
         const detailsGrid = new Ext.grid.GridPanel({
             store: store,
-            title: t('valantic_dataquality_view_locales_for', null, { name: rec.get('label') }),
+            title: label,
             columns: [
                 {
                     text: t('valantic_dataquality_view_column_locale'),
@@ -408,20 +419,27 @@ valantic.dataquality.objectView = Class.create({
             autoScroll: true,
             viewConfig: {
                 forceFit: true,
-            },
+            }
         });
 
-        this.detailView.removeAll();
+        var globalGrid = this.detailView.items.getAt(0);
+        this.detailView.removeAll(false);
+
+        if (globalGrid) {
+            this.detailView.add(globalGrid);
+        }
+
         if (data.length > 0) {
             this.detailView.add(detailsGrid);
         }
-        if (rec.get('note')) {
+        if (note) {
             this.detailView.add(new Ext.Component({
                 xtype: 'component',
                 autoEl: {}, // will default to creating a DIV
                 html: `<div style="padding: 10px"><div style="position: relative; padding: .75rem 1.25rem; margin-bottom: 1rem; border-radius: .25rem; color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb;">${rec.get('note')}</div></div>`,
             }));
         }
+
         this.detailView.updateLayout();
     },
 

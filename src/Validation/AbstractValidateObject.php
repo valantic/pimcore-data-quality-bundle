@@ -106,6 +106,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
             $this->score(),
             $this instanceof MultiScorableInterface ? $this->scores() : [],
             $this->passes(),
+            $this->colors()
         );
     }
 
