@@ -33,7 +33,7 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
                 $attribute,
                 $this->groups,
                 $this->skippedConstraints,
-                $this->ignoreFallbackLanguage
+                $this->ignoreFallbackLanguage,
             ];
 
             if ($this->classInformation->isPlainAttribute($attribute)) {

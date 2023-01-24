@@ -9,7 +9,7 @@ class ObjectScore implements \JsonSerializable
         private null|float|int $score = null,
         private array $scores = [],
         private bool $passes = false,
-        private array $colors = []
+        private array $colors = [],
     ) {
     }
 
@@ -80,7 +80,7 @@ class ObjectScore implements \JsonSerializable
             'passes' => $this->getPasses(),
             'score' => $this->getScore(),
             'scores' => $this->getScores(),
-            'colors' => $this->getColors()
+            'colors' => $this->getColors(),
         ];
     }
 }

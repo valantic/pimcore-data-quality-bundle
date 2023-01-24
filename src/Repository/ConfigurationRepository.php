@@ -197,7 +197,7 @@ class ConfigurationRepository
         int $thresholdGreen = 0,
         int $thresholdOrange = 0,
         int $nestingLimit = 1,
-        bool $ignoreFallbackLanguage = false
+        bool $ignoreFallbackLanguage = false,
     ): void {
         $config = $this->getConfig();
         $config[Configuration::CONFIG_KEY_CLASSES] ??= [];

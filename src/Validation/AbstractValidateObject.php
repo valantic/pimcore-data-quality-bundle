@@ -71,7 +71,6 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     {
         $attributeScores = [];
         foreach ($this->validators as $attribute => $validator) {
-
             $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
 
             if ($validator instanceof ScorableInterface) {

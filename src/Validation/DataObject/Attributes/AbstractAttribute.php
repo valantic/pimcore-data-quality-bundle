@@ -89,7 +89,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         string $attribute,
         array $groups,
         array $skippedConstraints,
-        bool $ignoreFallbackLanguage
+        bool $ignoreFallbackLanguage,
     ): void {
         $this->obj = $obj;
         $this->attribute = $attribute;
@@ -233,9 +233,6 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
 
     /**
      * Sets pimcore setting to get language fallback values
-     *
-     * @param boolean $value
-     * @return void
      */
     protected function setGetFallbackValues(bool $value): void
     {

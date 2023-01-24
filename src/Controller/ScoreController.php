@@ -33,7 +33,6 @@ class ScoreController extends BaseController
         ValuePreviewFormatter $valuePreviewFormatter,
         ConfigurationRepository $configurationRepository,
     ): JsonResponse {
-
         $obj = Concrete::getById($request->query->getInt('id'));
 
         if (!$obj) {
@@ -99,8 +98,8 @@ class ScoreController extends BaseController
                 array_unique([DataObjectConfigInterface::VALIDATION_GROUP_DEFAULT, ...$groups])
             ),
             'settings' => [
-                "ignoreFallbackLanguage" => $ignoreFallbackLanguage
-            ]
+                'ignoreFallbackLanguage' => $ignoreFallbackLanguage,
+            ],
         ]);
     }
 
