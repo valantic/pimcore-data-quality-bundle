@@ -123,7 +123,7 @@ valantic.dataquality.settings_meta = Class.create({
                     dataIndex: 'ignore_fallback_language',
                     filter: 'number',
                     flex: 50,
-                }
+                },
             ];
 
             const plugins = ['pimcore.gridfilters'];
@@ -285,11 +285,12 @@ valantic.dataquality.settings_meta = Class.create({
             name: 'ignore_fallback_language',
             editable: true,
             width: 250,
-            value: record ? record.get('ignore_fallback_language') : false
+            value: record ? record.get('ignore_fallback_language') : false,
         };
 
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
+            // eslint-disable-next-line max-len
             items: [classnameCombo, localeCombo, greenRange, orangeRange, nestingLimitRange, ignoreFallbackLanguage],
         });
 
