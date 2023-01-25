@@ -143,7 +143,7 @@ class ConfigurationRepository
      */
     public function getIgnoreFallbackLanguage(string $className): bool
     {
-        return (bool)($this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE] ?? Configuration::CONFIG_VALUE_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE);
+        return (bool) $this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE];
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\DependencyInjection;
 
+use Pimcore\Model\DataObject\Localizedfield;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -23,7 +24,6 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_RULES = 'rules';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE = 'note';
     public const CONFIG_VALUE_CLASSES_CONFIG_NESTING_LIMIT = 1;
-    public const CONFIG_VALUE_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE = false;
 
     protected const SYMFONY_CONSTRAINTS_NAMESPACE = 'Symfony\\Component\\Validator\\Constraints\\';
 
@@ -43,6 +43,11 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->end()
             ->end();
+    }
+
+    public static function getDefaultIgnoreFallbackLanguage()
+    {
+        return Localizedfield::getGetFallbackValues();
     }
 
     protected function buildAttributesNode(): ArrayNodeDefinition
@@ -94,7 +99,7 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->booleanNode(self::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE)
             ->info('Value to determine whether or not to ignore fallback language')
-            ->defaultValue(false)
+            ->defaultValue(self::getDefaultIgnoreFallbackLanguage())
             ->end()
             ->end();
     }

@@ -13,6 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Valantic\DataQualityBundle\DependencyInjection\Configuration;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
@@ -200,13 +201,15 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
      */
     protected function valueInherited(Concrete $obj, ?string $locale = null): mixed
     {
-        $this->setGetFallbackValues(!$this->ignoreFallbackLanguage);
-
         if (!$obj->getParentId() || !($obj->getParent() instanceof Concrete) || $obj->get($this->attribute, $locale)) {
-            return $obj->get($this->attribute, $locale);
-        }
+            $oldValue = Configuration::getDefaultIgnoreFallbackLanguage();
 
-        $this->setGetFallbackValues($this->ignoreFallbackLanguage);
+            $this->setGetFallbackValues(!$this->ignoreFallbackLanguage);
+            $value = $obj->get($this->attribute, $locale);
+            $this->setGetFallbackValues($oldValue);
+
+            return $value;
+        }
 
         return $this->valueInherited($obj->getParent(), $locale);
     }
