@@ -21,6 +21,11 @@ final class DefaultDataObjectConfig extends AbstractDataObjectConfig
         return $this->configurationRepository->getConfiguredLocales($obj::class);
     }
 
+    public function getIgnoreFallbackLanguage(Concrete $obj): bool
+    {
+        return false;
+    }
+
     public static function isDefault(): bool
     {
         return true;

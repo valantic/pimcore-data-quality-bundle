@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\DependencyInjection;
 
+use Pimcore\Model\DataObject\Localizedfield;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -17,11 +18,13 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_CLASSES_CONFIG = 'config';
     public const CONFIG_KEY_CLASSES_CONFIG_LOCALES = 'locales';
     public const CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT = 'nesting_limit';
+    public const CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE = 'ignore_fallback_language';
     public const CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS = 'thresholds';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES = 'attributes';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_RULES = 'rules';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE = 'note';
     public const CONFIG_VALUE_CLASSES_CONFIG_NESTING_LIMIT = 1;
+
     protected const SYMFONY_CONSTRAINTS_NAMESPACE = 'Symfony\\Component\\Validator\\Constraints\\';
 
     public function getConfigTreeBuilder(): TreeBuilder
@@ -40,6 +43,11 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->end()
             ->end();
+    }
+
+    public static function getDefaultIgnoreFallbackLanguage(): bool
+    {
+        return Localizedfield::getGetFallbackValues();
     }
 
     protected function buildAttributesNode(): ArrayNodeDefinition
@@ -88,6 +96,10 @@ class Configuration implements ConfigurationInterface
             ->info('The maximum number of levels/relations are resolved when validating an attribute. Useful to prevent circular references.')
             ->min(0)
             ->defaultValue(self::CONFIG_VALUE_CLASSES_CONFIG_NESTING_LIMIT)
+            ->end()
+            ->booleanNode(self::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE)
+            ->info('Value to determine whether or not to ignore fallback language')
+            ->defaultValue(self::getDefaultIgnoreFallbackLanguage())
             ->end()
             ->end();
     }

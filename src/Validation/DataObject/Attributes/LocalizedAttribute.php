@@ -20,7 +20,9 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorableInter
 
         try {
             foreach ($this->getValidatableLocales() as $locale) {
-                $this->violations[$locale] = $this->validator->validate($this->value()[$locale], $this->getConstraints(), $this->groups);
+                // If null, value is set to empty string due to issue with incorrect null validation
+                $value = $this->value()[$locale] ?: '';
+                $this->violations[$locale] = $this->validator->validate($value, $this->getConstraints(), $this->groups);
             }
         } catch (\Throwable $e) {
             $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));

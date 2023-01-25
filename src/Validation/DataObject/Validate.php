@@ -17,17 +17,23 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
         $this->validationConfig = $this->configurationRepository->getAttributesForClass($obj::class);
         $this->classInformation = $this->definitionInformationFactory->make($this->obj::class);
         $this->groups = $this->dataObjectConfigRepository->get($obj::class)->getValidationGroups($obj);
+
+        if (!isset($this->ignoreFallbackLanguage)) {
+            $this->ignoreFallbackLanguage = $this->dataObjectConfigRepository->get($obj::class)->getIgnoreFallbackLanguage($obj);
+        }
     }
 
     public function validate(): void
     {
         $validators = [];
+
         foreach ($this->getValidatableAttributes() as $attribute) {
             $arguments = [
                 $this->obj,
                 $attribute,
                 $this->groups,
                 $this->skippedConstraints,
+                $this->ignoreFallbackLanguage,
             ];
 
             if ($this->classInformation->isPlainAttribute($attribute)) {
