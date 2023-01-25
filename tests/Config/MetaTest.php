@@ -58,7 +58,7 @@ class MetaTest extends AbstractTestCase
             ],
             'thresholds' => ['green' => 0.8, 'orange' => 0.5],
             'nesting_limit' => 1,
-            'ignore_fallback_language' => false
+            'ignore_fallback_language' => false,
         ], $this->configurationRepository->getConfigForClass($this->className));
     }
 
