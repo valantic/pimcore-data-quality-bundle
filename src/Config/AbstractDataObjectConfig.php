@@ -10,4 +10,9 @@ abstract class AbstractDataObjectConfig implements DataObjectConfigInterface
     {
         return [];
     }
+
+    public function getIgnoreFallbackLanguage(Concrete $obj): bool
+    {
+        return false;
+    }
 }

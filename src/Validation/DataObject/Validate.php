@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Validation\DataObject;
 
 use Pimcore\Model\DataObject\Concrete;
+use Valantic\DataQualityBundle\Model\AttributeScore;
 use Valantic\DataQualityBundle\Validation\AbstractValidateObject;
 use Valantic\DataQualityBundle\Validation\MultiScorableInterface;
 
@@ -16,17 +17,23 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
         $this->validationConfig = $this->configurationRepository->getAttributesForClass($obj::class);
         $this->classInformation = $this->definitionInformationFactory->make($this->obj::class);
         $this->groups = $this->dataObjectConfigRepository->get($obj::class)->getValidationGroups($obj);
+
+        if (!isset($this->ignoreFallbackLanguage)) {
+            $this->ignoreFallbackLanguage = $this->dataObjectConfigRepository->get($obj::class)->getIgnoreFallbackLanguage($obj);
+        }
     }
 
     public function validate(): void
     {
         $validators = [];
+
         foreach ($this->getValidatableAttributes() as $attribute) {
             $arguments = [
                 $this->obj,
                 $attribute,
                 $this->groups,
                 $this->skippedConstraints,
+                $this->ignoreFallbackLanguage,
             ];
 
             if ($this->classInformation->isPlainAttribute($attribute)) {
@@ -57,13 +64,23 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
             return 0;
         }
 
-        return array_sum(array_column($this->attributeScores(), 'score')) / count($this->getValidatableAttributes());
+        $scores = array_map(
+            fn (AttributeScore $attributeScore) => $attributeScore->getScore(),
+            $this->attributeScores(),
+        );
+
+        return array_sum($scores) / count($this->getValidatableAttributes());
     }
 
     public function scores(): array
     {
+        $scores = array_map(
+            fn (AttributeScore $attributeScore) => $attributeScore->getScores(),
+            $this->attributeScores(),
+        );
+
         // get (array_column) all attribute scores that have (array_filter) multiple scores
-        $multiScores = array_values(array_filter(array_column($this->attributeScores(), 'scores')));
+        $multiScores = array_values(array_filter($scores));
 
         if (!count($multiScores)) {
             return [];

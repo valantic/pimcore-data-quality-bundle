@@ -13,6 +13,19 @@ trait ColorScoreTrait
         return $this->calculateColor($this->score());
     }
 
+    public function colors(): array
+    {
+        $colors = [];
+
+        if ($this instanceof MultiScorableInterface) {
+            foreach ($this->scores() as $language => $score) {
+                $colors[$language] = $this->calculateColor($score);
+            }
+        }
+
+        return $colors;
+    }
+
     /**
      * Perform the actual calculation of the color.
      */

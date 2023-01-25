@@ -16,12 +16,14 @@ valantic.dataquality.objectView = Class.create({
             }
 
             this.activeGroups = [];
+            this.activeIgnoreFallbackLanguage = null;
             const baseStoreProxyConfig = (rootProperty) => ({
                 type: 'ajax',
                 url: Routing.generate('valantic_dataquality_score_show'),
                 extraParams: {
                     id: this.object.id,
                     'groups[]': this.activeGroups,
+                    ignoreFallbackLanguage: this.activeIgnoreFallbackLanguage,
                 },
                 reader: {
                     type: 'json',
@@ -44,18 +46,24 @@ valantic.dataquality.objectView = Class.create({
                 proxy: baseStoreProxyConfig('attributes'),
             });
 
+            this.globalScores = null;
+            this.globalColors = null;
             this.objectStoreConfig = () => new Ext.data.Store({
                 proxy: baseStoreProxyConfig('object'),
                 listeners: {
                     load: function (store) {
                         const data = store.getData()
                             .getAt(0);
+
                         if (!data.get('color')) {
                             return;
                         }
                         this.layout.setTitle(
                             `${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${this.colorMapping(data.get('color'))}">${this.formatAsPercentage(data.get('score'))}</span>)`,
                         );
+
+                        this.globalScores = data.get('scores');
+                        this.globalColors = data.get('colors');
                     }.bind(this),
                 },
             });
@@ -64,9 +72,22 @@ valantic.dataquality.objectView = Class.create({
                 proxy: baseStoreProxyConfig('groups'),
             });
 
+            this.settingsStoreConfig = () => new Ext.data.Store({
+                proxy: baseStoreProxyConfig('settings'),
+                listeners: {
+                    load: function (store) {
+                        const data = store.getData()
+                            .getAt(0);
+
+                        this.activeIgnoreFallbackLanguage = data.data.ignoreFallbackLanguage;
+                    }.bind(this),
+                },
+            });
+
             this.attributesStore = this.attributesStoreConfig();
             this.objectStore = this.objectStoreConfig();
             this.groupsStore = this.groupsStoreConfig();
+            this.settingsStore = this.settingsStoreConfig();
 
             const plugins = ['pimcore.gridfilters'];
 
@@ -114,6 +135,15 @@ valantic.dataquality.objectView = Class.create({
                                 triggerAction: 'all',
                                 width: 250,
                                 value: this.activeGroups,
+                            }),
+                            new Ext.form.field.Checkbox({
+                                fieldLabel: t('valantic_dataquality_config_constraint_ignore_fallback_languages'),
+                                name: 'ignoreFallbackLanguage',
+                                editable: true,
+                                mode: 'local',
+                                displayField: 'ignoreFallbackLanguage',
+                                valueField: 'ignoreFallbackLanguage',
+                                value: this.activeIgnoreFallbackLanguage,
                             })],
                         });
 
@@ -131,6 +161,8 @@ valantic.dataquality.objectView = Class.create({
                                         .getFieldValues();
 
                                     this.activeGroups = values['groups[]'];
+                                    // eslint-disable-next-line max-len
+                                    this.activeIgnoreFallbackLanguage = values.ignoreFallbackLanguage;
 
                                     this.attributesStore = this.attributesStoreConfig();
                                     this.objectStore = this.objectStoreConfig();
@@ -281,12 +313,15 @@ valantic.dataquality.objectView = Class.create({
                 stripeRows: true,
                 listeners: {
                     rowclick: function (recordGrid, record) {
-                        this.showDetail(record);
+                        const label = t('valantic_dataquality_view_locales_for', null, { name: record.get('label') });
+                        const note = record.get('note');
+                        this.showDetail(record.data.scores, record.data.colors, label, note);
                     }.bind(this),
                 },
             });
 
             grid.on('beforerender', function () {
+                this.showDetail(this.globalScores, this.globalColors, t('valantic_dataquality_view_global_locales'));
                 this.attributesStore.load();
             }.bind(this));
 
@@ -297,7 +332,6 @@ valantic.dataquality.objectView = Class.create({
                 minWidth: 350,
                 width: 350,
                 split: true,
-                layout: 'fit',
             });
 
             this.layout = new Ext.Panel({
@@ -313,6 +347,7 @@ valantic.dataquality.objectView = Class.create({
 
             this.objectStore.load();
             this.groupsStore.load();
+            this.settingsStore.load();
         }
 
         return this.layout;
@@ -324,14 +359,16 @@ valantic.dataquality.objectView = Class.create({
         this.groupsStore.reload();
     },
 
-    showDetail: function (rec) {
+    showDetail: function (scores, colors, label, note = null) {
         const data = [];
-        Object.keys(rec.data.scores)
+
+        Object.keys(scores)
             .forEach((locale) => data.push({
                 locale,
-                score: rec.data.scores[locale],
-                color: rec.data.colors[locale],
+                score: scores[locale],
+                color: colors[locale],
             }));
+
         const store = new Ext.data.Store({
             proxy: {
                 type: 'memory',
@@ -352,7 +389,7 @@ valantic.dataquality.objectView = Class.create({
 
         const detailsGrid = new Ext.grid.GridPanel({
             store: store,
-            title: t('valantic_dataquality_view_locales_for', null, { name: rec.get('label') }),
+            title: label,
             columns: [
                 {
                     text: t('valantic_dataquality_view_column_locale'),
@@ -383,17 +420,24 @@ valantic.dataquality.objectView = Class.create({
             },
         });
 
-        this.detailView.removeAll();
+        const globalGrid = this.detailView.items.getAt(0);
+        this.detailView.removeAll(false);
+
+        if (globalGrid) {
+            this.detailView.add(globalGrid);
+        }
+
         if (data.length > 0) {
             this.detailView.add(detailsGrid);
         }
-        if (rec.get('note')) {
+        if (note) {
             this.detailView.add(new Ext.Component({
                 xtype: 'component',
                 autoEl: {}, // will default to creating a DIV
-                html: `<div style="padding: 10px"><div style="position: relative; padding: .75rem 1.25rem; margin-bottom: 1rem; border-radius: .25rem; color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb;">${rec.get('note')}</div></div>`,
+                html: `<div style="padding: 10px"><div style="position: relative; padding: .75rem 1.25rem; margin-bottom: 1rem; border-radius: .25rem; color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb;">${note}</div></div>`,
             }));
         }
+
         this.detailView.updateLayout();
     },
 
