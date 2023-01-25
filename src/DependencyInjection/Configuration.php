@@ -45,7 +45,7 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    public static function getDefaultIgnoreFallbackLanguage()
+    public static function getDefaultIgnoreFallbackLanguage(): bool
     {
         return Localizedfield::getGetFallbackValues();
     }

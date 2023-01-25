@@ -37,7 +37,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected string $attribute;
     protected array $groups;
     protected array $skippedConstraints;
-    protected bool $ignoreFallbackLanguage;
+    protected ?bool $ignoreFallbackLanguage;
 
     /**
      * Violations found during validation.
@@ -90,7 +90,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         string $attribute,
         array $groups,
         array $skippedConstraints,
-        bool $ignoreFallbackLanguage,
+        ?bool $ignoreFallbackLanguage,
     ): void {
         $this->obj = $obj;
         $this->attribute = $attribute;

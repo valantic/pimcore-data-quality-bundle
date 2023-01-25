@@ -17,8 +17,10 @@ trait ColorScoreTrait
     {
         $colors = [];
 
-        foreach ($this->scores() as $language => $score) {
-            $colors[$language] = $this->calculateColor($score);
+        if ($this instanceof MultiScorableInterface) {
+            foreach ($this->scores() as $language => $score) {
+                $colors[$language] = $this->calculateColor($score);
+            }
         }
 
         return $colors;
