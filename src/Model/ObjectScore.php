@@ -77,10 +77,10 @@ class ObjectScore implements \JsonSerializable
     {
         return [
             'color' => $this->getColor(),
+            'colors' => $this->getColors(),
             'passes' => $this->getPasses(),
             'score' => $this->getScore(),
             'scores' => $this->getScores(),
-            'colors' => $this->getColors(),
         ];
     }
 }
