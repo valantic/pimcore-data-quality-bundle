@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\ElementInterface;
 use ReflectionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,6 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Valantic\DataQualityBundle\DependencyInjection\Configuration;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
@@ -35,6 +37,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected string $attribute;
     protected array $groups;
     protected array $skippedConstraints;
+    protected ?bool $ignoreFallbackLanguage;
 
     /**
      * Violations found during validation.
@@ -77,7 +80,8 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             $this->attribute,
             $this->groups,
             $this->skippedConstraints,
-            $this->validationConfig
+            $this->validationConfig,
+            $this->ignoreFallbackLanguage
         );
     }
 
@@ -86,13 +90,16 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         string $attribute,
         array $groups,
         array $skippedConstraints,
+        ?bool $ignoreFallbackLanguage,
     ): void {
         $this->obj = $obj;
         $this->attribute = $attribute;
         $this->groups = $groups;
+        $this->ignoreFallbackLanguage = $ignoreFallbackLanguage;
         $this->skippedConstraints = $skippedConstraints;
         $this->validationConfig = $this->configurationRepository->getRulesForAttribute($obj::class, $attribute);
         $this->classInformation = $this->definitionInformationFactory->make($this->obj::class);
+
         if (self::$maxNestingLevel < 0) {
             self::$maxNestingLevel = $this->configurationRepository->getConfiguredNestingLimit($this->obj::class);
         }
@@ -195,7 +202,13 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected function valueInherited(Concrete $obj, ?string $locale = null): mixed
     {
         if (!$obj->getParentId() || !($obj->getParent() instanceof Concrete) || $obj->get($this->attribute, $locale)) {
-            return $obj->get($this->attribute, $locale);
+            $oldValue = Configuration::getDefaultIgnoreFallbackLanguage();
+
+            $this->setGetFallbackValues(!$this->ignoreFallbackLanguage);
+            $value = $obj->get($this->attribute, $locale);
+            $this->setGetFallbackValues($oldValue);
+
+            return $value;
         }
 
         return $this->valueInherited($obj->getParent(), $locale);
@@ -219,5 +232,13 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
             ) - 1,
             0
         );
+    }
+
+    /**
+     * Sets pimcore setting to get language fallback values
+     */
+    protected function setGetFallbackValues(bool $value): void
+    {
+        Localizedfield::setGetFallbackValues($value);
     }
 }

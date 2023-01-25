@@ -40,6 +40,7 @@ class MetaConfigController extends BaseController
                 'locales' => $configurationRepository->getConfiguredLocales($className),
                 'threshold_green' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::green()) * 100,
                 'threshold_orange' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::orange()) * 100,
+                'ignore_fallback_language' => $configurationRepository->getIgnoreFallbackLanguage($className),
             ];
         }
 
@@ -93,7 +94,8 @@ class MetaConfigController extends BaseController
             $request->request->get('locales', []),
             $request->request->getInt('threshold_green'),
             $request->request->getInt('threshold_orange'),
-            $request->request->getInt('nesting_limit', 1)
+            $request->request->getInt('nesting_limit', 1),
+            $request->request->getBoolean('ignore_fallback_language')
         );
 
         return $this->json([

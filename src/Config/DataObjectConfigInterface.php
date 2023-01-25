@@ -16,5 +16,7 @@ interface DataObjectConfigInterface
     /** @return string[] */
     public function getLocales(Concrete $obj): array;
 
+    public function getIgnoreFallbackLanguage(Concrete $obj): bool;
+
     public static function isDefault(): bool;
 }
