@@ -55,7 +55,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         protected RelationAttribute $relationAttribute,
         protected DataObjectConfigRepository $dataObjectConfigRepository,
         protected TagAwareCacheInterface $cache,
-        protected CacheService $cacheService
+        protected CacheService $cacheService,
     ) {
     }
 
