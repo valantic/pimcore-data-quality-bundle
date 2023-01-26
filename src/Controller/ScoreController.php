@@ -146,6 +146,6 @@ class ScoreController extends BaseController
 
     protected function getCacheKey(Request $request): string
     {
-        return md5(json_encode($request->query->all(), flags: JSON_THROW_ON_ERROR));
+        return md5(json_encode($request->getRequestUri(), flags: JSON_THROW_ON_ERROR));
     }
 }

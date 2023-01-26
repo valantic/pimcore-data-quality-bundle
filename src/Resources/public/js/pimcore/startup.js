@@ -32,6 +32,7 @@ pimcore.plugin.ValanticDataQualityBundle = Class.create(pimcore.plugin.admin, {
         Ext.Ajax.request({
             url: Routing.generate('valantic_dataquality_score_check'),
             method: 'get',
+            disableCaching: false,
             params: {
                 id: object.id,
             },
