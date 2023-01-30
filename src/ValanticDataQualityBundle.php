@@ -20,6 +20,7 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
             '/bundles/valanticdataquality/js/pimcore/settingsMeta.js',
             '/bundles/valanticdataquality/js/pimcore/settings.js',
             '/bundles/valanticdataquality/js/pimcore/startup.js',
+            '/bundles/valanticdataquality/js/pimcore/objects/classes/data/valanticDataQualityScore.js',
         ];
     }
 
