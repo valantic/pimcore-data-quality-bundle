@@ -38,20 +38,22 @@ class ScoreController extends BaseController
         TagAwareCacheInterface $cache,
         CacheService $cacheService,
     ): JsonResponse {
+        $obj = Concrete::getById($request->query->getInt('id'));
+
+        if (!$obj instanceof Concrete) {
+            return $this->json([
+                'score' => -1,
+                'scores' => [],
+                'attributes' => [],
+                'color' => null,
+            ]);
+        }
+
+        $config = $configurationRepository->getForClass($obj::class);
+
         return $cache->get(
-            $this->getCacheKey($request),
-            function(ItemInterface $item) use ($cacheService, $request, $valuePreviewFormatter, $valueFormatter, $configurationRepository, $validation, $definitionInformationFactory) {
-                $obj = Concrete::getById($request->query->getInt('id'));
-
-                if (!$obj instanceof Concrete) {
-                    return $this->json([
-                        'score' => -1,
-                        'scores' => [],
-                        'attributes' => [],
-                        'color' => null,
-                    ]);
-                }
-
+            $this->getCacheKey($request, $config),
+            function(ItemInterface $item) use ($obj, $cacheService, $request, $valuePreviewFormatter, $valueFormatter, $configurationRepository, $validation, $definitionInformationFactory) {
                 $item->tag($cacheService->getTags($obj));
 
                 $classInformation = $definitionInformationFactory->make($obj::class);
@@ -125,16 +127,19 @@ class ScoreController extends BaseController
         TagAwareCacheInterface $cache,
         CacheService $cacheService,
     ): JsonResponse {
-        return $cache->get(
-            $this->getCacheKey($request),
-            function(ItemInterface $item) use ($cacheService, $request, $configurationRepository) {
-                $obj = Concrete::getById($request->query->getInt('id'));
-                if (!$obj instanceof Concrete) {
-                    return $this->json([
-                        'status' => false,
-                    ]);
-                }
+        $obj = Concrete::getById($request->query->getInt('id'));
 
+        if (!$obj instanceof Concrete) {
+            return $this->json([
+                'status' => false,
+            ]);
+        }
+
+        $config = $configurationRepository->getForClass($obj::class);
+
+        return $cache->get(
+            $this->getCacheKey($request, $config),
+            function(ItemInterface $item) use ($obj, $cacheService, $configurationRepository) {
                 $item->tag($cacheService->getTags($obj));
 
                 return $this->json([
@@ -144,8 +149,14 @@ class ScoreController extends BaseController
         );
     }
 
-    protected function getCacheKey(Request $request): string
+    protected function getCacheKey(Request $request, array $config = []): string
     {
-        return md5(json_encode($request->getRequestUri(), flags: JSON_THROW_ON_ERROR));
+        $cacheKey = json_encode($request->getRequestUri(), flags: JSON_THROW_ON_ERROR);
+
+        if (!empty($config)) {
+            $cacheKey .= '_' . json_encode($config, flags: JSON_THROW_ON_ERROR);
+        }
+
+        return md5($cacheKey);
     }
 }

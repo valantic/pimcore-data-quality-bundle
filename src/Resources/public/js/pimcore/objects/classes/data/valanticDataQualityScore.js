@@ -15,6 +15,22 @@ pimcore.object.classes.data.valanticDataQualityScore = Class.create(pimcore.obje
 
         this.initData(initData);
 
+        // apply default data
+        Ext.apply(
+            this.datax,
+            {
+                name: 'score',
+                title: 'Score (%)',
+                noteditable: true,
+                visibleGridView: true,
+                defaultValue: 0,
+                integer: true,
+                minValue: 0,
+                maxValue: 100,
+                style: 'display:none;',
+            },
+        );
+
         this.treeNode = treeNode;
     },
 
