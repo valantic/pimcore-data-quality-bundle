@@ -3,9 +3,9 @@
   "description": "Pimcore Data Quality Bundle",
   "devDependencies": {
     "@release-it/bumper": "^4.0.2",
-    "eslint": "^8.31.0",
+    "eslint": "^8.33.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-import": "^2.27.5",
     "release-it": "^15.6.0"
   },
   "scripts": {
