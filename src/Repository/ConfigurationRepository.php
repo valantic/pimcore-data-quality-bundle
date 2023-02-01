@@ -149,9 +149,9 @@ class ConfigurationRepository
     /**
      * @param class-string $className
      */
-    public function getFieldName(string $className): string
+    public function getScoreFieldName(string $className): ?string
     {
-        return $this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_FIELD_NAME];
+        return $this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME];
     }
 
     /**

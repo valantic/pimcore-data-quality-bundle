@@ -25,6 +25,7 @@ pimcore.object.classes.data.valanticDataQualityScore = Class.create(pimcore.obje
                 visibleGridView: true,
                 defaultValue: 0,
                 integer: true,
+                unsigned: true,
                 minValue: 0,
                 maxValue: 100,
                 style: 'display:none;',

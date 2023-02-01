@@ -66,9 +66,9 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
 
         $score = $this->calculateScore();
 
-        $fieldName = $this->configurationRepository->getFieldName($this->obj::class);
+        $fieldName = $this->configurationRepository->getScoreFieldName($this->obj::class);
 
-        if ($fieldName && property_exists($this->obj, $fieldName)) {
+        if (!empty($fieldName) && property_exists($this->obj, $fieldName)) {
             $currentScore = $this->dataObjectRepository->getValue($this->obj, $fieldName);
             $newScore = $this->percentageFormatter->format($score);
 

@@ -25,7 +25,7 @@ class DataObjectRepository
         return $object->$getter();
     }
 
-    public function setValue(DataObject &$object, string $fieldName, mixed $value): void
+    public function setValue(DataObject $object, string $fieldName, mixed $value): void
     {
         $setter = "set$fieldName";
         $object->$setter($value);

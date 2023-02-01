@@ -19,7 +19,7 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_CLASSES_CONFIG_LOCALES = 'locales';
     public const CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT = 'nesting_limit';
     public const CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE = 'ignore_fallback_language';
-    public const CONFIG_KEY_CLASSES_CONFIG_FIELD_NAME = 'field_name';
+    public const CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME = 'score_field_name';
     public const CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS = 'thresholds';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES = 'attributes';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES_RULES = 'rules';
@@ -102,9 +102,9 @@ class Configuration implements ConfigurationInterface
             ->info('Value to determine whether or not to ignore fallback language')
             ->defaultValue(self::getDefaultIgnoreFallbackLanguage())
             ->end()
-            ->scalarNode(self::CONFIG_KEY_CLASSES_CONFIG_FIELD_NAME)
+            ->scalarNode(self::CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME)
             ->info('Field name for storing data quality score')
-            ->defaultValue('')
+            ->defaultValue(null)
             ->end()
             ->end();
     }

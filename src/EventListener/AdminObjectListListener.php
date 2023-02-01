@@ -10,10 +10,8 @@ use Valantic\DataQualityBundle\Repository\DataObjectRepository;
 use Valantic\DataQualityBundle\Service\Formatters\PercentageFormatter;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 
-class AdminObjectListListener
+class AdminObjectListListener extends AbstractListener
 {
-    protected static bool $isEnabled = true;
-
     public function __construct(
         private ConfigurationRepository $configurationRepository,
         private DataObjectRepository $dataObjectRepository,
@@ -31,16 +29,21 @@ class AdminObjectListListener
         $list = $event->getArgument('list');
 
         if ($list && property_exists($list, 'className')) {
-            /** @var class-string */
+            /** @var class-string $className */
             $className = DataObjectRepository::PIMCORE_DATA_OBJECT_NAMESPACE . '\\' . $list->getClassName();
 
-            $fieldName = $this->configurationRepository->getFieldName($className);
+            $fieldName = $this->configurationRepository->getScoreFieldName($className);
+
+            if (empty($fieldName)) {
+                return;
+            }
+
             $ignoreFallbackLanguage = $this->configurationRepository->getIgnoreFallbackLanguage($className);
 
             $objects = $list->getObjects();
 
             foreach ($objects as $obj) {
-                if ($fieldName && property_exists($obj, $fieldName) && $obj->getPublished()) {
+                if (property_exists($obj, $fieldName) && $obj->getPublished()) {
                     $this->validation->setIgnoreFallbackLanguage($ignoreFallbackLanguage);
                     $this->validation->setObject($obj);
                     $this->validation->validate();
@@ -50,15 +53,5 @@ class AdminObjectListListener
                 }
             }
         }
-    }
-
-    public static function enableListener(): void
-    {
-        self::$isEnabled = true;
-    }
-
-    public static function disableListener(): void
-    {
-        self::$isEnabled = false;
     }
 }

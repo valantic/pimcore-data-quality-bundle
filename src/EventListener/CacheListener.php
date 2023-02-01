@@ -10,10 +10,8 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\CacheService;
 
-class CacheListener
+class CacheListener extends AbstractListener
 {
-    protected static bool $isEnabled = true;
-
     public function __construct(
         protected TagAwareCacheInterface $cache,
         protected CacheService $cacheService,
@@ -33,16 +31,6 @@ class CacheListener
         }
 
         $this->flushCache($obj);
-    }
-
-    public static function enableListener(): void
-    {
-        self::$isEnabled = true;
-    }
-
-    public static function disableListener(): void
-    {
-        self::$isEnabled = false;
     }
 
     protected function flushCache(Concrete $obj): void
