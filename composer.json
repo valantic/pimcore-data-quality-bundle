@@ -1,6 +1,6 @@
 {
   "name": "valantic/pimcore-data-quality-bundle",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Data quality score for Pimcore",
   "type": "pimcore-bundle",
   "require": {
@@ -11,20 +11,21 @@
     "symfony/validator": "^5.0"
   },
   "require-dev": {
-    "bamarni/composer-bin-plugin": "^1.4",
-    "infection/infection": "^0.26.10",
-    "phpstan/extension-installer": "^1.1",
-    "phpstan/phpstan": "^1.7.0",
-    "phpstan/phpstan-deprecation-rules": "^1.0",
-    "phpunit/phpunit": "^9.2",
-    "rector/rector": "^0.13.0",
+    "bamarni/composer-bin-plugin": "^1.8.2",
+    "infection/infection": "^0.26.18",
+    "phpstan/extension-installer": "^1.2",
+    "phpstan/phpstan": "^1.9.14",
+    "phpstan/phpstan-deprecation-rules": "^1.1.1",
+    "phpstan/phpstan-strict-rules": "^1.4",
+    "phpunit/phpunit": "^9.5.28",
+    "rector/rector": "^0.15.10",
     "roave/security-advisories": "dev-latest",
-    "symfony/config": "^5.0",
-    "symfony/dependency-injection": "^5.0",
-    "symfony/framework-bundle": "^5.0",
-    "symfony/http-foundation": "^5.0",
-    "symfony/http-kernel": "^5.0",
-    "symfony/routing": "^5.0"
+    "symfony/config": "^5.4.19",
+    "symfony/dependency-injection": "^5.4.19",
+    "symfony/framework-bundle": "^5.4.19",
+    "symfony/http-foundation": "^5.4.19",
+    "symfony/http-kernel": "^5.4.19",
+    "symfony/routing": "^5.4.19"
   },
   "license": "proprietary",
   "authors": [
@@ -68,14 +69,14 @@
     "phpstan": [
       "vendor/bin/phpstan analyse --memory-limit=1G"
     ],
-    "phpcs": [
+    "php-cs-fixer": [
       "vendor-bin/phpcs/vendor/bin/php-cs-fixer fix --diff"
     ],
-    "phpcs-check": [
+    "php-cs-fixer-check": [
       "vendor-bin/phpcs/vendor/bin/php-cs-fixer fix --diff --dry-run"
     ],
     "rector": [
-      "vendor/bin/rector process src tests"
+      "vendor/bin/rector process"
     ],
     "test": "./vendor/bin/phpunit",
     "infection": [

@@ -10,7 +10,7 @@ lint_php:
     - composer install
 
   script:
-    - composer run phpcs-check
+    - composer run php-cs-fixer-check
     - composer run phpstan
     - composer run test
 

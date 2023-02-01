@@ -32,6 +32,6 @@ abstract class AbstractCustomConstraint extends Constraint implements CustomCons
     {
         $parts = explode('\\', static::class);
 
-        return (string) array_pop($parts);
+        return array_pop($parts);
     }
 }
