@@ -60,7 +60,7 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
 
     public function score(): float
     {
-        if (!count($this->getValidatableAttributes())) {
+        if (count($this->getValidatableAttributes()) === 0) {
             return 0;
         }
 
@@ -82,7 +82,7 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
         // get (array_column) all attribute scores that have (array_filter) multiple scores
         $multiScores = array_values(array_filter($scores));
 
-        if (!count($multiScores)) {
+        if (count($multiScores) === 0) {
             return [];
         }
 
