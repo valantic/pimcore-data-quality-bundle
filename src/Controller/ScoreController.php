@@ -35,7 +35,7 @@ class ScoreController extends BaseController
     ): JsonResponse {
         $obj = Concrete::getById($request->query->getInt('id'));
 
-        if (!$obj) {
+        if ($obj === null) {
             return $this->json([
                 'score' => -1,
                 'scores' => [],

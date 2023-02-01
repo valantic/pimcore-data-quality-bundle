@@ -21,6 +21,9 @@ class ThresholdEnum extends Enum
         };
     }
 
+    /**
+     * @return array<string,string>
+     */
     protected static function values(): array
     {
         return [

@@ -111,7 +111,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
 
     public function score(): float
     {
-        if (!count($this->getConstraints())) {
+        if (count($this->getConstraints()) === 0) {
             return 0;
         }
 
@@ -201,7 +201,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
      */
     protected function valueInherited(Concrete $obj, ?string $locale = null): mixed
     {
-        if (!$obj->getParentId() || !($obj->getParent() instanceof Concrete) || $obj->get($this->attribute, $locale)) {
+        if ($obj->getParentId() === null || !($obj->getParent() instanceof Concrete) || $obj->get($this->attribute, $locale)) {
             $oldValue = Configuration::getDefaultIgnoreFallbackLanguage();
 
             $this->setGetFallbackValues(!$this->ignoreFallbackLanguage);

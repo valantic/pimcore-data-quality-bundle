@@ -31,7 +31,7 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorableInter
 
     public function score(): float
     {
-        if (!count($this->getConstraints()) || !count($this->getValidatableLocales())) {
+        if (count($this->getConstraints()) === 0 || count($this->getValidatableLocales()) === 0) {
             return 0;
         }
 
@@ -40,7 +40,7 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorableInter
 
     public function scores(): array
     {
-        if (!count($this->getConstraints())) {
+        if (count($this->getConstraints()) === 0) {
             return [];
         }
 
@@ -55,7 +55,7 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorableInter
 
     public function colors(): array
     {
-        if (!count($this->getConstraints())) {
+        if (count($this->getConstraints()) === 0) {
             return [];
         }
 

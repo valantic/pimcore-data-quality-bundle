@@ -223,7 +223,7 @@ abstract class AbstractDefinitionInformation
         $this->name = $name;
 
         $definition = $this->getDefinition();
-        if (!$definition) {
+        if ($definition === null) {
             throw new \InvalidArgumentException('Failed to load definition');
         }
         $this->definition = $definition;
