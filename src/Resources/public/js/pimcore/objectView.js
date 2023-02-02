@@ -20,6 +20,7 @@ valantic.dataquality.objectView = Class.create({
             const baseStoreProxyConfig = (rootProperty) => ({
                 type: 'ajax',
                 url: Routing.generate('valantic_dataquality_score_show'),
+                noCache: false,
                 extraParams: {
                     id: this.object.id,
                     'groups[]': this.activeGroups,

@@ -7,10 +7,13 @@ namespace Valantic\DataQualityBundle\Validation;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Valantic\DataQualityBundle\Model\AttributeScore;
 use Valantic\DataQualityBundle\Model\ObjectScore;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectConfigRepository;
+use Valantic\DataQualityBundle\Service\CacheService;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
@@ -51,6 +54,8 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         protected PlainAttribute $plainAttribute,
         protected RelationAttribute $relationAttribute,
         protected DataObjectConfigRepository $dataObjectConfigRepository,
+        protected TagAwareCacheInterface $cache,
+        protected CacheService $cacheService,
     ) {
     }
 
@@ -69,30 +74,37 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
      */
     public function attributeScores(): array
     {
-        $attributeScores = [];
-        foreach ($this->validators as $attribute => $validator) {
-            $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
+        return $this->cache->get(
+            md5(sprintf('%s_%s_%s', __METHOD__, $this->obj->getId(), implode('', $this->groups))),
+            function(ItemInterface $item): array {
+                $item->tag($this->cacheService->getTags($this->obj));
 
-            if ($validator instanceof ScorableInterface) {
-                $score->setScore($validator->score());
+                $attributeScores = [];
+                foreach ($this->validators as $attribute => $validator) {
+                    $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
+
+                    if ($validator instanceof ScorableInterface) {
+                        $score->setScore($validator->score());
+                    }
+
+                    if ($validator instanceof MultiScorableInterface) {
+                        $score->setScores($validator->scores());
+                    }
+
+                    if ($validator instanceof ColorableInterface) {
+                        $score->setColor($validator->color());
+                    }
+
+                    if ($validator instanceof MultiColorableInterface) {
+                        $score->setColors($validator->colors());
+                    }
+
+                    $attributeScores[$attribute] = $score;
+                }
+
+                return $attributeScores;
             }
-
-            if ($validator instanceof MultiScorableInterface) {
-                $score->setScores($validator->scores());
-            }
-
-            if ($validator instanceof ColorableInterface) {
-                $score->setColor($validator->color());
-            }
-
-            if ($validator instanceof MultiColorableInterface) {
-                $score->setColors($validator->colors());
-            }
-
-            $attributeScores[$attribute] = $score;
-        }
-
-        return $attributeScores;
+        );
     }
 
     /**
