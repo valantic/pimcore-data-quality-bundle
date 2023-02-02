@@ -13,7 +13,9 @@ use Valantic\DataQualityBundle\Model\AttributeScore;
 use Valantic\DataQualityBundle\Model\ObjectScore;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectConfigRepository;
+use Valantic\DataQualityBundle\Repository\DataObjectRepository;
 use Valantic\DataQualityBundle\Service\CacheService;
+use Valantic\DataQualityBundle\Service\Formatters\PercentageFormatter;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
@@ -56,6 +58,8 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         protected DataObjectConfigRepository $dataObjectConfigRepository,
         protected TagAwareCacheInterface $cache,
         protected CacheService $cacheService,
+        protected DataObjectRepository $dataObjectRepository,
+        protected PercentageFormatter $percentageFormatter,
     ) {
     }
 
@@ -74,37 +78,49 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
      */
     public function attributeScores(): array
     {
+        $config = $this->configurationRepository->getConfigForClass($this->obj::class);
+
         return $this->cache->get(
-            md5(sprintf('%s_%s_%s', __METHOD__, $this->obj->getId(), implode('', $this->groups))),
+            md5(sprintf('%s_%s_%s_%s', __METHOD__, $this->obj->getId(), implode('', $this->groups), json_encode($config))),
             function(ItemInterface $item): array {
                 $item->tag($this->cacheService->getTags($this->obj));
 
-                $attributeScores = [];
-                foreach ($this->validators as $attribute => $validator) {
-                    $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
-
-                    if ($validator instanceof ScorableInterface) {
-                        $score->setScore($validator->score());
-                    }
-
-                    if ($validator instanceof MultiScorableInterface) {
-                        $score->setScores($validator->scores());
-                    }
-
-                    if ($validator instanceof ColorableInterface) {
-                        $score->setColor($validator->color());
-                    }
-
-                    if ($validator instanceof MultiColorableInterface) {
-                        $score->setColors($validator->colors());
-                    }
-
-                    $attributeScores[$attribute] = $score;
-                }
-
-                return $attributeScores;
+                return $this->calculateScores();
             }
         );
+    }
+
+    /**
+     * Calculates the scores for the individual attributes.
+     *
+     * @return array<string,AttributeScore>
+     */
+    public function calculateScores(): array
+    {
+        $attributeScores = [];
+        foreach ($this->validators as $attribute => $validator) {
+            $score = new AttributeScore(value: $validator->value(), passes: $validator->passes());
+
+            if ($validator instanceof ScorableInterface) {
+                $score->setScore($validator->score());
+            }
+
+            if ($validator instanceof MultiScorableInterface) {
+                $score->setScores($validator->scores());
+            }
+
+            if ($validator instanceof ColorableInterface) {
+                $score->setColor($validator->color());
+            }
+
+            if ($validator instanceof MultiColorableInterface) {
+                $score->setColors($validator->colors());
+            }
+
+            $attributeScores[$attribute] = $score;
+        }
+
+        return $attributeScores;
     }
 
     /**

@@ -147,6 +147,14 @@ class ConfigurationRepository
     }
 
     /**
+     * @param class-string $className
+     */
+    public function getScoreFieldName(string $className): ?string
+    {
+        return $this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME];
+    }
+
+    /**
      * Given a class name, return the corresponding rules for $attribute.
      *
      * @param class-string $className Base name or ::class

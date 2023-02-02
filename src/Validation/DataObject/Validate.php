@@ -64,6 +64,26 @@ class Validate extends AbstractValidateObject implements MultiScorableInterface
             return 0;
         }
 
+        $score = $this->calculateScore();
+
+        $fieldName = $this->configurationRepository->getScoreFieldName($this->obj::class);
+
+        if (!empty($fieldName) && property_exists($this->obj, $fieldName)) {
+            $currentScore = $this->dataObjectRepository->getValue($this->obj, $fieldName);
+            $newScore = $this->percentageFormatter->format($score);
+
+            if ($currentScore !== $newScore) {
+                $this->dataObjectRepository->update($this->obj, [
+                    $fieldName => $newScore,
+                ]);
+            }
+        }
+
+        return $score;
+    }
+
+    public function calculateScore(): float
+    {
         $scores = array_map(
             fn (AttributeScore $attributeScore) => $attributeScore->getScore(),
             $this->attributeScores(),

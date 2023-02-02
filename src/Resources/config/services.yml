@@ -65,3 +65,7 @@ services:
             - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: handle }
             - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: handle }
             - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: handle }
+
+    Valantic\DataQualityBundle\EventListener\AdminObjectListListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.object.list.beforeListLoad, method: handle }
