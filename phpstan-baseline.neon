@@ -111,6 +111,11 @@ parameters:
 			path: src/Repository/ConstraintDefinitions.php
 
 		-
+			message: "#^Variable method call on Pimcore\\\\Model\\\\DataObject\\.$#"
+			count: 2
+			path: src/Repository/DataObjectRepository.php
+
+		-
 			message: "#^Method Valantic\\\\DataQualityBundle\\\\Service\\\\Formatters\\\\ValueFormatter\\:\\:shorten\\(\\) should return array\\<string\\>\\|string but returns array\\<array\\<string\\>\\|string\\>\\.$#"
 			count: 1
 			path: src/Service/Formatters/ValueFormatter.php

@@ -28,7 +28,7 @@ class AdminObjectListListener extends AbstractListener
 
         $list = $event->getArgument('list');
 
-        if ($list && property_exists($list, 'className')) {
+        if (!empty($list) && property_exists($list, 'className')) {
             /** @var class-string $className */
             $className = DataObjectRepository::PIMCORE_DATA_OBJECT_NAMESPACE . '\\' . $list->getClassName();
 
