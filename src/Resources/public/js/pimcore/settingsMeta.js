@@ -301,6 +301,33 @@ valantic.dataquality.settings_meta = Class.create({
             closable: true,
             items: [formPanel],
             buttons: [{
+                text: t('reset'),
+                tooltip: t('valantic_dataquality_config_settings_reset'),
+                iconCls: 'pimcore_icon_delete',
+                handler: function () {
+                    Ext.MessageBox.confirm(t('valantic_dataquality_config_settings_reset_confirmation_title'), t('valantic_dataquality_config_settings_reset_confirmation_message'), function (confirmation) {
+                        if (confirmation === 'yes') {
+                            const values = formPanel.getForm()
+                                .getFieldValues();
+
+                            Ext.Ajax.request({
+                                url: Routing.generate('valantic_dataquality_metaconfig_reset'),
+                                method: 'post',
+                                params: {
+                                    classname: values.classname.split('\\').pop(),
+                                },
+                                // eslint-disable-next-line no-unused-vars
+                                success: function (response, opts) {
+                                    this.store.reload();
+                                }.bind(this),
+                            });
+
+                            modifyWin.close();
+                        }
+                    }.bind(this));
+                }.bind(this),
+
+            }, {
                 text: t('save'),
                 iconCls: 'pimcore_icon_accept',
                 handler: function () {

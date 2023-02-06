@@ -23,8 +23,6 @@ valantic.dataquality.objectView = Class.create({
                 noCache: false,
                 extraParams: {
                     id: this.object.id,
-                    'groups[]': this.activeGroups,
-                    ignoreFallbackLanguage: this.activeIgnoreFallbackLanguage,
                 },
                 reader: {
                     type: 'json',
@@ -80,6 +78,7 @@ valantic.dataquality.objectView = Class.create({
                         const data = store.getData()
                             .getAt(0);
 
+                        this.activeGroups = data.data.groups;
                         this.activeIgnoreFallbackLanguage = data.data.ignoreFallbackLanguage;
                     }.bind(this),
                 },
@@ -155,21 +154,64 @@ valantic.dataquality.objectView = Class.create({
                             closable: true,
                             items: [formPanel],
                             buttons: [{
+                                text: t('reset'),
+                                tooltip: t('valantic_dataquality_config_settings_user_reset'),
+                                iconCls: 'pimcore_icon_delete',
+                                handler: function () {
+                                    Ext.MessageBox.confirm(t('valantic_dataquality_config_settings_user_reset_confirmation_title'), t('valantic_dataquality_config_settings_user_reset_confirmation_message'), function (confirmation) {
+                                        if (confirmation === 'yes') {
+                                            const values = {
+                                                classname: this.object.data.general.o_className,
+                                            };
+
+                                            Ext.Ajax.request({
+                                                url: Routing.generate('valantic_dataquality_metaconfig_userreset'),
+                                                method: 'post',
+                                                params: values,
+                                                // eslint-disable-next-line no-unused-vars
+                                                success: function (response, opts) {
+                                                    // eslint-disable-next-line max-len
+                                                    this.attributesStore = this.attributesStoreConfig();
+                                                    this.objectStore = this.objectStoreConfig();
+                                                    this.settingsStore = this.settingsStoreConfig();
+
+                                                    this.attributesStore.reload();
+                                                    this.objectStore.reload();
+                                                    this.settingsStore.reload();
+                                                }.bind(this),
+                                            });
+
+                                            configWin.close();
+                                        }
+                                    }.bind(this));
+                                }.bind(this),
+                            },
+                            {
                                 text: t('apply'),
                                 iconCls: 'pimcore_icon_accept',
                                 handler: function () {
                                     const values = formPanel.getForm()
                                         .getFieldValues();
 
-                                    this.activeGroups = values['groups[]'];
-                                    // eslint-disable-next-line max-len
-                                    this.activeIgnoreFallbackLanguage = values.ignoreFallbackLanguage;
+                                    values.classname = this.object.data.general.o_className;
 
-                                    this.attributesStore = this.attributesStoreConfig();
-                                    this.objectStore = this.objectStoreConfig();
+                                    Ext.Ajax.request({
+                                        url: Routing.generate('valantic_dataquality_metaconfig_usermodify'),
+                                        method: 'post',
+                                        params: values,
+                                        // eslint-disable-next-line no-unused-vars
+                                        success: function (response, opts) {
+                                            this.activeGroups = values['groups[]'];
+                                            // eslint-disable-next-line max-len
+                                            this.activeIgnoreFallbackLanguage = values.ignoreFallbackLanguage;
 
-                                    this.attributesStore.reload();
-                                    this.objectStore.reload();
+                                            this.attributesStore = this.attributesStoreConfig();
+                                            this.objectStore = this.objectStoreConfig();
+
+                                            this.attributesStore.reload();
+                                            this.objectStore.reload();
+                                        }.bind(this),
+                                    });
 
                                     configWin.close();
                                 }.bind(this),

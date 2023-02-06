@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
+use Valantic\DataQualityBundle\Service\UserSettingsService;
 use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 use Valantic\DataQualityBundle\Shared\SortOrderTrait;
 
@@ -113,6 +115,72 @@ class MetaConfigController extends BaseController
             return $this->json(['status' => false]);
         }
         $configurationRepository->deleteClassConfig((string) $request->request->get('classname'));
+
+        return $this->json([
+            'status' => true,
+        ]);
+    }
+
+    /**
+     * Resets all user config.
+     */
+    #[Route('/reset', options: ['expose' => true], methods: ['POST'])]
+    public function resetAction(Request $request, UserSettingsService $settingsService): JsonResponse
+    {
+        $className = (string) $request->request->get('classname');
+
+        if (empty($className)) {
+            return $this->json(['status' => false]);
+        }
+
+        $settingsService->deleteAll($className);
+
+        return $this->json([
+            'status' => true,
+        ]);
+    }
+
+    /**
+     * Adds or updates the user config.
+     */
+    #[Route('/user/modify', options: ['expose' => true], methods: ['POST'])]
+    public function userModifyAction(Request $request, UserSettingsService $settingsService): JsonResponse
+    {
+        $className = (string) $request->request->get('classname');
+
+        if (empty($className)) {
+            return $this->json(['status' => false]);
+        }
+
+        $settings = [
+            'groups' => $request->request->get('groups'),
+            'ignoreFallbackLanguage' => $request->request->getBoolean('ignoreFallbackLanguage'),
+        ];
+
+        /** @var User */
+        $user = $this->getUser();
+        $settingsService->set($settings, $className, (string) $user->getId());
+
+        return $this->json([
+            'status' => true,
+        ]);
+    }
+
+    /**
+     * Resets the current user config.
+     */
+    #[Route('/user/reset', options: ['expose' => true], methods: ['POST'])]
+    public function userResetAction(Request $request, UserSettingsService $settingsService): JsonResponse
+    {
+        $className = (string) $request->request->get('classname');
+
+        if (empty($className)) {
+            return $this->json(['status' => false]);
+        }
+
+        /** @var User */
+        $user = $this->getUser();
+        $settingsService->delete($className, (string) $user->getId());
 
         return $this->json([
             'status' => true,
