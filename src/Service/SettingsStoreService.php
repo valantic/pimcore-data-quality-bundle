@@ -10,14 +10,14 @@ class SettingsStoreService
     {
         $instance = SettingsStore::get($id, $scope);
 
-        if (!$instance) {
+        if (empty($instance)) {
             return null;
         }
 
         $value = $instance->getData();
 
         if ($instance->getType() === 'string') {
-            $data = json_decode($value);
+            $data = json_decode((string) $value);
 
             if (is_object($data)) {
                 return (array) $data;
