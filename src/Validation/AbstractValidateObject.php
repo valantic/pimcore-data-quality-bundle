@@ -90,7 +90,14 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         $userConfig = $this->settingsService->get($this->obj->getClassName(), (string) $user->getId());
 
         return $this->cache->get(
-            md5(sprintf('%s_%s_%s_%s_%s', __METHOD__, $this->obj->getId(), implode('', $this->groups), json_encode($config), json_encode($userConfig))),
+            md5(sprintf(
+                '%s_%s_%s_%s_%s',
+                __METHOD__,
+                $this->obj->getId(),
+                implode('', $this->groups),
+                json_encode($config),
+                json_encode($userConfig)
+            )),
             function(ItemInterface $item): array {
                 $item->tag($this->cacheService->getTags($this->obj));
 

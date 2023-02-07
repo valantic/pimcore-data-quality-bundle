@@ -54,7 +54,7 @@ class ScoreController extends BaseController
 
         $config = $configurationRepository->getForClass($obj::class);
 
-        /** @var User */
+        /** @var User $user */
         $user = $this->getUser();
         $userConfig = $settingsService->get($obj->getClassName(), (string) $user->getId());
 
@@ -146,7 +146,7 @@ class ScoreController extends BaseController
 
         $config = $configurationRepository->getForClass($obj::class);
 
-        /** @var User */
+        /** @var User $user */
         $user = $this->getUser();
         $userConfig = $settingsService->get($obj->getClassName(), (string) $user->getId());
 

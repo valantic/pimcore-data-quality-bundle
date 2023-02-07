@@ -4,8 +4,8 @@ namespace Valantic\DataQualityBundle\Service;
 
 class UserSettingsService
 {
-    public const SCOPE = 'valantic-data-quality';
-    public const SETTINGS_ID = 'settings';
+    private const SCOPE = 'valantic-data-quality';
+    private const SETTINGS_ID = 'settings';
 
     public function __construct(private SettingsStoreService $settingsStoreService)
     {

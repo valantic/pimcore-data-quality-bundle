@@ -38,4 +38,3 @@ valantic_dataquality_view_global_locales: 'Locales'
 valantic_dataquality_view_locales_for: 'Locales for {name}'
 valantic_dataquality_data_type_score: 'Data Quality Score'
 plugin_valantic_dataquality_config: 'Valantic Data Quality Bundle'
-

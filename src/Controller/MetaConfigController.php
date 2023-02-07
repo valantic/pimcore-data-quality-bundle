@@ -157,7 +157,7 @@ class MetaConfigController extends BaseController
             'ignoreFallbackLanguage' => $request->request->getBoolean('ignoreFallbackLanguage'),
         ];
 
-        /** @var User */
+        /** @var User $user */
         $user = $this->getUser();
         $settingsService->set($settings, $className, (string) $user->getId());
 
@@ -178,7 +178,7 @@ class MetaConfigController extends BaseController
             return $this->json(['status' => false]);
         }
 
-        /** @var User */
+        /** @var User $user */
         $user = $this->getUser();
         $settingsService->delete($className, (string) $user->getId());
 
