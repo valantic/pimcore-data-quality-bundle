@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +14,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Valantic\DataQualityBundle\Config\DataObjectConfigInterface;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Service\CacheService;
+use Valantic\DataQualityBundle\Service\UserSettingsService;
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
 use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
@@ -37,6 +39,7 @@ class ScoreController extends BaseController
         ConfigurationRepository $configurationRepository,
         TagAwareCacheInterface $cache,
         CacheService $cacheService,
+        UserSettingsService $settingsService,
     ): JsonResponse {
         $obj = Concrete::getById($request->query->getInt('id'));
 
@@ -51,22 +54,35 @@ class ScoreController extends BaseController
 
         $config = $configurationRepository->getForClass($obj::class);
 
+        /** @var User $user */
+        $user = $this->getUser();
+        $userConfig = $settingsService->get($obj->getClassName(), (string) $user->getId());
+
         return $cache->get(
-            $this->getCacheKey($request, $config),
-            function(ItemInterface $item) use ($obj, $cacheService, $request, $valuePreviewFormatter, $valueFormatter, $configurationRepository, $validation, $definitionInformationFactory) {
+            $this->getCacheKey($request, $config, $userConfig),
+            function(ItemInterface $item) use ($obj, $userConfig, $cacheService, $request, $valuePreviewFormatter, $valueFormatter, $configurationRepository, $validation, $definitionInformationFactory) {
                 $item->tag($cacheService->getTags($obj));
 
                 $classInformation = $definitionInformationFactory->make($obj::class);
 
-                $validation->setObject($obj);
-                $validation->setGroups($request->query->all('groups'));
+                $groups = [];
+                foreach ($configurationRepository->getConfiguredAttributes($obj::class) as $attribute) {
+                    foreach ($configurationRepository->getRulesForAttribute($obj::class, $attribute) as $rule) {
+                        foreach ($rule['groups'] ?? [] as $group) {
+                            $groups[] = $group;
+                        }
+                    }
+                }
 
                 $ignoreFallbackLanguage = $configurationRepository->getIgnoreFallbackLanguage($obj::class);
 
-                if (!empty($request->query->get('ignoreFallbackLanguage'))) {
-                    $ignoreFallbackLanguage = $request->query->getBoolean('ignoreFallbackLanguage');
+                if (!empty($userConfig)) {
+                    $groups = $userConfig['groups'] ?: [];
+                    $ignoreFallbackLanguage = $userConfig['ignoreFallbackLanguage'];
                 }
 
+                $validation->setObject($obj);
+                $validation->setGroups($groups);
                 $validation->setIgnoreFallbackLanguage($ignoreFallbackLanguage);
                 $validation->validate();
                 $filter = $request->get('filterText');
@@ -93,15 +109,6 @@ class ScoreController extends BaseController
                     );
                 }
 
-                $groups = [];
-                foreach ($configurationRepository->getConfiguredAttributes($obj::class) as $attribute) {
-                    foreach ($configurationRepository->getRulesForAttribute($obj::class, $attribute) as $rule) {
-                        foreach ($rule['groups'] ?? [] as $group) {
-                            $groups[] = $group;
-                        }
-                    }
-                }
-
                 return $this->json([
                     'object' => $validation->objectScore(),
                     'attributes' => $this->sortBySortOrder($attributes, 'label'),
@@ -110,6 +117,7 @@ class ScoreController extends BaseController
                         array_unique([DataObjectConfigInterface::VALIDATION_GROUP_DEFAULT, ...$groups])
                     ),
                     'settings' => [
+                        'groups' => $groups,
                         'ignoreFallbackLanguage' => $ignoreFallbackLanguage,
                     ],
                 ]);
@@ -126,6 +134,7 @@ class ScoreController extends BaseController
         ConfigurationRepository $configurationRepository,
         TagAwareCacheInterface $cache,
         CacheService $cacheService,
+        UserSettingsService $settingsService,
     ): JsonResponse {
         $obj = Concrete::getById($request->query->getInt('id'));
 
@@ -137,8 +146,12 @@ class ScoreController extends BaseController
 
         $config = $configurationRepository->getForClass($obj::class);
 
+        /** @var User $user */
+        $user = $this->getUser();
+        $userConfig = $settingsService->get($obj->getClassName(), (string) $user->getId());
+
         return $cache->get(
-            $this->getCacheKey($request, $config),
+            $this->getCacheKey($request, $config, $userConfig),
             function(ItemInterface $item) use ($obj, $cacheService, $configurationRepository) {
                 $item->tag($cacheService->getTags($obj));
 
@@ -149,12 +162,16 @@ class ScoreController extends BaseController
         );
     }
 
-    protected function getCacheKey(Request $request, array $config = []): string
+    protected function getCacheKey(Request $request, ?array $config = null, ?array $userConfig = null): string
     {
         $cacheKey = json_encode($request->getRequestUri(), flags: JSON_THROW_ON_ERROR);
 
         if (!empty($config)) {
             $cacheKey .= '_' . json_encode($config, flags: JSON_THROW_ON_ERROR);
+        }
+
+        if (!empty($userConfig)) {
+            $cacheKey .= '_' . json_encode($userConfig, flags: JSON_THROW_ON_ERROR);
         }
 
         return md5($cacheKey);

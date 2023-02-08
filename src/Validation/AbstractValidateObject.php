@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation;
 
+use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Valantic\DataQualityBundle\Model\AttributeScore;
@@ -15,6 +17,7 @@ use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectConfigRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectRepository;
 use Valantic\DataQualityBundle\Service\CacheService;
+use Valantic\DataQualityBundle\Service\UserSettingsService;
 use Valantic\DataQualityBundle\Service\Formatters\PercentageFormatter;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
@@ -60,6 +63,8 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         protected CacheService $cacheService,
         protected DataObjectRepository $dataObjectRepository,
         protected PercentageFormatter $percentageFormatter,
+        protected UserSettingsService $settingsService,
+        protected Security $securityService,
     ) {
     }
 
@@ -80,8 +85,19 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     {
         $config = $this->configurationRepository->getConfigForClass($this->obj::class);
 
+        /** @var User */
+        $user = $this->securityService->getUser();
+        $userConfig = $this->settingsService->get($this->obj->getClassName(), (string) $user->getId());
+
         return $this->cache->get(
-            md5(sprintf('%s_%s_%s_%s', __METHOD__, $this->obj->getId(), implode('', $this->groups), json_encode($config))),
+            md5(sprintf(
+                '%s_%s_%s_%s_%s',
+                __METHOD__,
+                $this->obj->getId(),
+                implode('', $this->groups),
+                json_encode($config),
+                json_encode($userConfig)
+            )),
             function(ItemInterface $item): array {
                 $item->tag($this->cacheService->getTags($this->obj));
 
