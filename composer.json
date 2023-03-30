@@ -1,6 +1,6 @@
 {
   "name": "valantic/pimcore-data-quality-bundle",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Data quality score for Pimcore",
   "type": "pimcore-bundle",
   "require": {
