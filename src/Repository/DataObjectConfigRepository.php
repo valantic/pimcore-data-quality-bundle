@@ -9,15 +9,14 @@ use Valantic\DataQualityBundle\Config\DefaultDataObjectConfig;
 class DataObjectConfigRepository
 {
     /**
-     * @var DataObjectConfigInterface[]
+     * @var array<class-string,DataObjectConfigInterface>
      */
-    protected array $configs;
-    protected DataObjectConfigInterface$defaultConfig;
+    protected ?array $configs = null;
 
-    public function __construct(iterable $documents, DefaultDataObjectConfig $defaultConfig)
-    {
-        $this->configs = $this->iterableToArray($documents);
-        $this->defaultConfig = $defaultConfig;
+    public function __construct(
+        protected iterable $configInterfaces,
+        protected DefaultDataObjectConfig $defaultConfig,
+    ) {
     }
 
     /**
@@ -25,7 +24,7 @@ class DataObjectConfigRepository
      */
     public function all(): array
     {
-        return $this->configs;
+        return $this->getConfigs();
     }
 
     /**
@@ -33,22 +32,22 @@ class DataObjectConfigRepository
      */
     public function get(string $className): DataObjectConfigInterface
     {
-        return $this->configs[$className] ?? $this->defaultConfig;
+        return $this->getConfigs()[$className] ?? $this->defaultConfig;
     }
 
-    private function iterableToArray(iterable $iterables): array
+    private function getConfigs(): array
     {
-        $arr = [];
-
-        foreach ($iterables as $iterable) {
-            /** @var DataObjectConfigInterface $iterable */
-            if ($iterable::isDefault()) {
-                $this->defaultConfig = $iterable;
-                continue;
+        if ($this->configs === null) {
+            foreach ($this->configInterfaces as $configuration) {
+                /** @var DefaultDataObjectConfig $configuration */
+                if ($configuration::isDefault()) {
+                    $this->defaultConfig = $configuration;
+                    continue;
+                }
+                $this->configs[$configuration->getClass()] = $configuration;
             }
-            $arr[$iterable->getClass()] = $iterable;
         }
 
-        return $arr;
+        return $this->configs ?: [];
     }
 }

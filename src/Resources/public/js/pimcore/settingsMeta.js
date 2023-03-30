@@ -14,7 +14,7 @@ valantic.dataquality.settings_meta = Class.create({
             const itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('valantic_dataquality_metaconfig_list'),
-                ['classname', 'locales', 'threshold_green', 'threshold_orange', 'nesting_limit', 'ignore_fallback_language'],
+                ['classname', 'locales', 'threshold_green', 'threshold_orange', 'nesting_limit', 'ignore_fallback_language', 'disable_tab_on_object'],
                 itemsPerPage,
                 {
                     autoLoad: true,
@@ -121,7 +121,14 @@ valantic.dataquality.settings_meta = Class.create({
                     text: t('valantic_dataquality_config_column_ignore_fallback_language'),
                     sortable: true,
                     dataIndex: 'ignore_fallback_language',
-                    filter: 'number',
+                    filter: 'boolean',
+                    flex: 50,
+                },
+                {
+                    text: t('valantic_dataquality_config_column_disable_tab_on_object'),
+                    sortable: true,
+                    dataIndex: 'disable_tab_on_object',
+                    filter: 'boolean',
                     flex: 50,
                 },
             ];
@@ -288,10 +295,19 @@ valantic.dataquality.settings_meta = Class.create({
             value: record ? record.get('ignore_fallback_language') : false,
         };
 
+        const disableTabOnObject = {
+            xtype: 'checkboxfield',
+            fieldLabel: t('valantic_dataquality_config_column_disable_tab_on_object'),
+            name: 'disable_tab_on_object',
+            editable: true,
+            width: 250,
+            value: record ? record.get('disable_tab_on_object') : false,
+        };
+
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
             // eslint-disable-next-line max-len
-            items: [classnameCombo, localeCombo, greenRange, orangeRange, nestingLimitRange, ignoreFallbackLanguage],
+            items: [classnameCombo, localeCombo, greenRange, orangeRange, nestingLimitRange, ignoreFallbackLanguage, disableTabOnObject],
         });
 
         const modifyWin = new Ext.Window({

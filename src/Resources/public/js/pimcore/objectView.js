@@ -17,21 +17,52 @@ valantic.dataquality.objectView = Class.create({
 
             this.activeGroups = [];
             this.activeIgnoreFallbackLanguage = null;
-            const baseStoreProxyConfig = (rootProperty) => ({
-                type: 'ajax',
-                url: Routing.generate('valantic_dataquality_score_show'),
-                noCache: false,
-                extraParams: {
-                    id: this.object.id,
+
+            this.store = Ext.create('Ext.data.Store', {
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    noCache: false,
+                    url: Routing.generate('valantic_dataquality_score_show'),
+                    actionMethods: {
+                        read: 'GET',
+                    },
+                    extraParams: {
+                        id: this.object.id,
+                    },
+                    reader: {
+                        type: 'json',
+                    },
                 },
-                reader: {
-                    type: 'json',
-                    rootProperty,
+                listeners: {
+                    // eslint-disable-next-line no-unused-vars
+                    load: (store, records, successful) => {
+                        const objectData = records[0].getData().object;
+                        const settingsData = records[0].getData().settings;
+
+                        if (objectData.color && objectData.score) {
+                            this.layout.setTitle(
+                                `${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${objectData.color}">${this.formatAsPercentage(objectData.score)}</span>)`,
+                            );
+
+                            this.globalScores = objectData.scores;
+                            this.globalColors = objectData.colors;
+                        }
+
+                        this.activeGroups = settingsData.groups;
+                        this.activeIgnoreFallbackLanguage = settingsData.ignoreFallbackLanguage;
+
+                        this.attributesStore.loadRawData(records[0].getData());
+                        this.groupsStore.loadRawData(records[0].getData());
+
+                        this.showDetail(this.globalScores, this.globalColors, t('valantic_dataquality_view_global_locales'));
+                    },
                 },
             });
 
-            this.attributesStoreConfig = () => new Ext.data.Store({
+            this.attributesStore = Ext.create('Ext.data.Store', {
                 model: modelName,
+                autoAsync: true,
                 sorters: [
                     {
                         property: 'score',
@@ -42,52 +73,13 @@ valantic.dataquality.objectView = Class.create({
                         direction: 'ASC',
                     },
                 ],
-                proxy: baseStoreProxyConfig('attributes'),
+                proxy: { type: 'memory', reader: { type: 'json', rootProperty: 'attributes' } },
             });
 
-            this.globalScores = null;
-            this.globalColors = null;
-            this.objectStoreConfig = () => new Ext.data.Store({
-                proxy: baseStoreProxyConfig('object'),
-                listeners: {
-                    load: function (store) {
-                        const data = store.getData()
-                            .getAt(0);
-
-                        if (!data.get('color')) {
-                            return;
-                        }
-                        this.layout.setTitle(
-                            `${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${this.colorMapping(data.get('color'))}">${this.formatAsPercentage(data.get('score'))}</span>)`,
-                        );
-
-                        this.globalScores = data.get('scores');
-                        this.globalColors = data.get('colors');
-                    }.bind(this),
-                },
+            this.groupsStore = Ext.create('Ext.data.Store', {
+                autoAsync: true,
+                proxy: { type: 'memory', reader: { type: 'json', rootProperty: 'groups' } },
             });
-
-            this.groupsStoreConfig = () => new Ext.data.Store({
-                proxy: baseStoreProxyConfig('groups'),
-            });
-
-            this.settingsStoreConfig = () => new Ext.data.Store({
-                proxy: baseStoreProxyConfig('settings'),
-                listeners: {
-                    load: function (store) {
-                        const data = store.getData()
-                            .getAt(0);
-
-                        this.activeGroups = data.data.groups;
-                        this.activeIgnoreFallbackLanguage = data.data.ignoreFallbackLanguage;
-                    }.bind(this),
-                },
-            });
-
-            this.attributesStore = this.attributesStoreConfig();
-            this.objectStore = this.objectStoreConfig();
-            this.groupsStore = this.groupsStoreConfig();
-            this.settingsStore = this.settingsStoreConfig();
 
             const plugins = ['pimcore.gridfilters'];
 
@@ -100,15 +92,10 @@ valantic.dataquality.objectView = Class.create({
                 style: 'margin: 0 10px 0 0;',
                 enableKeyEvents: true,
                 listeners: {
-                    keyup: function (field, key) {
-                        if (key.getKey() === key.ENTER || field.getValue().length === 0) {
-                            const input = field;
-                            const proxy = this.attributesStore.getProxy();
-                            proxy.extraParams.filterText = input.getValue();
-
-                            this.attributesStore.load();
-                        }
-                    }.bind(this),
+                    keyup: {
+                        fn: this.filterStore.bind(this),
+                        element: 'el',
+                    },
                 },
             });
 
@@ -121,30 +108,32 @@ valantic.dataquality.objectView = Class.create({
                 {
                     text: t('configure'),
                     iconCls: 'pimcore_icon_properties',
-                    handler: function () {
+                    handler: () => {
                         const formPanel = new Ext.form.FormPanel({
                             bodyStyle: 'padding:10px;',
-                            items: [new Ext.ux.form.MultiSelect({
-                                fieldLabel: t('valantic_dataquality_config_constraint_groups'),
-                                name: 'groups[]',
-                                editable: true,
-                                displayField: 'group',
-                                valueField: 'group',
-                                store: this.groupsStore,
-                                mode: 'local',
-                                triggerAction: 'all',
-                                width: 250,
-                                value: this.activeGroups,
-                            }),
-                            new Ext.form.field.Checkbox({
-                                fieldLabel: t('valantic_dataquality_config_constraint_ignore_fallback_languages'),
-                                name: 'ignoreFallbackLanguage',
-                                editable: true,
-                                mode: 'local',
-                                displayField: 'ignoreFallbackLanguage',
-                                valueField: 'ignoreFallbackLanguage',
-                                value: this.activeIgnoreFallbackLanguage,
-                            })],
+                            items: [
+                                new Ext.ux.form.MultiSelect({
+                                    fieldLabel: t('valantic_dataquality_config_constraint_groups'),
+                                    name: 'groups[]',
+                                    editable: true,
+                                    displayField: 'group',
+                                    valueField: 'group',
+                                    store: this.groupsStore,
+                                    mode: 'local',
+                                    triggerAction: 'all',
+                                    width: 250,
+                                    value: this.activeGroups,
+                                }),
+                                new Ext.form.field.Checkbox({
+                                    fieldLabel: t('valantic_dataquality_config_constraint_ignore_fallback_languages'),
+                                    name: 'ignoreFallbackLanguage',
+                                    editable: true,
+                                    mode: 'local',
+                                    displayField: 'ignoreFallbackLanguage',
+                                    valueField: 'ignoreFallbackLanguage',
+                                    value: this.activeIgnoreFallbackLanguage,
+                                }),
+                            ],
                         });
 
                         const configWin = new Ext.Window({
@@ -153,78 +142,72 @@ valantic.dataquality.objectView = Class.create({
                             height: 400,
                             closable: true,
                             items: [formPanel],
-                            buttons: [{
-                                text: t('reset'),
-                                tooltip: t('valantic_dataquality_config_settings_user_reset'),
-                                iconCls: 'pimcore_icon_delete',
-                                handler: function () {
-                                    Ext.MessageBox.confirm(t('valantic_dataquality_config_settings_user_reset_confirmation_title'), t('valantic_dataquality_config_settings_user_reset_confirmation_message'), function (confirmation) {
-                                        if (confirmation === 'yes') {
-                                            const values = {
-                                                classname: this.object.data.general.o_className,
-                                            };
+                            buttons: [
+                                {
+                                    text: t('reset'),
+                                    tooltip: t('valantic_dataquality_config_settings_user_reset'),
+                                    iconCls: 'pimcore_icon_delete',
+                                    handler: () => {
+                                        Ext.MessageBox.confirm(
+                                            t('valantic_dataquality_config_settings_user_reset_confirmation_title'),
+                                            t('valantic_dataquality_config_settings_user_reset_confirmation_message'),
+                                            (confirmation) => {
+                                                if (confirmation === 'yes') {
+                                                    const values = {
+                                                        // eslint-disable-next-line max-len
+                                                        classname: this.object.data.general.o_className,
+                                                    };
 
-                                            Ext.Ajax.request({
-                                                url: Routing.generate('valantic_dataquality_metaconfig_userreset'),
-                                                method: 'post',
-                                                params: values,
-                                                // eslint-disable-next-line no-unused-vars
-                                                success: function (response, opts) {
-                                                    // eslint-disable-next-line max-len
-                                                    this.attributesStore = this.attributesStoreConfig();
-                                                    this.objectStore = this.objectStoreConfig();
-                                                    this.settingsStore = this.settingsStoreConfig();
+                                                    Ext.Ajax.request({
+                                                        url: Routing.generate('valantic_dataquality_metaconfig_userreset'),
+                                                        method: 'post',
+                                                        params: values,
+                                                        // eslint-disable-next-line no-unused-vars
+                                                        success: (response, opts) => {
+                                                            this.store.reload();
+                                                        },
+                                                    });
 
-                                                    this.attributesStore.reload();
-                                                    this.objectStore.reload();
-                                                    this.settingsStore.reload();
-                                                }.bind(this),
-                                            });
+                                                    configWin.close();
+                                                }
+                                            },
+                                        );
+                                    },
+                                },
+                                {
+                                    text: t('apply'),
+                                    iconCls: 'pimcore_icon_accept',
+                                    handler: () => {
+                                        const values = formPanel.getForm().getFieldValues();
 
-                                            configWin.close();
-                                        }
-                                    }.bind(this));
-                                }.bind(this),
-                            },
-                            {
-                                text: t('apply'),
-                                iconCls: 'pimcore_icon_accept',
-                                handler: function () {
-                                    const values = formPanel.getForm()
-                                        .getFieldValues();
+                                        values.classname = this.object.data.general.o_className;
 
-                                    values.classname = this.object.data.general.o_className;
+                                        Ext.Ajax.request({
+                                            url: Routing.generate('valantic_dataquality_metaconfig_usermodify'),
+                                            method: 'post',
+                                            params: values,
+                                            // eslint-disable-next-line no-unused-vars
+                                            success: (response, opts) => {
+                                                this.activeGroups = values['groups[]'];
+                                                // eslint-disable-next-line max-len
+                                                this.activeIgnoreFallbackLanguage = values.ignoreFallbackLanguage;
 
-                                    Ext.Ajax.request({
-                                        url: Routing.generate('valantic_dataquality_metaconfig_usermodify'),
-                                        method: 'post',
-                                        params: values,
-                                        // eslint-disable-next-line no-unused-vars
-                                        success: function (response, opts) {
-                                            this.activeGroups = values['groups[]'];
-                                            // eslint-disable-next-line max-len
-                                            this.activeIgnoreFallbackLanguage = values.ignoreFallbackLanguage;
-
-                                            this.attributesStore = this.attributesStoreConfig();
-                                            this.objectStore = this.objectStoreConfig();
-
-                                            this.attributesStore.reload();
-                                            this.objectStore.reload();
-                                        }.bind(this),
-                                    });
-
-                                    configWin.close();
-                                }.bind(this),
-                            }],
+                                                this.store.reload();
+                                            },
+                                        });
+                                        configWin.close();
+                                    },
+                                },
+                            ],
                         });
 
                         configWin.show();
-                    }.bind(this),
+                    },
                 },
                 {
                     text: t('settings'),
                     iconCls: 'pimcore_icon_properties',
-                    handler: function () {
+                    handler: () => {
                         try {
                             pimcore.globalmanager.get('valantic_dataquality_settings')
                                 .activate({
@@ -237,7 +220,7 @@ valantic.dataquality.objectView = Class.create({
                                 filter: this.object.data.general.o_className,
                             }));
                         }
-                    }.bind(this),
+                    },
                 },
                 '->',
                 {
@@ -338,11 +321,11 @@ valantic.dataquality.objectView = Class.create({
                         dataIndex: 'score',
                         editable: false,
                         flex: 0,
-                        renderer: function (value, meta, record) {
+                        renderer: (value, meta, record) => {
                             // eslint-disable-next-line no-param-reassign
                             meta.style = this.cellStyle(record.get('color'));
                             return this.formatAsPercentage(value);
-                        }.bind(this),
+                        },
                         align: 'right',
                     },
                 ],
@@ -355,18 +338,13 @@ valantic.dataquality.objectView = Class.create({
                 },
                 stripeRows: true,
                 listeners: {
-                    rowclick: function (recordGrid, record) {
+                    rowclick: (recordGrid, record) => {
                         const label = t('valantic_dataquality_view_locales_for', null, { name: record.get('label') });
                         const note = record.get('note');
                         this.showDetail(record.data.scores, record.data.colors, label, note);
-                    }.bind(this),
+                    },
                 },
             });
-
-            grid.on('beforerender', function () {
-                this.showDetail(this.globalScores, this.globalColors, t('valantic_dataquality_view_global_locales'));
-                this.attributesStore.load();
-            }.bind(this));
 
             grid.reference = this;
 
@@ -388,18 +366,14 @@ valantic.dataquality.objectView = Class.create({
                 items: [grid, this.detailView],
             });
 
-            this.objectStore.load();
-            this.groupsStore.load();
-            this.settingsStore.load();
+            this.store.load();
         }
 
         return this.layout;
     },
 
     reload: function () {
-        this.attributesStore.reload();
-        this.objectStore.reload();
-        this.groupsStore.reload();
+        this.store.reload();
     },
 
     showDetail: function (scores, colors, label, note = null) {
@@ -440,21 +414,25 @@ valantic.dataquality.objectView = Class.create({
                     dataIndex: 'locale',
                     editable: false,
                     flex: 1,
+                    renderer: function (value) {
+                        return `${pimcore.available_languages[value]} (${value})`;
+                    },
                 },
                 {
                     text: t('valantic_dataquality_view_column_score'),
                     sortable: true,
                     dataIndex: 'score',
                     editable: false,
-                    flex: 1,
-                    renderer: function (value, meta, record) {
+                    width: 100,
+                    renderer: (value, meta, record) => {
                         // eslint-disable-next-line no-param-reassign
                         meta.style = this.cellStyle(record.get('color'));
                         return this.formatAsPercentage(value);
-                    }.bind(this),
+                    },
                     align: 'right',
                 },
             ],
+            style: 'margin-bottom: 20px',
             columnLines: true,
             stripeRows: true,
             autoScroll: true,
@@ -519,5 +497,30 @@ valantic.dataquality.objectView = Class.create({
             return `color: ${this.colorMapping(color)}; background: url('${this.colorIcon(color)}') right center no-repeat; padding-right: 30px;`;
         }
         return '';
+    },
+
+    filterStore: function (e) {
+        const searchColumns = ['attribute', 'value_preview'];
+        const query = Ext.get(e.target).getValue().toLowerCase();
+        const searchFilter = new Ext.util.Filter({
+            filterFn: function (item) {
+                let result = false;
+                Object.entries(item.data).forEach(([key, value]) => {
+                    /* skip none-search columns and null values */
+                    if (value && searchColumns.indexOf(key) >= 0) {
+                        const lValue = String(value).toLowerCase();
+
+                        /* numbers, texts */
+                        if (lValue.indexOf(query) >= 0) {
+                            result = true;
+                        }
+                    }
+                });
+                return result;
+            },
+        });
+
+        this.attributesStore.clearFilter();
+        this.attributesStore.filter(searchFilter);
     },
 });

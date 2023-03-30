@@ -19,10 +19,11 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorableInter
         }
 
         try {
+            $values = $this->value();
             foreach ($this->getValidatableLocales() as $locale) {
                 // If null, value is set to empty string due to issue with incorrect null validation
-                $value = $this->value()[$locale] ?: '';
-                $this->violations[$locale] = $this->validator->validate($value, $this->getConstraints(), $this->groups);
+                $value = $values[$locale] ?: '';
+                $this->violations[$locale] = $this->getValidator()->validate($value, $this->getConstraints(), $this->groups);
             }
         } catch (\Throwable $e) {
             $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
@@ -47,7 +48,9 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorableInter
         $scores = [];
 
         foreach ($this->getValidatableLocales() as $locale) {
-            $scores[$locale] = 1 - (count($this->violations[$locale]) / count($this->getConstraints()));
+            if (array_key_exists($locale, $this->violations)) {
+                $scores[$locale] = 1 - (count($this->violations[$locale]) / count($this->getConstraints()));
+            }
         }
 
         return $scores;
@@ -63,7 +66,9 @@ class LocalizedAttribute extends AbstractAttribute implements MultiScorableInter
         $colors = [];
 
         foreach ($this->getValidatableLocales() as $locale) {
-            $colors[$locale] = $this->calculateColor($scores[$locale]);
+            if (array_key_exists($locale, $scores)) {
+                $colors[$locale] = $this->calculateColor($scores[$locale]);
+            }
         }
 
         return $colors;

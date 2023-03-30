@@ -43,6 +43,7 @@ class MetaConfigController extends BaseController
                 'threshold_green' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::green()) * 100,
                 'threshold_orange' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::orange()) * 100,
                 'ignore_fallback_language' => $configurationRepository->getIgnoreFallbackLanguage($className),
+                'disable_tab_on_object' => $configurationRepository->getDisableTabOnObject($className),
             ];
         }
 
@@ -97,7 +98,8 @@ class MetaConfigController extends BaseController
             $request->request->getInt('threshold_green'),
             $request->request->getInt('threshold_orange'),
             $request->request->getInt('nesting_limit', 1),
-            $request->request->getBoolean('ignore_fallback_language')
+            $request->request->getBoolean('ignore_fallback_language'),
+            $request->request->getBoolean('disable_tab_on_object')
         );
 
         return $this->json([
@@ -159,7 +161,7 @@ class MetaConfigController extends BaseController
 
         /** @var User $user */
         $user = $this->getUser();
-        $settingsService->set($settings, $className, (string) $user->getId());
+        $settingsService->set($settings, $className, $user->getUserIdentifier());
 
         return $this->json([
             'status' => true,
@@ -180,7 +182,7 @@ class MetaConfigController extends BaseController
 
         /** @var User $user */
         $user = $this->getUser();
-        $settingsService->delete($className, (string) $user->getId());
+        $settingsService->delete($className, $user->getUserIdentifier());
 
         return $this->json([
             'status' => true,
