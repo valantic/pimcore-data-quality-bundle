@@ -149,9 +149,17 @@ class ConfigurationRepository
     /**
      * @param class-string $className
      */
+    public function getDisableTabOnObject(string $className): bool
+    {
+        return (bool) $this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_DISABLE_TAB_ON_OBJECT];
+    }
+
+    /**
+     * @param class-string $className
+     */
     public function getScoreFieldName(string $className): ?string
     {
-        return $this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME];
+        return $this->getConfigForClass($className)[Configuration::CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME] ?? null;
     }
 
     /**
@@ -206,6 +214,7 @@ class ConfigurationRepository
         int $thresholdOrange = 0,
         int $nestingLimit = 1,
         bool $ignoreFallbackLanguage = false,
+        bool $disableTabOnObject = false,
     ): void {
         $config = $this->getConfig();
         $config[Configuration::CONFIG_KEY_CLASSES] ??= [];
@@ -217,6 +226,7 @@ class ConfigurationRepository
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::orange()->value] = $thresholdOrange / 100;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT] = $nestingLimit;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE] = $ignoreFallbackLanguage;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_DISABLE_TAB_ON_OBJECT] = $disableTabOnObject;
 
         $this->setConfig($config);
     }
@@ -370,11 +380,18 @@ class ConfigurationRepository
             $containerConfig = $this->parameterBag->get(self::CONTAINER_TAG);
 
             $additionalConfig = [];
+
             if ($this->getConfigFile() !== null) {
-                $additionalConfig = Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY] ?? [];
+                $systemConfig = Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY] ?? [];
+
+                $configuration = new Configuration();
+                $configTree = $configuration->getConfigTreeBuilder()->buildTree();
+
+                $currentConfig = $configTree->normalize($systemConfig);
+                $additionalConfig = $configTree->finalize($currentConfig);
             }
 
-            $this->config = array_merge_recursive($containerConfig, $additionalConfig);
+            $this->config = array_replace_recursive($containerConfig, $additionalConfig);
         }
 
         return $this->config ?: [];

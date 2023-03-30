@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
-use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use ReflectionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -13,7 +12,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Valantic\DataQualityBundle\DependencyInjection\Configuration;
 use Valantic\DataQualityBundle\Event\ConstraintFailureEvent;
 use Valantic\DataQualityBundle\Event\InvalidConstraintEvent;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
@@ -31,9 +29,9 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
 {
     use ColorScoreTrait;
     use SafeArray;
-    protected ValidatorInterface $validator;
+    protected ?ValidatorInterface $validator = null;
     protected array $validationConfig;
-    protected Concrete $obj;
+    protected DataObject\Concrete $obj;
     protected string $attribute;
     protected array $groups;
     protected array $skippedConstraints;
@@ -69,8 +67,6 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         protected ConfigurationRepository $configurationRepository,
         protected DataObjectConfigRepository $dataObjectConfigRepository,
     ) {
-        $validationBuilder = Validation::createValidatorBuilder();
-        $this->validator = $validationBuilder->getValidator();
     }
 
     public function __clone(): void
@@ -86,7 +82,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     }
 
     public function configure(
-        Concrete $obj,
+        DataObject\Concrete $obj,
         string $attribute,
         array $groups,
         array $skippedConstraints,
@@ -121,7 +117,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     public function validate(): void
     {
         try {
-            $this->violations = $this->validator->validate($this->value(), $this->getConstraints(), $this->groups);
+            $this->violations = $this->getValidator()->validate($this->value(), $this->getConstraints(), $this->groups);
         } catch (\Throwable $e) {
             $this->eventDispatcher->dispatch(new ConstraintFailureEvent($e, $this->obj->getId(), $this->attribute, $this->violations));
         }
@@ -199,19 +195,20 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
      *
      * @throws \Exception
      */
-    protected function valueInherited(Concrete $obj, ?string $locale = null): mixed
+    protected function valueInherited(DataObject\Concrete $obj, ?string $locale = null): mixed
     {
-        if ($obj->getParentId() === null || !($obj->getParent() instanceof Concrete) || $obj->get($this->attribute, $locale)) {
-            $oldValue = Configuration::getDefaultIgnoreFallbackLanguage();
+        $orgInheritedValues = DataObject::getGetInheritedValues();
+        $orgFallbackValues = DataObject\Localizedfield::getGetFallbackValues();
 
-            $this->setGetFallbackValues(!$this->ignoreFallbackLanguage);
-            $value = $obj->get($this->attribute, $locale);
-            $this->setGetFallbackValues($oldValue);
+        DataObject::setGetInheritedValues(true);
+        DataObject\Localizedfield::setGetFallbackValues(!$this->ignoreFallbackLanguage);
 
-            return $value;
-        }
+        $value = $obj->get($this->attribute, $locale);
 
-        return $this->valueInherited($obj->getParent(), $locale);
+        DataObject::setGetInheritedValues($orgInheritedValues);
+        DataObject\Localizedfield::setGetFallbackValues($orgFallbackValues);
+
+        return $value;
     }
 
     /**
@@ -234,11 +231,13 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
         );
     }
 
-    /**
-     * Sets pimcore setting to get language fallback values
-     */
-    protected function setGetFallbackValues(bool $value): void
+    protected function getValidator(): ValidatorInterface
     {
-        Localizedfield::setGetFallbackValues($value);
+        if ($this->validator === null) {
+            $validationBuilder = Validation::createValidatorBuilder();
+            $this->validator = $validationBuilder->getValidator();
+        }
+
+        return $this->validator;
     }
 }

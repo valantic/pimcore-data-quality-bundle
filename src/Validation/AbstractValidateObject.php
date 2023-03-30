@@ -87,7 +87,7 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
 
         /** @var User */
         $user = $this->securityService->getUser();
-        $userConfig = $this->settingsService->get($this->obj->getClassName(), (string) $user->getId());
+        $userConfig = $this->settingsService->get($this->obj->getClassName(), $user->getUserIdentifier());
 
         return $this->cache->get(
             md5(sprintf(

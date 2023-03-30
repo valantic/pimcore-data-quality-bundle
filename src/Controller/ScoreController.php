@@ -56,7 +56,7 @@ class ScoreController extends BaseController
 
         /** @var User $user */
         $user = $this->getUser();
-        $userConfig = $settingsService->get($obj->getClassName(), (string) $user->getId());
+        $userConfig = $settingsService->get($obj->getClassName(), $user->getUserIdentifier());
 
         return $cache->get(
             $this->getCacheKey($request, $config, $userConfig),
@@ -145,10 +145,15 @@ class ScoreController extends BaseController
         }
 
         $config = $configurationRepository->getForClass($obj::class);
+        if (empty($config['config']) || $configurationRepository->getDisableTabOnObject($obj::class)) {
+            return $this->json([
+                'status' => false,
+            ]);
+        }
 
         /** @var User $user */
         $user = $this->getUser();
-        $userConfig = $settingsService->get($obj->getClassName(), (string) $user->getId());
+        $userConfig = $settingsService->get($obj->getClassName(), $user->getUserIdentifier());
 
         return $cache->get(
             $this->getCacheKey($request, $config, $userConfig),

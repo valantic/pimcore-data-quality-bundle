@@ -19,6 +19,7 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_CLASSES_CONFIG_LOCALES = 'locales';
     public const CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT = 'nesting_limit';
     public const CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE = 'ignore_fallback_language';
+    public const CONFIG_KEY_CLASSES_CONFIG_DISABLE_TAB_ON_OBJECT = 'disable_tab_on_object';
     public const CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME = 'score_field_name';
     public const CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS = 'thresholds';
     public const CONFIG_KEY_CLASSES_ATTRIBUTES = 'attributes';
@@ -101,6 +102,10 @@ class Configuration implements ConfigurationInterface
             ->booleanNode(self::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE)
             ->info('Value to determine whether or not to ignore fallback language')
             ->defaultValue(self::getDefaultIgnoreFallbackLanguage())
+            ->end()
+            ->booleanNode(self::CONFIG_KEY_CLASSES_CONFIG_DISABLE_TAB_ON_OBJECT)
+            ->info('Hide DataQuality tab on object')
+            ->defaultValue(false)
             ->end()
             ->scalarNode(self::CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME)
             ->info('Field name for storing data quality score')
