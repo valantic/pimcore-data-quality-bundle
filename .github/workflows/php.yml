@@ -1,0 +1,92 @@
+name: PHP Checks
+
+on: [ push, pull_request ]
+
+
+jobs:
+
+  phpunit:
+
+    name: phpunit (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ ubuntu-latest ]
+        php-versions: [ '8.0', '8.1', '8.2' ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: curl
+          coverage: xdebug
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v2
+
+      - name: Static analysis using phpstan
+        run: composer run test
+
+  phpstan_pimcore10:
+
+    name: phpstan (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ ubuntu-latest ]
+        php-versions: [ '8.0', '8.1', '8.2' ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: curl
+          coverage: xdebug
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v2
+
+      - name: Static analysis using phpstan
+        run: composer run phpstan -- --error-format=github
+
+  php-cs-fixer:
+
+    name: php-cs-fixer
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ ubuntu-latest ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          extensions: curl
+          coverage: xdebug
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v2
+
+      - name: Ensure code style using php-cs-fixer
+        run: composer run php-cs-fixer-check

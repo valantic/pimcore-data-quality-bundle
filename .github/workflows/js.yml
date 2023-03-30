@@ -1,0 +1,23 @@
+name: JS Checks
+
+on: [ push, pull_request ]
+
+
+jobs:
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Code Linting
+        run: npm run lint
