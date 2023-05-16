@@ -9,6 +9,7 @@ use Pimcore\Model\Element\ElementInterface;
 use ReflectionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -42,7 +43,7 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
      *
      * @var array|ConstraintViolationListInterface[]
      */
-    protected array $violations = [];
+    protected ConstraintViolationList $violations;
     protected AbstractDefinitionInformation $classInformation;
 
     /**
