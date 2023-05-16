@@ -38,11 +38,6 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     protected array $skippedConstraints;
     protected ?bool $ignoreFallbackLanguage;
 
-    /**
-     * Violations found during validation.
-     *
-     * @var array|ConstraintViolationListInterface[]
-     */
     protected ConstraintViolationList $violations;
     protected AbstractDefinitionInformation $classInformation;
 
