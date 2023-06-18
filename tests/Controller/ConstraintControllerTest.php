@@ -9,11 +9,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Valantic\DataQualityBundle\Controller\ConstraintConfigController;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
+use Valantic\DataQualityBundle\Service\CacheService;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class ConstraintControllerTest extends AbstractTestCase
 {
     protected MockObject|ConstraintConfigController $controller;
+    protected MockObject|CacheService $cacheService;
 
     /** @var class-string */
     protected string $className = 'SomeClass';
@@ -27,6 +29,9 @@ class ConstraintControllerTest extends AbstractTestCase
 
     protected function setUp(): void
     {
+        $this->cacheService = $this->getMockBuilder(CacheService::class)
+            ->onlyMethods(['clearTag'])->getMock();
+
         $this->controller = $this->getMockBuilder(ConstraintConfigController::class)
             ->onlyMethods(['getClassNames'])
             ->getMock();
@@ -193,7 +198,11 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testAddAttributeMissingData(): void
     {
         $this->assertCount(0, $this->configurationRepository->getConfiguredAttributes($this->className));
-        $response = $this->controller->addAttributeAction(Request::create('/', 'POST'), $this->configurationRepository);
+        $response = $this->controller->addAttributeAction(
+            Request::create('/', 'POST'),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -211,10 +220,14 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testAddAttributePartialData(): void
     {
         $this->assertCount(0, $this->configurationRepository->getConfiguredAttributes($this->className));
-        $response = $this->controller->addAttributeAction(Request::create('/', 'POST', [
-            'classname' => $this->className,
-            'attributename' => $this->attributeName,
-        ]), $this->configurationRepository);
+        $response = $this->controller->addAttributeAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->className,
+                'attributename' => $this->attributeName,
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -236,11 +249,15 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testAddAttributeCompleteData(): void
     {
         $this->assertCount(0, $this->configurationRepository->getConfiguredAttributes($this->className));
-        $response = $this->controller->addAttributeAction(Request::create('/', 'POST', [
-            'classname' => $this->className,
-            'attributename' => $this->attributeName,
-            'note' => 'NOTE',
-        ]), $this->configurationRepository);
+        $response = $this->controller->addAttributeAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->className,
+                'attributename' => $this->attributeName,
+                'note' => 'NOTE',
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -262,7 +279,11 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testDeleteAttributeMissingData(): void
     {
         $this->assertCount(6, $this->configurationRepository->getConfiguredAttributes($this->classNameConfigured));
-        $response = $this->controller->deleteAttributeAction(Request::create('/', 'POST'), $this->configurationRepository);
+        $response = $this->controller->deleteAttributeAction(
+            Request::create('/', 'POST'),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -280,10 +301,14 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testDeleteAttributeCompleteData(): void
     {
         $this->assertCount(6, $this->configurationRepository->getConfiguredAttributes($this->classNameConfigured));
-        $response = $this->controller->deleteAttributeAction(Request::create('/', 'POST', [
-            'classname' => $this->classNameConfigured,
-            'attributename' => 'name',
-        ]), $this->configurationRepository);
+        $response = $this->controller->deleteAttributeAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->classNameConfigured,
+                'attributename' => 'name',
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -331,10 +356,14 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testAddConstraintMissingData(): void
     {
         $this->assertFalse($this->configurationRepository->isClassConfigured($this->className));
-        $response = $this->controller->addConstraintAction(Request::create('/', 'POST', [
-            'classname' => $this->className,
-            'attributename' => $this->attributeName,
-        ]), $this->configurationRepository);
+        $response = $this->controller->addConstraintAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->className,
+                'attributename' => $this->attributeName,
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -352,11 +381,15 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testAddConstraintPartialData(): void
     {
         $this->assertCount(0, $this->configurationRepository->getConfiguredAttributes($this->className));
-        $response = $this->controller->addConstraintAction(Request::create('/', 'POST', [
-            'classname' => $this->className,
-            'attributename' => $this->attributeName,
-            'constraint' => $this->constraintName,
-        ]), $this->configurationRepository);
+        $response = $this->controller->addConstraintAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->className,
+                'attributename' => $this->attributeName,
+                'constraint' => $this->constraintName,
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -377,12 +410,16 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testAddConstraintCompleteData(): void
     {
         $this->assertCount(0, $this->configurationRepository->getConfiguredAttributes($this->className));
-        $response = $this->controller->addConstraintAction(Request::create('/', 'POST', [
-            'classname' => $this->className,
-            'attributename' => $this->attributeName,
-            'constraint' => $this->constraintName,
-            'params' => json_encode($this->constraintParams, \JSON_THROW_ON_ERROR),
-        ]), $this->configurationRepository);
+        $response = $this->controller->addConstraintAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->className,
+                'attributename' => $this->attributeName,
+                'constraint' => $this->constraintName,
+                'params' => json_encode($this->constraintParams, \JSON_THROW_ON_ERROR),
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -403,10 +440,14 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testDeleteConstraintMissingData(): void
     {
         $this->assertCount(2, $this->configurationRepository->getRulesForAttribute($this->classNameConfigured, 'name'));
-        $response = $this->controller->deleteConstraintAction(Request::create('/', 'POST', [
-            'classname' => $this->classNameConfigured,
-            'attributename' => 'name',
-        ]), $this->configurationRepository);
+        $response = $this->controller->deleteConstraintAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->classNameConfigured,
+                'attributename' => 'name',
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -424,11 +465,15 @@ class ConstraintControllerTest extends AbstractTestCase
     public function testDeleteConstraintCompleteData(): void
     {
         $this->assertCount(2, $this->configurationRepository->getRulesForAttribute($this->classNameConfigured, 'name'));
-        $response = $this->controller->deleteConstraintAction(Request::create('/', 'POST', [
-            'classname' => $this->classNameConfigured,
-            'attributename' => 'name',
-            'constraint' => 'Length',
-        ]), $this->configurationRepository);
+        $response = $this->controller->deleteConstraintAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->classNameConfigured,
+                'attributename' => 'name',
+                'constraint' => 'Length',
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);

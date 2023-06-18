@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
-use Valantic\DataQualityBundle\Validation\BaseColorableInterface;
+use Valantic\DataQualityBundle\Validation\ColorableInterface;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 
 abstract class AbstractValidator extends ConstraintValidator
@@ -49,7 +49,7 @@ abstract class AbstractValidator extends ConstraintValidator
             $validation->validate();
             $totalCount++;
 
-            if ($validation->color() === $this->getThresholdKey() || ($this->getThresholdKey() === BaseColorableInterface::COLOR_ORANGE && $validation->color() === BaseColorableInterface::COLOR_GREEN)) {
+            if ($validation->color() === $this->getThresholdKey() || ($this->getThresholdKey() === ColorableInterface::COLOR_ORANGE && $validation->color() === ColorableInterface::COLOR_GREEN)) {
                 $validCount++;
             } else {
                 $failedIds[] = $id;

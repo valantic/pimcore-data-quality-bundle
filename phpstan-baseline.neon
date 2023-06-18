@@ -11,31 +11,6 @@ parameters:
 			path: src/Constraint/RelationScore/AbstractValidator.php
 
 		-
-			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:addClassAttribute\\(\\) expects class\\-string, string\\|string given\\.$#"
-			count: 1
-			path: src/Controller/ConstraintConfigController.php
-
-		-
-			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:deleteClassAttribute\\(\\) expects class\\-string, string\\|string given\\.$#"
-			count: 1
-			path: src/Controller/ConstraintConfigController.php
-
-		-
-			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:deleteRule\\(\\) expects class\\-string, string\\|string given\\.$#"
-			count: 1
-			path: src/Controller/ConstraintConfigController.php
-
-		-
-			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:modifyNote\\(\\) expects class\\-string, string\\|string given\\.$#"
-			count: 1
-			path: src/Controller/ConstraintConfigController.php
-
-		-
-			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:modifyRule\\(\\) expects class\\-string, string\\|string given\\.$#"
-			count: 1
-			path: src/Controller/ConstraintConfigController.php
-
-		-
 			message: "#^Parameter \\#1 \\$name of method Valantic\\\\DataQualityBundle\\\\Service\\\\Information\\\\DefinitionInformationFactory\\:\\:make\\(\\) expects class\\-string, bool\\|float\\|int\\|string\\|null given\\.$#"
 			count: 1
 			path: src/Controller/ConstraintConfigController.php
@@ -51,22 +26,7 @@ parameters:
 			path: src/Controller/ConstraintConfigController.php
 
 		-
-			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:deleteClassConfig\\(\\) expects class\\-string, string\\|string given\\.$#"
-			count: 1
-			path: src/Controller/MetaConfigController.php
-
-		-
-			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:setClassConfig\\(\\) expects class\\-string, string\\|string given\\.$#"
-			count: 1
-			path: src/Controller/MetaConfigController.php
-
-		-
 			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\:\\:get\\(\\) expects bool\\|float\\|int\\|string\\|null, array given\\.$#"
-			count: 1
-			path: src/Controller/MetaConfigController.php
-
-		-
-			message: "#^Parameter \\#2 \\$locales of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:setClassConfig\\(\\) expects array, bool\\|float\\|int\\|string\\|null given\\.$#"
 			count: 1
 			path: src/Controller/MetaConfigController.php
 
@@ -149,29 +109,4 @@ parameters:
 			message: "#^Instanceof between Valantic\\\\DataQualityBundle\\\\Validation\\\\DataObject\\\\Attributes\\\\AbstractAttribute and Valantic\\\\DataQualityBundle\\\\Validation\\\\ScorableInterface will always evaluate to true\\.$#"
 			count: 1
 			path: src/Validation/AbstractValidateObject.php
-
-		-
-			message: "#^Only booleans are allowed in a negated boolean, bool\\|null given\\.$#"
-			count: 1
-			path: src/Validation/DataObject/Attributes/AbstractAttribute.php
-
-		-
-			message: "#^Property Valantic\\\\DataQualityBundle\\\\Validation\\\\DataObject\\\\Attributes\\\\AbstractAttribute\\:\\:\\$violations \\(array\\<Symfony\\\\Component\\\\Validator\\\\ConstraintViolationListInterface\\>\\) does not accept Symfony\\\\Component\\\\Validator\\\\ConstraintViolationListInterface\\.$#"
-			count: 1
-			path: src/Validation/DataObject/Attributes/AbstractAttribute.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge_recursive expects array, Symfony\\\\Component\\\\Validator\\\\ConstraintViolationListInterface given\\.$#"
-			count: 1
-			path: src/Validation/DataObject/Attributes/FieldCollectionAttribute.php
-
-		-
-			message: "#^Variable method call on Pimcore\\\\Model\\\\DataObject\\\\Objectbrick\\.$#"
-			count: 1
-			path: src/Validation/DataObject/Attributes/ObjectBrickAttribute.php
-
-		-
-			message: "#^Variable method call on Pimcore\\\\Model\\\\DataObject\\\\Objectbrick\\\\Data\\\\AbstractData\\.$#"
-			count: 1
-			path: src/Validation/DataObject/Attributes/ObjectBrickAttribute.php
 

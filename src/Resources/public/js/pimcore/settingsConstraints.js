@@ -131,8 +131,7 @@ valantic.dataquality.settings_constraints = Class.create({
                     forceFit: true,
                 },
                 listeners: {
-                    // eslint-disable-next-line no-unused-vars
-                    rowclick: function (grid, record, tr, rowIndex, e, eOpts) {
+                    rowclick: function (grid, record) {
                         this.showDetail(record);
                     }.bind(this),
                     rowdblclick: this.onModifyMain.bind(this),
@@ -173,8 +172,7 @@ valantic.dataquality.settings_constraints = Class.create({
         this.store.load();
     },
 
-    // eslint-disable-next-line no-unused-vars
-    onMainContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+    onMainContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e) {
         const rec = this.store.getAt(rowIndex);
 
         const menu = new Ext.menu.Menu();
@@ -189,8 +187,7 @@ valantic.dataquality.settings_constraints = Class.create({
                         classname: rec.get('classname'),
                         attributename: rec.get('attributename'),
                     },
-                    // eslint-disable-next-line no-unused-vars
-                    success: function (response, opts) {
+                    success: function () {
                         this.store.reload();
                     }.bind(this),
                 });
@@ -201,8 +198,7 @@ valantic.dataquality.settings_constraints = Class.create({
         menu.showAt(e.pageX, e.pageY);
     },
 
-    // eslint-disable-next-line no-unused-vars
-    onDetailContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+    onDetailContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e) {
         const menu = new Ext.menu.Menu();
         menu.add([{
             text: t('delete'),
@@ -216,11 +212,9 @@ valantic.dataquality.settings_constraints = Class.create({
                         attributename: this.record.get('attributename'),
                         constraint: record.get('constraint'),
                     },
-                    // eslint-disable-next-line no-unused-vars
-                    success: function (response, opts) {
+                    success: function () {
                         this.store.reload({
-                            // eslint-disable-next-line no-unused-vars
-                            callback: function (records, operation, success) {
+                            callback: function () {
                                 const updatedRecord = this.store.data.items
                                     .filter((r) => r.get('classname') === this.record.get('classname'))
                                     .filter((r) => r.get('attributename') === this.record.get('attributename'))[0];
@@ -269,8 +263,7 @@ valantic.dataquality.settings_constraints = Class.create({
                     sortable: true,
                     dataIndex: 'args',
                     flex: 30,
-                    // eslint-disable-next-line no-unused-vars
-                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    renderer: function (value) {
                         return value ? JSON.stringify(value) : '';
                     },
                 },
@@ -324,35 +317,30 @@ valantic.dataquality.settings_constraints = Class.create({
             },
         });
 
-        const attributenameCombo = new Ext.form.field.ComboBox({
-            xtype: 'combo',
+        const attributenameCombo = Ext.create('Ext.form.ComboBox', {
             fieldLabel: t('valantic_dataquality_config_column_attributename'),
+            store: attributesStore,
+            readOnly: (record && record.get('attributename')),
+            queryMode: 'local',
             name: 'attributename',
-            editable: true,
             displayField: 'name',
             valueField: 'name',
-            store: attributesStore,
-            mode: 'local',
-            triggerAction: 'all',
-            width: 250,
+            width: 350,
             value: record ? record.get('attributename') : null,
         });
 
-        const classnameCombo = {
-            xtype: 'combo',
+        const classnameCombo = Ext.create('Ext.form.ComboBox', {
             fieldLabel: t('valantic_dataquality_config_column_classname'),
+            store: this.classesStore,
+            readOnly: (record && record.get('classname')),
+            queryMode: 'local',
             name: 'classname',
-            editable: true,
             displayField: 'short',
             valueField: 'name',
-            store: this.classesStore,
-            mode: 'local',
-            triggerAction: 'all',
-            width: 250,
+            width: 350,
             value: record ? record.get('classname') : null,
             listeners: {
-                // eslint-disable-next-line no-unused-vars
-                select: function (combo, value, index) {
+                select: function (combo) {
                     const classname = combo.getValue();
                     attributesStore.getProxy().setExtraParams({
                         classname: classname,
@@ -361,7 +349,8 @@ valantic.dataquality.settings_constraints = Class.create({
                     attributenameCombo.clearValue();
                 },
             },
-        };
+        });
+
         const noteTextare = {
             xtype: 'textareafield',
             fieldLabel: t('valantic_dataquality_config_column_note'),
@@ -371,6 +360,7 @@ valantic.dataquality.settings_constraints = Class.create({
             height: 100,
             value: record ? record.get('note') : null,
         };
+
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
             items: [classnameCombo, attributenameCombo, noteTextare],
@@ -378,7 +368,7 @@ valantic.dataquality.settings_constraints = Class.create({
 
         const addMainWin = new Ext.Window({
             modal: true,
-            width: 300,
+            width: 380,
             height: 300,
             closable: true,
             items: [formPanel],
@@ -392,8 +382,7 @@ valantic.dataquality.settings_constraints = Class.create({
                         url: Routing.generate('valantic_dataquality_constraintconfig_addattribute'),
                         method: 'post',
                         params: values,
-                        // eslint-disable-next-line no-unused-vars
-                        success: function (response, opts) {
+                        success: function () {
                             this.store.reload();
                         }.bind(this),
                     });
@@ -405,6 +394,7 @@ valantic.dataquality.settings_constraints = Class.create({
 
         addMainWin.show();
     },
+
     onModifyDetail: function (tree, possibleRecord, onlyDefinedIfEdit) {
         const record = onlyDefinedIfEdit ? possibleRecord : null;
         const constraintsStore = new Ext.data.Store({
@@ -447,27 +437,26 @@ valantic.dataquality.settings_constraints = Class.create({
             })}</p>`);
         };
 
+        const constraintsCombo = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: t('valantic_dataquality_config_column_constraint'),
+            store: constraintsStore,
+            queryMode: 'local',
+            name: 'constraint',
+            displayField: 'label',
+            valueField: 'name',
+            width: 250,
+            value: record ? record.get('constraint') : null,
+            listeners: {
+                select: function (combo, value) {
+                    refreshConstraintParametersHelper(combo.getValue(), value);
+                },
+            },
+        });
+
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
             items: [
-                {
-                    xtype: 'combo',
-                    fieldLabel: t('valantic_dataquality_config_column_constraint'),
-                    name: 'constraint',
-                    editable: true,
-                    displayField: 'label',
-                    valueField: 'name',
-                    store: constraintsStore,
-                    mode: 'local',
-                    triggerAction: 'all',
-                    width: 400,
-                    value: record ? record.get('constraint') : null,
-                    listeners: {
-                        select: function (combo, value) {
-                            refreshConstraintParametersHelper(combo.getValue(), value);
-                        },
-                    },
-                },
+                constraintsCombo,
                 constraintParametersHelper,
                 {
                     xtype: 'textareafield',
@@ -565,11 +554,9 @@ valantic.dataquality.settings_constraints = Class.create({
                             classname: this.record.get('classname'),
                             attributename: this.record.get('attributename'),
                         },
-                        // eslint-disable-next-line no-unused-vars
-                        success: function (response, opts) {
+                        success: function () {
                             this.store.reload({
-                                // eslint-disable-next-line no-unused-vars
-                                callback: function (records, operation, success) {
+                                callback: function () {
                                     const updatedRecord = this.store.data.items
                                         .filter((rec) => rec.get('classname') === this.record.get('classname'))
                                         .filter((rec) => rec.get('attributename') === this.record.get('attributename'))[0];

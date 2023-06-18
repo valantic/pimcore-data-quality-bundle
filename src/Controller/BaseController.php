@@ -7,6 +7,7 @@ namespace Valantic\DataQualityBundle\Controller;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Listing as ClassDefinitionListing;
+use Valantic\DataQualityBundle\Repository\DataObjectRepository;
 use Valantic\DataQualityBundle\Shared\ClassBasenameTrait;
 
 abstract class BaseController extends AdminController
@@ -22,7 +23,7 @@ abstract class BaseController extends AdminController
         $classes = $classesList->load();
 
         return array_map(
-            fn (ClassDefinition $classDefinition): string => sprintf('Pimcore\Model\DataObject\%s', $classDefinition->getName()),
+            fn (ClassDefinition $classDefinition): string => sprintf('%s\%s', DataObjectRepository::PIMCORE_DATA_OBJECT_NAMESPACE, $classDefinition->getName()),
             $classes
         );
     }

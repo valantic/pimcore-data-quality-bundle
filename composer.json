@@ -6,7 +6,7 @@
   "require": {
     "php": "^8.0",
     "ext-json": "*",
-    "pimcore/pimcore": "^10.0",
+    "pimcore/pimcore": "^10.5",
     "spatie/enum": "^3.13",
     "symfony/validator": "^5.0"
   },

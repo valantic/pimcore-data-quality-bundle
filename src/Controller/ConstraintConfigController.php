@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
+use Valantic\DataQualityBundle\Service\CacheService;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SortOrderTrait;
 
@@ -71,7 +72,7 @@ class ConstraintConfigController extends BaseController
         $this->checkPermission(self::CONFIG_NAME);
 
         $classNames = array_map(
-            fn ($name): array => ['name' => $name, 'short' => $this->classBasename($name)],
+            fn ($name): array => ['name' => $name, 'short' => self::classBasename($name)],
             $this->getClassNames()
         );
 
@@ -119,22 +120,30 @@ class ConstraintConfigController extends BaseController
      * Adds a new classname-attributename pair to the config.
      */
     #[Route('/attributes', options: ['expose' => true], methods: ['POST'])]
-    public function addAttributeAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
+    public function addAttributeAction(Request $request, ConfigurationRepository $configurationRepository, CacheService $cacheService): JsonResponse
     {
-        if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
+        /** @var class-string $className */
+        $className = (string) $request->request->get('classname');
+        $attributeName = (string) $request->request->get('attributename');
+        $note = $request->request->get('note');
+
+        if (empty($className) || empty($attributeName)) {
             return $this->json(['status' => false]);
         }
 
         $this->checkPermission(self::CONFIG_NAME);
         $configurationRepository->addClassAttribute(
-            (string) $request->request->get('classname'),
-            (string) $request->request->get('attributename')
+            $className,
+            $attributeName
         );
         $configurationRepository->modifyNote(
-            (string) $request->request->get('classname'),
-            (string) $request->request->get('attributename'),
-            $request->request->get('note'),
+            $className,
+            $attributeName,
+            $note,
         );
+        $configurationRepository->persist();
+
+        $cacheService->clearTag(sprintf('%s_%s', CacheService::DATA_QUALITY_CACHE_KEY, self::classBasename($className)));
 
         return $this->json([
             'status' => true,
@@ -145,17 +154,27 @@ class ConstraintConfigController extends BaseController
      * Deletes a classname-attributename pair from the config.
      */
     #[Route('/attributes', options: ['expose' => true], methods: ['DELETE'])]
-    public function deleteAttributeAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
-    {
-        if (empty($request->request->get('classname')) || empty($request->request->get('attributename'))) {
+    public function deleteAttributeAction(
+        Request $request,
+        ConfigurationRepository $configurationRepository,
+        CacheService $cacheService,
+    ): JsonResponse {
+        /** @var class-string $className */
+        $className = (string) $request->request->get('classname');
+        $attributeName = (string) $request->request->get('attributename');
+
+        if (empty($className) || empty($attributeName)) {
             return $this->json(['status' => false]);
         }
 
         $this->checkPermission(self::CONFIG_NAME);
         $configurationRepository->deleteClassAttribute(
-            (string) $request->request->get('classname'),
-            (string) $request->request->get('attributename')
+            $className,
+            $attributeName
         );
+        $configurationRepository->persist();
+
+        $cacheService->clearTag(sprintf('%s_%s', CacheService::DATA_QUALITY_CACHE_KEY, self::classBasename($className)));
 
         return $this->json([
             'status' => true,
@@ -191,19 +210,31 @@ class ConstraintConfigController extends BaseController
      * Adds a new constraint for a class attribute to the config.
      */
     #[Route('/constraints', options: ['expose' => true], methods: ['POST'])]
-    public function addConstraintAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
-    {
-        if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
+    public function addConstraintAction(
+        Request $request,
+        ConfigurationRepository $configurationRepository,
+        CacheService $cacheService,
+    ): JsonResponse {
+        /** @var class-string $className */
+        $className = (string) $request->request->get('classname');
+        $attributeName = (string) $request->request->get('attributename');
+        $constraint = (string) $request->request->get('constraint');
+        $params = $request->request->get('params');
+
+        if (empty($className) || empty($attributeName) || empty($constraint)) {
             return $this->json(['status' => false]);
         }
 
         $this->checkPermission(self::CONFIG_NAME);
         $configurationRepository->modifyRule(
-            (string) $request->request->get('classname'),
-            (string) $request->request->get('attributename'),
-            (string) $request->request->get('constraint'),
-            $request->request->get('params')
+            $className,
+            $attributeName,
+            $constraint,
+            $params
         );
+        $configurationRepository->persist();
+
+        $cacheService->clearTag(sprintf('%s_%s', CacheService::DATA_QUALITY_CACHE_KEY, self::classBasename($className)));
 
         return $this->json([
             'status' => true,
@@ -214,18 +245,29 @@ class ConstraintConfigController extends BaseController
      * Delete a constraint for a class attribute from the config.
      */
     #[Route('/constraints', options: ['expose' => true], methods: ['DELETE'])]
-    public function deleteConstraintAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
-    {
-        if (empty($request->request->get('classname')) || empty($request->request->get('attributename')) || empty($request->request->get('constraint'))) {
+    public function deleteConstraintAction(
+        Request $request,
+        ConfigurationRepository $configurationRepository,
+        CacheService $cacheService,
+    ): JsonResponse {
+        /** @var class-string $className */
+        $className = (string) $request->request->get('classname');
+        $attributeName = (string) $request->request->get('attributename');
+        $constraint = (string) $request->request->get('constraint');
+
+        if (empty($className) || empty($attributeName) || empty($constraint)) {
             return $this->json(['status' => false]);
         }
 
         $this->checkPermission(self::CONFIG_NAME);
         $configurationRepository->deleteRule(
-            (string) $request->request->get('classname'),
-            (string) $request->request->get('attributename'),
-            (string) $request->request->get('constraint')
+            $className,
+            $attributeName,
+            $constraint
         );
+        $configurationRepository->persist();
+
+        $cacheService->clearTag(sprintf('%s_%s', CacheService::DATA_QUALITY_CACHE_KEY, self::classBasename($className)));
 
         return $this->json([
             'status' => true,

@@ -2,8 +2,6 @@
 
 namespace Valantic\DataQualityBundle\Enum;
 
-use Spatie\Enum\Enum;
-
 // TODO: refactor enum once PHP 8.1+
 interface UtilConstants
 {

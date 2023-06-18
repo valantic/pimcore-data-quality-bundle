@@ -18,17 +18,8 @@ services:
 
     Valantic\DataQualityBundle\Validation\DataObject\Validate: '@valantic_dataquality_validate_dataobject'
 
-    Valantic\DataQualityBundle\Command\:
-        resource: '../../Command'
-        tags: [ 'console.command' ]
-
-
     Valantic\DataQualityBundle\Installer\Installer:
         public: true
-
-    Valantic\DataQualityBundle\EventListener\KernelTerminateListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate }
 
     Valantic\DataQualityBundle\Service\:
         resource: '../../Service'
@@ -49,6 +40,8 @@ services:
     valantic_dataquality_validate_dataobject:
         public: true
         class: 'Valantic\DataQualityBundle\Validation\DataObject\Validate'
+        arguments:
+            $normalizer: '@valantic.dataquality.serializer'
 
     Valantic\DataQualityBundle\Repository\DataObjectConfigRepository:
         arguments:
@@ -62,10 +55,18 @@ services:
 
     Valantic\DataQualityBundle\EventListener\CacheListener:
         tags:
-            - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: handle }
-            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: handle }
-            - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: handle }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: handleObject }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: handleObject }
+            - { name: kernel.event_listener, event: pimcore.user.postUpdate, method: handleUser }
+            - { name: kernel.event_listener, event: pimcore.user.preDelete, method: handleUser }
 
-    Valantic\DataQualityBundle\EventListener\AdminObjectListListener:
+    # Pimcore Grid column configurations
+    Valantic\DataQualityBundle\Pimcore\GridColumnConfig\Operator\Factory\DataQualityColorFactory:
+        public: true
         tags:
-            - { name: kernel.event_listener, event: pimcore.admin.object.list.beforeListLoad, method: handle }
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: dataquality_color }
+
+    Valantic\DataQualityBundle\Pimcore\GridColumnConfig\Operator\Factory\DataQualityScoreFactory:
+        public: true
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: dataquality_score }
