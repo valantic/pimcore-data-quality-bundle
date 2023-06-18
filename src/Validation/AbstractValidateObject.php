@@ -4,36 +4,33 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Validation;
 
-use Pimcore\Bundle\AdminBundle\Security\User\User;
+use Pimcore\Localization\LocaleService;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Tool;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Valantic\DataQualityBundle\Model\AttributeScore;
 use Valantic\DataQualityBundle\Model\ObjectScore;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectConfigRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectRepository;
-use Valantic\DataQualityBundle\Service\CacheService;
 use Valantic\DataQualityBundle\Service\UserSettingsService;
 use Valantic\DataQualityBundle\Service\Formatters\PercentageFormatter;
 use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
-use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\AbstractAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\FieldCollectionAttribute;
+use Valantic\DataQualityBundle\Validation\DataObject\Attributes\Attribute;
 use Valantic\DataQualityBundle\Validation\DataObject\Attributes\LocalizedAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\ObjectBrickAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\PlainAttribute;
-use Valantic\DataQualityBundle\Validation\DataObject\Attributes\RelationAttribute;
 
-abstract class AbstractValidateObject implements ValidatableInterface, ScorableInterface, ColorableInterface, PassFailInterface
+abstract class AbstractValidateObject implements ValidatableInterface, ColorableInterface, PassFailInterface, ScorableInterface
 {
     use ColorScoreTrait;
     protected Concrete $obj;
-    protected array $groups = [];
+    protected ?array $groups = null;
     protected array $validationConfig;
+    protected bool $cacheScores = true;
 
     /**
      * Validators used for this object.
@@ -44,28 +41,27 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     protected AbstractDefinitionInformation $classInformation;
     protected array $skippedConstraints = [];
     protected ?bool $ignoreFallbackLanguage = null;
+    protected array $allowedLocales = [];
 
     /**
      * Validate an object and all its attributes.
      */
     public function __construct(
         protected EventDispatcherInterface $eventDispatcher,
-        protected DefinitionInformationFactory $definitionInformationFactory,
         protected ContainerInterface $container,
         protected ConfigurationRepository $configurationRepository,
-        protected FieldCollectionAttribute $fieldCollectionAttribute,
-        protected LocalizedAttribute $localizedAttribute,
-        protected ObjectBrickAttribute $objectBrickAttribute,
-        protected PlainAttribute $plainAttribute,
-        protected RelationAttribute $relationAttribute,
         protected DataObjectConfigRepository $dataObjectConfigRepository,
         protected TagAwareCacheInterface $cache,
-        protected CacheService $cacheService,
         protected DataObjectRepository $dataObjectRepository,
         protected PercentageFormatter $percentageFormatter,
         protected UserSettingsService $settingsService,
         protected Security $securityService,
+        protected NormalizerInterface $normalizer,
+        protected LocaleService $localeService,
+        protected Attribute $simpleAttribute,
+        protected LocalizedAttribute $localizedAttribute,
     ) {
+        $this->allowedLocales = Tool::getValidLanguages();
     }
 
     /**
@@ -74,36 +70,6 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
     public function addSkippedConstraint(string $constraintValidator): void
     {
         $this->skippedConstraints[] = $constraintValidator;
-    }
-
-    /**
-     * Get the scores for the individual attributes.
-     *
-     * @return array<string,AttributeScore>
-     */
-    public function attributeScores(): array
-    {
-        $config = $this->configurationRepository->getConfigForClass($this->obj::class);
-
-        /** @var User */
-        $user = $this->securityService->getUser();
-        $userConfig = $this->settingsService->get($this->obj->getClassName(), $user->getUserIdentifier());
-
-        return $this->cache->get(
-            md5(sprintf(
-                '%s_%s_%s_%s_%s',
-                __METHOD__,
-                $this->obj->getId(),
-                implode('', $this->groups),
-                json_encode($config),
-                json_encode($userConfig)
-            )),
-            function(ItemInterface $item): array {
-                $item->tag($this->cacheService->getTags($this->obj));
-
-                return $this->calculateScores();
-            }
-        );
     }
 
     /**
@@ -149,13 +115,8 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
             $this->score(),
             $this instanceof MultiScorableInterface ? $this->scores() : [],
             $this->passes(),
-            $this->colors()
+            $this instanceof MultiColorableInterface ? $this->colors() : [],
         );
-    }
-
-    public function setGroups(array $groups): void
-    {
-        $this->groups = $groups;
     }
 
     public function setIgnoreFallbackLanguage(bool $ignoreFallbackLanguage): void
@@ -163,9 +124,51 @@ abstract class AbstractValidateObject implements ValidatableInterface, ScorableI
         $this->ignoreFallbackLanguage = $ignoreFallbackLanguage;
     }
 
+    public function getIgnoreFallbackLanguage(): bool
+    {
+        if ($this->ignoreFallbackLanguage !== null) {
+            return $this->ignoreFallbackLanguage;
+        }
+
+        return $this->ignoreFallbackLanguage = $this->dataObjectConfigRepository->get($this->obj::class)->getIgnoreFallbackLanguage($this->obj);
+    }
+
     public function passes(): bool
     {
         return $this->score() === 1.0;
+    }
+
+    public function setAllowedLocales(array $locales): void
+    {
+        $this->allowedLocales = array_intersect($locales, Tool::getValidLanguages());
+    }
+
+    public function setCacheScores(bool $cacheScore): void
+    {
+        $this->cacheScores = $cacheScore;
+    }
+
+    public function setGroups(array $groups): void
+    {
+        $this->groups = $groups;
+    }
+
+    public function getGroups(): array
+    {
+        if ($this->groups !== null) {
+            return $this->groups;
+        }
+
+        $groups = [];
+        foreach ($this->configurationRepository->getConfiguredAttributes($this->obj::class) as $attribute) {
+            foreach ($this->configurationRepository->getRulesForAttribute($this->obj::class, $attribute) as $rule) {
+                foreach ($rule['groups'] ?? [] as $group) {
+                    $groups[] = $group;
+                }
+            }
+        }
+
+        return $this->groups = $groups;
     }
 
     /**

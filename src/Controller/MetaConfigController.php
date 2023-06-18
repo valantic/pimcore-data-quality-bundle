@@ -10,8 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
+use Valantic\DataQualityBundle\Repository\DataObjectRepository;
+use Valantic\DataQualityBundle\Service\CacheService;
 use Valantic\DataQualityBundle\Service\UserSettingsService;
-use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 use Valantic\DataQualityBundle\Shared\SortOrderTrait;
 
 #[Route('/admin/valantic/data-quality/meta-config')]
@@ -58,7 +59,7 @@ class MetaConfigController extends BaseController
     {
         $this->checkPermission(self::CONFIG_NAME);
         $classes = array_map(
-            fn ($name): array => ['name' => $name, 'short' => $this->classBasename($name)],
+            fn ($name): array => ['name' => $name, 'short' => self::classBasename($name)],
             $this->getClassNames()
         );
 
@@ -68,39 +69,32 @@ class MetaConfigController extends BaseController
     }
 
     /**
-     * Return a list of possible locales to configure.
-     */
-    #[Route('/locales', options: ['expose' => true], methods: ['GET'])]
-    public function listLocalesAction(LocalesList $localesList): JsonResponse
-    {
-        $this->checkPermission(self::CONFIG_NAME);
-
-        $localeNames = [];
-        foreach ($localesList->all() as $locale) {
-            $localeNames[] = ['locale' => $locale];
-        }
-
-        return $this->json(['locales' => $localeNames]);
-    }
-
-    /**
      * Adds or updates the locale config for a class.
      */
     #[Route('/modify', options: ['expose' => true], methods: ['POST'])]
-    public function modifyAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
-    {
-        if (empty($request->request->get('classname'))) {
+    public function modifyAction(
+        Request $request,
+        ConfigurationRepository $configurationRepository,
+        CacheService $cacheService,
+    ): JsonResponse {
+        /** @var class-string $className */
+        $className = (string) $request->request->get('classname');
+
+        if (empty($className)) {
             return $this->json(['status' => false]);
         }
         $configurationRepository->setClassConfig(
-            (string) $request->request->get('classname'),
-            $request->request->get('locales', []),
+            $className,
+            (array) $request->request->get('locales', []),
             $request->request->getInt('threshold_green'),
             $request->request->getInt('threshold_orange'),
             $request->request->getInt('nesting_limit', 1),
             $request->request->getBoolean('ignore_fallback_language'),
             $request->request->getBoolean('disable_tab_on_object')
         );
+        $configurationRepository->persist();
+
+        $cacheService->clearTag(sprintf('%s_%s', CacheService::DATA_QUALITY_CACHE_KEY, self::classBasename($className)));
 
         return $this->json([
             'status' => true,
@@ -111,12 +105,23 @@ class MetaConfigController extends BaseController
      * Deletes a config entry for a class.
      */
     #[Route('/modify', options: ['expose' => true], methods: ['DELETE'])]
-    public function deleteAction(Request $request, ConfigurationRepository $configurationRepository): JsonResponse
-    {
-        if (empty($request->request->get('classname'))) {
+    public function deleteAction(
+        Request $request,
+        ConfigurationRepository $configurationRepository,
+        CacheService $cacheService,
+    ): JsonResponse {
+        /** @var class-string $className */
+        $className = (string) $request->request->get('classname');
+
+        if (empty($className)) {
             return $this->json(['status' => false]);
         }
-        $configurationRepository->deleteClassConfig((string) $request->request->get('classname'));
+        $configurationRepository->deleteClassConfig(
+            $className
+        );
+        $configurationRepository->persist();
+
+        $cacheService->clearTag(sprintf('%s_%s', CacheService::DATA_QUALITY_CACHE_KEY, self::classBasename($className)));
 
         return $this->json([
             'status' => true,
@@ -127,7 +132,7 @@ class MetaConfigController extends BaseController
      * Resets all user config.
      */
     #[Route('/reset', options: ['expose' => true], methods: ['POST'])]
-    public function resetAction(Request $request, UserSettingsService $settingsService): JsonResponse
+    public function resetAction(Request $request, UserSettingsService $settingsService, CacheService $cacheService): JsonResponse
     {
         $className = (string) $request->request->get('classname');
 
@@ -136,6 +141,8 @@ class MetaConfigController extends BaseController
         }
 
         $settingsService->deleteAll($className);
+
+        $cacheService->clearTag(CacheService::DATA_QUALITY_USER_TAG_KEY);
 
         return $this->json([
             'status' => true,
@@ -146,13 +153,21 @@ class MetaConfigController extends BaseController
      * Adds or updates the user config.
      */
     #[Route('/user/modify', options: ['expose' => true], methods: ['POST'])]
-    public function userModifyAction(Request $request, UserSettingsService $settingsService): JsonResponse
-    {
+    public function userModifyAction(
+        Request $request,
+        UserSettingsService $settingsService,
+        ConfigurationRepository $configurationRepository,
+        CacheService $cacheService,
+    ): JsonResponse {
         $className = (string) $request->request->get('classname');
 
         if (empty($className)) {
             return $this->json(['status' => false]);
         }
+
+        /** @var class-string $fullClassName */
+        $fullClassName = sprintf('%s\%s', DataObjectRepository::PIMCORE_DATA_OBJECT_NAMESPACE, $className);
+        $ignoreFallbackLanguage = $configurationRepository->getIgnoreFallbackLanguage($fullClassName);
 
         $settings = [
             'groups' => $request->request->get('groups'),
@@ -161,7 +176,13 @@ class MetaConfigController extends BaseController
 
         /** @var User $user */
         $user = $this->getUser();
-        $settingsService->set($settings, $className, $user->getUserIdentifier());
+        if (empty($settings['groups']) && $settings['ignoreFallbackLanguage'] === $ignoreFallbackLanguage) {
+            $settingsService->delete($className, $user->getUserIdentifier());
+        } else {
+            $settingsService->set($settings, $className, $user->getUserIdentifier());
+        }
+
+        $cacheService->clearTag(sprintf('%s_%d', CacheService::DATA_QUALITY_USER_TAG_KEY, $user->getUser()->getId()));
 
         return $this->json([
             'status' => true,
@@ -172,7 +193,7 @@ class MetaConfigController extends BaseController
      * Resets the current user config.
      */
     #[Route('/user/reset', options: ['expose' => true], methods: ['POST'])]
-    public function userResetAction(Request $request, UserSettingsService $settingsService): JsonResponse
+    public function userResetAction(Request $request, UserSettingsService $settingsService, CacheService $cacheService): JsonResponse
     {
         $className = (string) $request->request->get('classname');
 
@@ -183,6 +204,8 @@ class MetaConfigController extends BaseController
         /** @var User $user */
         $user = $this->getUser();
         $settingsService->delete($className, $user->getUserIdentifier());
+
+        $cacheService->clearTag(sprintf('%s_%d', CacheService::DATA_QUALITY_USER_TAG_KEY, $user->getUser()->getId()));
 
         return $this->json([
             'status' => true,

@@ -3,6 +3,19 @@ valantic.dataquality.settings_meta = Class.create({
 
     initialize: function (parent) {
         this.parent = parent;
+
+        const data = [];
+        pimcore.globalmanager.get('user').contentLanguages.split(',').forEach((key) => {
+            data.push({
+                locale: key,
+                name: pimcore.available_languages[key],
+            });
+        });
+
+        this.languageStore = Ext.data.Store({
+            fields: ['locale', 'name'],
+            data: data,
+        });
     },
 
     activate: function () {
@@ -91,8 +104,7 @@ valantic.dataquality.settings_meta = Class.create({
                     dataIndex: 'locales',
                     filter: 'string',
                     flex: 200,
-                    // eslint-disable-next-line no-unused-vars
-                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    renderer: function (value) {
                         return value.join(', ');
                     },
                 },
@@ -172,8 +184,7 @@ valantic.dataquality.settings_meta = Class.create({
         return this.layout;
     },
 
-    // eslint-disable-next-line no-unused-vars
-    onMainContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+    onMainContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e) {
         const rec = this.store.getAt(rowIndex);
 
         const menu = new Ext.menu.Menu();
@@ -188,8 +199,7 @@ valantic.dataquality.settings_meta = Class.create({
                         classname: rec.get('classname'),
                         attributename: rec.get('attributename'),
                     },
-                    // eslint-disable-next-line no-unused-vars
-                    success: function (response, opts) {
+                    success: function () {
                         this.store.reload();
                     }.bind(this),
                 });
@@ -214,44 +224,38 @@ valantic.dataquality.settings_meta = Class.create({
             },
         });
 
-        const localesStore = new Ext.data.Store({
-            fields: ['name'],
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('valantic_dataquality_metaconfig_listlocales'),
-                reader: {
-                    type: 'json',
-                    rootProperty: 'locales',
-                },
+        const localeInfo = Ext.create('Ext.Component', {
+            html: t('valantic_dataquality_config_settings_locales'),
+            width: 350,
+            style: {
+                marginTop: '10px',
+                marginBottom: '5px',
             },
         });
 
         const localeCombo = new Ext.ux.form.MultiSelect({
-            fieldLabel: t('valantic_dataquality_config_column_locales'),
             name: 'locales[]',
             editable: true,
-            displayField: 'locale',
+            displayField: 'name',
             valueField: 'locale',
-            store: localesStore,
+            store: this.languageStore,
             mode: 'local',
             triggerAction: 'all',
-            width: 250,
+            width: 350,
+            height: 180,
             value: record ? record.get('locales') : null,
         });
 
-        const classnameCombo = {
-            xtype: 'combo',
+        const classnameCombo = Ext.create('Ext.form.ComboBox', {
             fieldLabel: t('valantic_dataquality_config_column_classname'),
+            store: classesStore,
+            queryMode: 'local',
             name: 'classname',
-            editable: true,
             displayField: 'short',
             valueField: 'name',
-            store: classesStore,
-            mode: 'local',
-            triggerAction: 'all',
-            width: 250,
+            width: 350,
             value: record ? record.get('classname') : null,
-        };
+        });
 
         const greenRange = {
             xtype: 'numberfield',
@@ -307,13 +311,13 @@ valantic.dataquality.settings_meta = Class.create({
         const formPanel = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px;',
             // eslint-disable-next-line max-len
-            items: [classnameCombo, localeCombo, greenRange, orangeRange, nestingLimitRange, ignoreFallbackLanguage, disableTabOnObject],
+            items: [classnameCombo, localeInfo, localeCombo, greenRange, orangeRange, nestingLimitRange, ignoreFallbackLanguage, disableTabOnObject],
         });
 
         const modifyWin = new Ext.Window({
             modal: true,
-            width: 300,
-            height: 470,
+            width: 380,
+            height: 600,
             closable: true,
             items: [formPanel],
             buttons: [{
@@ -332,8 +336,7 @@ valantic.dataquality.settings_meta = Class.create({
                                 params: {
                                     classname: values.classname.split('\\').pop(),
                                 },
-                                // eslint-disable-next-line no-unused-vars
-                                success: function (response, opts) {
+                                success: function () {
                                     this.store.reload();
                                 }.bind(this),
                             });
@@ -354,8 +357,7 @@ valantic.dataquality.settings_meta = Class.create({
                         url: Routing.generate('valantic_dataquality_metaconfig_modify'),
                         method: 'post',
                         params: values,
-                        // eslint-disable-next-line no-unused-vars
-                        success: function (response, opts) {
+                        success: function () {
                             this.store.reload();
                         }.bind(this),
                     });
@@ -367,7 +369,6 @@ valantic.dataquality.settings_meta = Class.create({
 
         modifyWin.on('beforerender', function () {
             classesStore.load();
-            localesStore.load();
         });
 
         modifyWin.show();

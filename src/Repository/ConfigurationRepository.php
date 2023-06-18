@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Yaml\Yaml;
 use Valantic\DataQualityBundle\DependencyInjection\Configuration;
 use Valantic\DataQualityBundle\Enum\ThresholdEnum;
+use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Throwable;
 use Valantic\DataQualityBundle\Shared\SafeArray;
@@ -17,7 +18,7 @@ class ConfigurationRepository
     use SafeArray;
     public const CONTAINER_TAG = 'valantic.pimcore_data_quality.config';
     protected ?array $config = null;
-    protected bool $isConfigDirty = false;
+    protected ?array $classInformation = null;
 
     public function __construct(
         protected ParameterBagInterface $parameterBag,
@@ -27,10 +28,6 @@ class ConfigurationRepository
 
     public function persist(): void
     {
-        if (!$this->isConfigDirty) {
-            return;
-        }
-
         $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfig()], Yaml::DUMP_OBJECT_AS_MAP);
 
         if (empty($this->getConfigFile())) {
@@ -69,21 +66,38 @@ class ConfigurationRepository
      */
     public function getForClass(string $className): array
     {
+        $classInformation = $this->getClassInformation($className);
+
+        if (!$this->isClassConfigured($classInformation->getName())) {
+            return [];
+        }
+
+        return $this->safeArray($this->classes(), $className);
+    }
+
+    /**
+     * Given a class name, return the DefinitionInformation.
+     *
+     * @param class-string $className
+     */
+    public function getClassInformation(string $className): AbstractDefinitionInformation
+    {
         try {
-            $classInformation = $this->definitionInformationFactory->make($className);
-            $className = $classInformation->getName();
-            if (empty($className)) {
-                throw new \RuntimeException(sprintf('Could not look up %s.', $className));
+            if (!isset($this->classInformation[$className])) {
+                $classInformation = $this->definitionInformationFactory->make($className);
+                $className = $classInformation->getName();
+
+                if (empty($className)) {
+                    throw new \RuntimeException(sprintf('Could not look up %s.', $className));
+                }
+
+                return $this->classInformation[$className] = $classInformation;
             }
         } catch (Throwable) {
             throw new \InvalidArgumentException();
         }
 
-        if (!$this->isClassConfigured($className)) {
-            return [];
-        }
-
-        return $this->safeArray($this->classes(), $className);
+        return $this->classInformation[$className];
     }
 
     /**
@@ -400,7 +414,6 @@ class ConfigurationRepository
     private function setConfig(array $config): void
     {
         $this->config = $config;
-        $this->isConfigDirty = true;
     }
 
     /**

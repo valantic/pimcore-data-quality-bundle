@@ -20,6 +20,7 @@ valantic_dataquality_config_constraint_ignore_fallback_languages: 'Ignore fallba
 valantic_dataquality_config_constraints_tooltip: 'Constraints'
 valantic_dataquality_config_details_for: 'Details for'
 valantic_dataquality_config_meta_tooltip: 'Classes'
+valantic_dataquality_config_settings_locales: 'Languages (no language means all)'
 valantic_dataquality_config_settings: 'Data Quality Bundle Settings'
 valantic_dataquality_config_settings_reset: 'Reset all user settings to the class level settings.'
 valantic_dataquality_config_settings_reset_confirmation_title: 'Confirmation'

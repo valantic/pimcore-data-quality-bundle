@@ -3,6 +3,8 @@ valantic.dataquality.objectView = Class.create({
 
     initialize: function (object) {
         this.object = object;
+
+        document.addEventListener(pimcore.events.postSaveObject, this.reload.bind(this));
     },
 
     getLayout: function () {
@@ -16,6 +18,7 @@ valantic.dataquality.objectView = Class.create({
             }
 
             this.activeGroups = [];
+            this.allowedLocales = [];
             this.activeIgnoreFallbackLanguage = null;
 
             this.store = Ext.create('Ext.data.Store', {
@@ -40,7 +43,7 @@ valantic.dataquality.objectView = Class.create({
                         const objectData = records[0].getData().object;
                         const settingsData = records[0].getData().settings;
 
-                        if (objectData.color && objectData.score) {
+                        if (objectData.color && objectData.scores) {
                             this.layout.setTitle(
                                 `${t('valantic_dataquality_pimcore_tab_name')} (<span style="color: ${objectData.color}">${this.formatAsPercentage(objectData.score)}</span>)`,
                             );
@@ -50,11 +53,15 @@ valantic.dataquality.objectView = Class.create({
                         }
 
                         this.activeGroups = settingsData.groups;
+                        this.allowedLocales = settingsData.allowedLocales;
                         this.activeIgnoreFallbackLanguage = settingsData.ignoreFallbackLanguage;
 
                         this.attributesStore.loadRawData(records[0].getData());
                         this.groupsStore.loadRawData(records[0].getData());
 
+                        if (this.detailView) {
+                            this.detailView.removeAll(false);
+                        }
                         this.showDetail(this.globalScores, this.globalColors, t('valantic_dataquality_view_global_locales'));
                     },
                 },
@@ -82,9 +89,6 @@ valantic.dataquality.objectView = Class.create({
             });
 
             const plugins = ['pimcore.gridfilters'];
-
-            // eslint-disable-next-line max-len
-            this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.attributesStore);
 
             this.filterField = new Ext.form.TextField({
                 xtype: 'textfield',
@@ -330,7 +334,6 @@ valantic.dataquality.objectView = Class.create({
                     },
                 ],
                 region: 'center',
-                bbar: this.pagingtoolbar,
                 tbar: tbar,
                 plugins: plugins,
                 viewConfig: {
@@ -350,6 +353,7 @@ valantic.dataquality.objectView = Class.create({
 
             this.detailView = new Ext.Panel({
                 region: 'east',
+                autoScroll: true,
                 minWidth: 350,
                 width: 350,
                 split: true,
