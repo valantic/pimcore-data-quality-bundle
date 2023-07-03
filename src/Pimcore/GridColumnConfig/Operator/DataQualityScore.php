@@ -43,7 +43,7 @@ class DataQualityScore extends AbstractOperator
         }
 
         $scores = $this->validation->scores();
-        $score = $scores[$this->context['language']] ?? 0;
+        $score = $scores[$this->context['language']] ?? (array_sum($scores) / count($scores));
 
         return sprintf('%d %%', (int) round($score * 100));
     }
