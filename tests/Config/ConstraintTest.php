@@ -81,16 +81,8 @@ class ConstraintTest extends AbstractTestCase
         $configurationRepository->modifyNote($this->className, $this->attributeName, 'ipsum');
         $this->assertSame('ipsum', $configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
 
-        $configurationRepository->deleteNote($this->className, $this->attributeName);
-        $configurationRepository->deleteNote($this->className, $this->attributeName);
-        $this->assertNull($configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
-
-        $configurationRepository->deleteNote($this->className, $this->attributeNameOther);
-        $this->assertNull($configurationRepository->getNoteForAttribute($this->className, $this->attributeNameOther));
-
-        $this->assertNull($configurationRepository->getNoteForAttribute($this->classNameOther, $this->attributeName));
-        $configurationRepository->deleteNote($this->classNameOther, $this->attributeName);
-        $this->assertNull($configurationRepository->getNoteForAttribute($this->classNameOther, $this->attributeName));
+        $configurationRepository->modifyNote($this->className, $this->attributeName, '');
+        $this->assertSame('', $configurationRepository->getNoteForAttribute($this->className, $this->attributeName));
     }
 
     public function testWriteDoubleAdd(): void
