@@ -8,8 +8,8 @@ use Valantic\DataQualityBundle\Constraint\AbstractCustomConstraint;
 
 class SampleConstraintMinimal extends AbstractCustomConstraint
 {
-    public string  $message = 'The string "{{ string }}" is no nonsense.';
-    public mixed  $expected;
+    public string $message = 'The string "{{ string }}" is no nonsense.';
+    public mixed $expected;
     public mixed $allowed;
 
     public function validatedBy()

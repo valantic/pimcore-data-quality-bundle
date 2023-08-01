@@ -329,22 +329,6 @@ class ConfigurationRepository
     }
 
     /**
-     * Deletes a class-attribute note.
-     *
-     * @param class-string $className
-     */
-    public function deleteNote(string $className, string $attributeName): void
-    {
-        if (!$this->isClassConfigured($className) || !$this->isAttributeConfigured($className, $attributeName)) {
-            return;
-        }
-
-        $config = $this->getConfig();
-        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES][$attributeName][Configuration::CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE] = null;
-        $this->setConfig($config);
-    }
-
-    /**
      * Given a class name, return the corresponding config for $attribute.
      *
      * @param class-string $className Base name or ::class
