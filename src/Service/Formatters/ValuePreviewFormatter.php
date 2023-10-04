@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Service\Formatters;
 
 use Pimcore\Model\User as PimcoreUser;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Security\User\TokenStorageUserResolver;
 
 class ValuePreviewFormatter extends ValueFormatter
 {
