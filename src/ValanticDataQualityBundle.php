@@ -5,12 +5,26 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Pimcore\Extension\Bundle\Installer\InstallerInterface;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
+use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Valantic\DataQualityBundle\DependencyInjection\Compiler\SerializerPass;
 use Valantic\DataQualityBundle\Installer\Installer;
 
-class ValanticDataQualityBundle extends AbstractPimcoreBundle
+class ValanticDataQualityBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
-    use PackageVersionTrait;
+    use BundleAdminClassicTrait;
+
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
+
+    public function build(ContainerBuilder $container): void
+    {
+        $container->addCompilerPass(new SerializerPass());
+    }
 
     public function getJsPaths(): array
     {
@@ -21,6 +35,7 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
             '/bundles/valanticdataquality/js/pimcore/settings.js',
             '/bundles/valanticdataquality/js/pimcore/startup.js',
             '/bundles/valanticdataquality/js/pimcore/objects/classes/data/valanticDataQualityScore.js',
+            '/bundles/valanticdataquality/js/pimcore/objects/gridcolumn/operator/valanticDataQualityScore.js',
         ];
     }
 
@@ -29,18 +44,14 @@ class ValanticDataQualityBundle extends AbstractPimcoreBundle
      *
      * @codeCoverageIgnore Can't be executed in testing
      */
-    public function getInstaller(): Installer
+    public function getInstaller(): ?InstallerInterface
     {
-        return $this->container->get(Installer::class);
-    }
+        $installer = $this->container?->get(Installer::class);
 
-    /**
-     * {@inheritDoc}
-     *
-     * @codeCoverageIgnore
-     */
-    protected function getComposerPackageName(): string
-    {
-        return 'valantic/pimcore-data-quality-bundle';
+        if ($installer instanceof InstallerInterface) {
+            return $installer;
+        }
+
+        return null;
     }
 }

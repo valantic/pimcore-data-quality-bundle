@@ -2,12 +2,50 @@
 
 namespace Valantic\DataQualityBundle\Service;
 
-use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Cache;
+use Pimcore\Model\User as PimcoreUser;
+use Valantic\DataQualityBundle\Shared\ClassBasenameTrait;
 
 class CacheService
 {
-    public function getTags(Concrete $concrete): array
+    use ClassBasenameTrait;
+
+    final public const DATA_QUALITY_CACHE_KEY = 'valantic_dataquality_object';
+    final public const DATA_QUALITY_SCORE_CACHE_KEY = 'valantic_dataquality_object_score';
+    final public const DATA_QUALITY_USER_TAG_KEY = 'valantic_dataquality_user';
+
+    public function clearTag(string $tag): void
     {
-        return [sprintf('valantic_dataquality_object_%d', $concrete->getId())];
+        Cache::clearTag($tag);
+    }
+
+    public static function getScoreCacheKey(int $id): string
+    {
+        return sprintf('%s_%d', self::DATA_QUALITY_SCORE_CACHE_KEY, $id);
+    }
+
+    public static function getCacheKey(int $id, ?PimcoreUser $user = null): string
+    {
+        if ($user !== null && $user->getId() !== null) {
+            return sprintf('%s_%d_user_%d', self::DATA_QUALITY_CACHE_KEY, $id, $user->getId());
+        }
+
+        return sprintf('%s_%d', self::DATA_QUALITY_CACHE_KEY, $id);
+    }
+
+    public static function getTags(int $id, string $className, ?PimcoreUser $user = null): array
+    {
+        $tags = [
+            self::DATA_QUALITY_CACHE_KEY,
+            sprintf('%s_%d', self::DATA_QUALITY_CACHE_KEY, $id),
+            sprintf('%s_%s', self::DATA_QUALITY_CACHE_KEY, self::classBasename($className)),
+        ];
+
+        if ($user !== null && $user->getId() !== null) {
+            $tags[] = self::DATA_QUALITY_USER_TAG_KEY;
+            $tags[] = sprintf('%s_%d', self::DATA_QUALITY_USER_TAG_KEY, $user->getId());
+        }
+
+        return $tags;
     }
 }

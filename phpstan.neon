@@ -14,3 +14,7 @@ parameters:
 
     strictRules:
         disallowedConstructs: false
+
+    ignoreErrors:
+        - '#^Method Valantic\\DataQualityBundle\\Normalizer\\ObjectbrickNormalizer\:\:normalize\(\) return type with generic class ArrayObject does not specify its types: TKey, TValue$#'
+        - '#^Method Valantic\\DataQualityBundle\\Normalizer\\FieldcollectionNormalizer\:\:normalize\(\) return type with generic class ArrayObject does not specify its types: TKey, TValue$#'

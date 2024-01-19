@@ -6,7 +6,7 @@ namespace Valantic\DataQualityBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 
@@ -24,7 +24,8 @@ class ValanticDataQualityExtension extends Extension
 
         $container->setParameter(ConfigurationRepository::CONTAINER_TAG, $config);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yml');
+        $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../../config']));
+        $loader->load('services.yaml');
+        $loader->load('serializer.yaml');
     }
 }

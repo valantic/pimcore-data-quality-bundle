@@ -1,0 +1,67 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Valantic\DataQualityBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
+    Valantic\DataQualityBundle\Validation\DataObject\Validate: '@valantic_dataquality_validate_dataobject'
+
+    Valantic\DataQualityBundle\Installer\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('ValanticDataQualityBundle')"
+
+    Valantic\DataQualityBundle\Service\:
+        resource: '../src/Service'
+
+    Valantic\DataQualityBundle\Config\:
+        resource: '../src/Config'
+
+    Valantic\DataQualityBundle\Validation\DataObject\Attributes\:
+        resource: '../src/Validation/DataObject/Attributes'
+
+    Valantic\DataQualityBundle\Repository\:
+        resource: '../src/Repository'
+
+    Valantic\DataQualityBundle\Repository\ConstraintDefinitions:
+        arguments:
+            - !tagged_iterator validator.constraint_validator
+
+    valantic_dataquality_validate_dataobject:
+        public: true
+        class: 'Valantic\DataQualityBundle\Validation\DataObject\Validate'
+        arguments:
+            $normalizer: '@valantic.dataquality.serializer'
+
+    Valantic\DataQualityBundle\Repository\DataObjectConfigRepository:
+        arguments:
+            - !tagged_iterator valantic.dataquality.config.dataobject
+
+    _instanceof:
+        Valantic\DataQualityBundle\Constraint\CustomConstraintParametersInterface:
+            tags: [ 'validator.constraint_validator' ]
+        Valantic\DataQualityBundle\Config\DataObjectConfigInterface:
+            tags: [ 'valantic.dataquality.config.dataobject' ]
+
+    Valantic\DataQualityBundle\EventListener\CacheListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: handleObject }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: handleObject }
+            - { name: kernel.event_listener, event: pimcore.user.postUpdate, method: handleUser }
+            - { name: kernel.event_listener, event: pimcore.user.preDelete, method: handleUser }
+
+    # Pimcore Grid column configurations
+    Valantic\DataQualityBundle\Pimcore\GridColumnConfig\Operator\Factory\DataQualityColorFactory:
+        public: true
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: dataquality_color }
+
+    Valantic\DataQualityBundle\Pimcore\GridColumnConfig\Operator\Factory\DataQualityScoreFactory:
+        public: true
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: dataquality_score }

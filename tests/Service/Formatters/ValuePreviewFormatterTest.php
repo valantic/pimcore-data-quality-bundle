@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Tests\Service\Formatters;
 
+use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
 use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
-use Valantic\DataQualityBundle\Service\Locales\LocalesList;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class ValuePreviewFormatterTest extends AbstractTestCase
@@ -15,12 +16,14 @@ class ValuePreviewFormatterTest extends AbstractTestCase
 
     protected function setUp(): void
     {
-        $locales = ['de', 'en'];
+        $user = (new User())
+            ->setId(1)
+            ->setLanguage('en');
 
-        $localesList = $this->createMock(LocalesList::class);
-        $localesList->method('all')->willReturn($locales);
+        $userResolver = $this->createMock(TokenStorageUserResolver::class);
+        $userResolver->method('getUser')->willReturn($user);
 
-        $this->formatter = new ValuePreviewFormatter($localesList);
+        $this->formatter = new ValuePreviewFormatter($userResolver);
     }
 
     public function testSimple(): void
@@ -34,13 +37,22 @@ class ValuePreviewFormatterTest extends AbstractTestCase
         $formatter = new ValueFormatter();
         $text = 'abcde';
         $textRepeated = str_repeat($text, 100);
-        $this->assertTrue(strlen($formatter->format($textRepeated)) > strlen($this->formatter->format($textRepeated)));
+        $this->assertTrue(strlen((string) $formatter->format($textRepeated)) > strlen($this->formatter->format($textRepeated)));
     }
 
     public function testDefaultLocale(): void
     {
+        $user = (new User())
+            ->setId(1)
+            ->setLanguage('de');
+
+        $userResolver = $this->createMock(TokenStorageUserResolver::class);
+        $userResolver->method('getUser')->willReturn($user);
+
+        $formatter = new ValuePreviewFormatter($userResolver);
+
         $text = ['de' => 'Deutscher Text', 'en' => 'english text'];
-        $this->assertSame($text['de'], $this->formatter->format($text));
+        $this->assertSame($text['de'], $formatter->format($text));
     }
 
     public function testEmptyDefaultLocale(): void
@@ -51,10 +63,10 @@ class ValuePreviewFormatterTest extends AbstractTestCase
 
     public function testNoDefaultLocale(): void
     {
-        $text = ['fr' => 'texte français', 'en' => 'english text'];
+        $text = ['fr' => 'texte français', 'de' => 'german text'];
         $this->assertStringContainsString($text['fr'], $this->formatter->format($text));
         $this->assertStringContainsString(', ', $this->formatter->format($text));
-        $this->assertStringContainsString($text['en'], $this->formatter->format($text));
+        $this->assertStringContainsString($text['de'], $this->formatter->format($text));
     }
 
     public function testEmptyLocales(): void

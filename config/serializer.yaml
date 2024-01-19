@@ -1,0 +1,31 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # SERIALIZER
+    #
+    # We use an isolated serializer instance in the DataQualityBundle.
+    Valantic\DataQualityBundle\Serializer\Serializer:
+        class: Symfony\Component\Serializer\Serializer
+        arguments: ['@?', '@?']
+
+    valantic.dataquality.serializer:
+        alias: Valantic\DataQualityBundle\Serializer\Serializer
+
+    valantic.dataquality.serializer.encoder.json:
+        class: Symfony\Component\Serializer\Encoder\JsonEncoder
+        tags:
+            -  { name: valantic.dataquality.serializer.encoder }
+
+    valantic.dataquality.serializer.normalizer.datetime:
+        class: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+        tags:
+            -  { name: valantic.dataquality.serializer.normalizer, priority: -910 }
+
+    Valantic\DataQualityBundle\Normalizer\:
+        resource: "../src/Normalizer"
+        tags:
+            - { name: valantic.dataquality.serializer.normalizer }

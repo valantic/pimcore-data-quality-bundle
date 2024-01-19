@@ -4,63 +4,38 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\EventListener;
 
+use Pimcore\Cache;
 use Pimcore\Event\Model\DataObjectEvent;
-use Pimcore\Model\DataObject\Concrete;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
+use Pimcore\Event\Model\UserRoleEvent;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\User as PimcoreUser;
 use Valantic\DataQualityBundle\Service\CacheService;
 
-class CacheListener extends AbstractListener
+class CacheListener
 {
-    public function __construct(
-        protected TagAwareCacheInterface $cache,
-        protected CacheService $cacheService,
-        protected ConfigurationRepository $configurationRepository,
-    ) {
-    }
-
-    public function handle(DataObjectEvent $event): void
+    public function handleObject(DataObjectEvent $event): void
     {
-        if (!self::$isEnabled) {
+        if ($event->hasArgument('saveVersionOnly') && $event->getArgument('saveVersionOnly') === true) {
             return;
         }
 
         $obj = $event->getObject();
-        if (!$obj instanceof Concrete) {
+        if (!$obj instanceof DataObject\Concrete) {
             return;
         }
 
-        $this->flushCache($obj);
+        Cache::clearTag(sprintf('%s_%d', CacheService::DATA_QUALITY_CACHE_KEY, $obj->getId()));
     }
 
-    protected function flushCache(Concrete $obj): void
+    public function handleUser(UserRoleEvent $event): void
     {
-        $this->cache->invalidateTags($this->cacheService->getTags($obj));
+        $userRole = $event->getUserRole();
+        if ($userRole instanceof PimcoreUser) {
+            Cache::clearTag(sprintf('%s_%d', CacheService::DATA_QUALITY_USER_TAG_KEY, $userRole->getId()));
 
-        $this->doFlushCache(
-            $obj,
-            $obj,
-            $this->configurationRepository->getConfiguredNestingLimit($obj::class)
-        );
-    }
-
-    protected function doFlushCache(Concrete $obj, Concrete $root, int $currentNestingLevel): void
-    {
-        foreach ([...$obj->getDependencies()->getRequires(), ...$obj->getDependencies()->getRequiredBy()] as $requirement) {
-            if ($requirement['type'] !== 'object') {
-                continue;
-            }
-            $req = Concrete::getById($requirement['id']);
-
-            if (!$req instanceof Concrete) {
-                continue;
-            }
-
-            $this->cache->invalidateTags($this->cacheService->getTags($req));
-
-            if ($currentNestingLevel <= $this->configurationRepository->getConfiguredNestingLimit($root::class)) {
-                $this->doFlushCache($req, $root, $currentNestingLevel + 1);
-            }
+            return;
         }
+
+        Cache::clearTag(CacheService::DATA_QUALITY_USER_TAG_KEY);
     }
 }

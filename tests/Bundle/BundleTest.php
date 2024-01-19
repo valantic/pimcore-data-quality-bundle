@@ -27,7 +27,7 @@ class BundleTest extends AbstractTestCase
         foreach ($this->bundle->getJsPaths() as $path) {
             $path = $path instanceof RouteReference ? $path->getRoute() : $path;
             /** @var string $path */
-            $this->assertFileExists($basepath . str_replace($prefix, '', $path));
+            $this->assertFileExists(PIMCORE_WEB_ROOT . str_replace($prefix, '', $path));
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Valantic\DataQualityBundle\Event;
 
 class ConstraintFailureEvent extends Event
 {
-    public const NAME = 'valantic.data_quality.constraint_failure';
+    final public const NAME = 'valantic.data_quality.constraint_failure';
 
     /**
      * ConstraintFailureEvent constructor.

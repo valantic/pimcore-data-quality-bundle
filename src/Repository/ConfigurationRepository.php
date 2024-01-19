@@ -8,16 +8,16 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Yaml\Yaml;
 use Valantic\DataQualityBundle\DependencyInjection\Configuration;
 use Valantic\DataQualityBundle\Enum\ThresholdEnum;
+use Valantic\DataQualityBundle\Service\Information\AbstractDefinitionInformation;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
-use Throwable;
 use Valantic\DataQualityBundle\Shared\SafeArray;
 
 class ConfigurationRepository
 {
     use SafeArray;
-    public const CONTAINER_TAG = 'valantic.pimcore_data_quality.config';
+    final public const CONTAINER_TAG = 'valantic.pimcore_data_quality.config';
     protected ?array $config = null;
-    protected bool $isConfigDirty = false;
+    protected ?array $classInformation = null;
 
     public function __construct(
         protected ParameterBagInterface $parameterBag,
@@ -27,15 +27,7 @@ class ConfigurationRepository
 
     public function persist(): void
     {
-        if (!$this->isConfigDirty) {
-            return;
-        }
-
         $yaml = Yaml::dump([Configuration::CONFIG_KEY => $this->getConfig()], Yaml::DUMP_OBJECT_AS_MAP);
-
-        if (empty($this->getConfigFile())) {
-            return;
-        }
 
         file_put_contents($this->getConfigFile(), $yaml);
     }
@@ -69,21 +61,38 @@ class ConfigurationRepository
      */
     public function getForClass(string $className): array
     {
-        try {
-            $classInformation = $this->definitionInformationFactory->make($className);
-            $className = $classInformation->getName();
-            if (empty($className)) {
-                throw new \RuntimeException(sprintf('Could not look up %s.', $className));
-            }
-        } catch (Throwable) {
-            throw new \InvalidArgumentException();
-        }
+        $classInformation = $this->getClassInformation($className);
 
-        if (!$this->isClassConfigured($className)) {
+        if (!$this->isClassConfigured($classInformation->getName())) {
             return [];
         }
 
         return $this->safeArray($this->classes(), $className);
+    }
+
+    /**
+     * Given a class name, return the DefinitionInformation.
+     *
+     * @param class-string $className
+     */
+    public function getClassInformation(string $className): AbstractDefinitionInformation
+    {
+        try {
+            if (!isset($this->classInformation[$className])) {
+                $classInformation = $this->definitionInformationFactory->make($className);
+                $className = $classInformation->getName();
+
+                if (empty($className)) {
+                    throw new \RuntimeException(sprintf('Could not look up %s.', $className));
+                }
+
+                return $this->classInformation[$className] = $classInformation;
+            }
+        } catch (\Throwable) {
+            throw new \InvalidArgumentException();
+        }
+
+        return $this->classInformation[$className];
     }
 
     /**
@@ -115,7 +124,7 @@ class ConfigurationRepository
     /**
      * @param class-string $className
      *
-     * @return array<string,float>
+     * @return array<string,int>
      */
     public function getConfiguredThresholds(string $className): array
     {
@@ -125,9 +134,11 @@ class ConfigurationRepository
     /**
      * @param class-string $className
      */
-    public function getConfiguredThreshold(string $className, ThresholdEnum $thresholdEnum): float
+    public function getConfiguredThreshold(string $className, ThresholdEnum $thresholdEnum): int
     {
-        return $this->getConfiguredThresholds($className)[$thresholdEnum->value] ?? $thresholdEnum->defaultValue();
+        $threshold = $this->getConfiguredThresholds($className)[$thresholdEnum->name] ?? throw new \InvalidArgumentException();
+
+        return (int) ($threshold * 100);
     }
 
     /**
@@ -209,7 +220,7 @@ class ConfigurationRepository
      */
     public function setClassConfig(
         string $className,
-        array $locales = [],
+        ?array $locales = null,
         int $thresholdGreen = 0,
         int $thresholdOrange = 0,
         int $nestingLimit = 1,
@@ -220,10 +231,10 @@ class ConfigurationRepository
         $config[Configuration::CONFIG_KEY_CLASSES] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className] ??= [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG] ??= [];
-        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_LOCALES] = $locales;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_LOCALES] = $locales ?? [];
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS] ??= [];
-        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::green()->value] = $thresholdGreen / 100;
-        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::orange()->value] = $thresholdOrange / 100;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::green->name] = $thresholdGreen / 100;
+        $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS][ThresholdEnum::orange->name] = $thresholdOrange / 100;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT] = $nestingLimit;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE] = $ignoreFallbackLanguage;
         $config[Configuration::CONFIG_KEY_CLASSES][$className][Configuration::CONFIG_KEY_CLASSES_CONFIG][Configuration::CONFIG_KEY_CLASSES_CONFIG_DISABLE_TAB_ON_OBJECT] = $disableTabOnObject;
@@ -286,7 +297,7 @@ class ConfigurationRepository
     {
         try {
             $paramsParsed = json_decode($params ?: '', true, 512, \JSON_THROW_ON_ERROR);
-        } catch (Throwable) {
+        } catch (\Throwable) {
             $paramsParsed = $params;
         }
 
@@ -354,7 +365,7 @@ class ConfigurationRepository
         return $this->getAttributesForClass($className)[$attribute] ?? [];
     }
 
-    private function getConfigFile(): ?string
+    private function getConfigFile(): string
     {
         $pathsToCheck = [
             Configuration::CONFIGURATION_DIRECTORY,
@@ -370,7 +381,7 @@ class ConfigurationRepository
             }
         }
 
-        return null;
+        return PIMCORE_CONFIGURATION_DIRECTORY . '/data_quality.yaml';
     }
 
     private function getConfig(): array
@@ -381,8 +392,9 @@ class ConfigurationRepository
 
             $additionalConfig = [];
 
-            if ($this->getConfigFile() !== null) {
-                $systemConfig = Yaml::parseFile($this->getConfigFile())[Configuration::CONFIG_KEY] ?? [];
+            $configFile = $this->getConfigFile();
+            if (file_exists($configFile)) {
+                $systemConfig = Yaml::parseFile($configFile)[Configuration::CONFIG_KEY] ?? [];
 
                 $configuration = new Configuration();
                 $configTree = $configuration->getConfigTreeBuilder()->buildTree();
@@ -400,7 +412,6 @@ class ConfigurationRepository
     private function setConfig(array $config): void
     {
         $this->config = $config;
-        $this->isConfigDirty = true;
     }
 
     /**

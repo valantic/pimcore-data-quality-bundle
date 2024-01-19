@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Service\Formatters;
 
-use Valantic\DataQualityBundle\Service\Locales\LocalesList;
+use Pimcore\Model\User as PimcoreUser;
+use Pimcore\Security\User\TokenStorageUserResolver;
 
 class ValuePreviewFormatter extends ValueFormatter
 {
-    /**
-     * ValuePreviewFormatter constructor.
-     */
-    public function __construct(protected LocalesList $localesList)
-    {
+    public function __construct(
+        protected TokenStorageUserResolver $userResolver,
+    ) {
     }
 
     public function format(mixed $input): string|array
@@ -24,7 +23,9 @@ class ValuePreviewFormatter extends ValueFormatter
             return $this->shorten($output, $threshold);
         }
 
-        $primaryLanguage = $this->localesList->all()[0];
+        /** @var PimcoreUser $user */
+        $user = $this->userResolver->getUser();
+        $primaryLanguage = $user->getLanguage();
         if (array_key_exists($primaryLanguage, $output) && !empty($output[$primaryLanguage])) {
             return $this->shorten($output[$primaryLanguage], $threshold);
         }

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Valantic\DataQualityBundle\Controller\MetaConfigController;
 use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
-use Valantic\DataQualityBundle\Service\Locales\LocalesList;
+use Valantic\DataQualityBundle\Service\CacheService;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class MetaControllerTest extends AbstractTestCase
@@ -21,6 +21,7 @@ class MetaControllerTest extends AbstractTestCase
      * @var MetaConfigController
      */
     protected MetaConfigController|MockObject $controller;
+    protected MockObject|CacheService $cacheService;
     protected ConfigurationRepository $configurationRepository;
 
     /** @var class-string */
@@ -28,6 +29,9 @@ class MetaControllerTest extends AbstractTestCase
 
     protected function setUp(): void
     {
+        $this->cacheService = $this->getMockBuilder(CacheService::class)
+            ->onlyMethods(['clearTag'])->getMock();
+
         $this->controller = $this->getMockBuilder(MetaConfigController::class)
             ->onlyMethods(['getClassNames'])
             ->getMock();
@@ -121,8 +125,8 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertSame($this->configurationRepository->getConfiguredNestingLimit($decoded['classname']), $decoded['nesting_limit']);
         $this->assertSame($this->configurationRepository->getConfiguredLocales($decoded['classname']), $decoded['locales']);
-        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::green()) * 100, $decoded['threshold_green'], 0.1);
-        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::orange()) * 100, $decoded['threshold_orange'], 0.1);
+        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::GREEN) * 100, $decoded['threshold_green'], 0.1);
+        $this->assertEqualsWithDelta($this->configurationRepository->getConfiguredThreshold($decoded['classname'], ThresholdEnum::ORANGE) * 100, $decoded['threshold_orange'], 0.1);
     }
 
     public function testListClasses(): void
@@ -147,7 +151,11 @@ class MetaControllerTest extends AbstractTestCase
     public function testAddMissingData(): void
     {
         $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
-        $response = $this->controller->modifyAction(Request::create('/', 'POST'), $this->configurationRepository);
+        $response = $this->controller->modifyAction(
+            Request::create('/', 'POST'),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -167,7 +175,8 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
         $response = $this->controller->modifyAction(
             Request::create('/', 'POST', ['classname' => $this->className]),
-            $this->configurationRepository
+            $this->configurationRepository,
+            $this->cacheService
         );
 
         $content = $response->getContent();
@@ -179,8 +188,8 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertTrue($this->configurationRepository->isClassConfigured($this->className));
 
         $this->assertSame([], $this->configurationRepository->getConfiguredLocales($this->className));
-        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::orange()));
-        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
+        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::ORANGE));
+        $this->assertSame(0.0, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::GREEN));
         $this->assertSame(1, $this->configurationRepository->getConfiguredNestingLimit($this->className));
 
         $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
@@ -192,13 +201,17 @@ class MetaControllerTest extends AbstractTestCase
     public function testAddCompleteData(): void
     {
         $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
-        $response = $this->controller->modifyAction(Request::create('/', 'POST', [
-            'classname' => $this->className,
-            'locales' => ['de', 'en'],
-            'threshold_green' => 80,
-            'threshold_orange' => 50,
-            'nesting_limit' => 2,
-        ]), $this->configurationRepository);
+        $response = $this->controller->modifyAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->className,
+                'locales' => ['de', 'en'],
+                'threshold_green' => 80,
+                'threshold_orange' => 50,
+                'nesting_limit' => 2,
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -209,8 +222,8 @@ class MetaControllerTest extends AbstractTestCase
         $this->assertTrue($this->configurationRepository->isClassConfigured($this->className));
 
         $this->assertSame(['de', 'en'], $this->configurationRepository->getConfiguredLocales($this->className));
-        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::orange()));
-        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
+        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::ORANGE));
+        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::GREEN));
         $this->assertSame(2, $this->configurationRepository->getConfiguredNestingLimit($this->className));
 
         $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
@@ -222,7 +235,11 @@ class MetaControllerTest extends AbstractTestCase
     public function testDeleteMissingData(): void
     {
         $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
-        $response = $this->controller->deleteAction(Request::create('/', 'POST'), $this->configurationRepository);
+        $response = $this->controller->deleteAction(
+            Request::create('/', 'POST'),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -240,7 +257,13 @@ class MetaControllerTest extends AbstractTestCase
     public function testDeleteCompleteData(): void
     {
         $this->assertCount(3, $this->configurationRepository->getConfiguredClasses());
-        $response = $this->controller->deleteAction(Request::create('/', 'POST', ['classname' => $this->classNameConfigured]), $this->configurationRepository);
+        $response = $this->controller->deleteAction(
+            Request::create('/', 'POST', [
+                'classname' => $this->classNameConfigured,
+            ]),
+            $this->configurationRepository,
+            $this->cacheService
+        );
 
         $content = $response->getContent();
         $this->assertIsString($content);
@@ -254,30 +277,5 @@ class MetaControllerTest extends AbstractTestCase
 
         $this->assertArrayHasKey('status', $decoded);
         $this->assertTrue($decoded['status']);
-    }
-
-    public function testLocalesList(): void
-    {
-        $locales = ['de', 'en'];
-
-        $localesList = $this->createMock(LocalesList::class);
-        $localesList->method('all')->willReturn($locales);
-
-        $response = $this->controller->listLocalesAction($localesList);
-
-        $content = $response->getContent();
-        $this->assertIsString($content);
-        $content = (string) $content;
-
-        $this->assertJson($content);
-        $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
-
-        $this->assertArrayHasKey('locales', $decoded);
-        $this->assertSameSize($locales, $decoded['locales']);
-
-        foreach ($decoded['locales'] as $entry) {
-            $this->assertArrayHasKey('locale', $entry);
-            $this->assertContains($entry['locale'], $locales, $entry['locale']);
-        }
     }
 }
