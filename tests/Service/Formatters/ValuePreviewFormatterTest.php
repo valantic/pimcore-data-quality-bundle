@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Tests\Service\Formatters;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Valantic\DataQualityBundle\Service\Formatters\ValueFormatter;
 use Valantic\DataQualityBundle\Service\Formatters\ValuePreviewFormatter;
 use Valantic\DataQualityBundle\Tests\AbstractTestCase;
@@ -37,7 +37,7 @@ class ValuePreviewFormatterTest extends AbstractTestCase
         $formatter = new ValueFormatter();
         $text = 'abcde';
         $textRepeated = str_repeat($text, 100);
-        $this->assertTrue(strlen($formatter->format($textRepeated)) > strlen($this->formatter->format($textRepeated)));
+        $this->assertTrue(strlen((string) $formatter->format($textRepeated)) > strlen($this->formatter->format($textRepeated)));
     }
 
     public function testDefaultLocale(): void

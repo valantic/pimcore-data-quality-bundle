@@ -20,13 +20,13 @@ abstract class AbstractValidator extends ConstraintValidator
     /**
      * Validation passes if all relations have a green score.
      */
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if ($constraint::class !== $this->getConstraint()) {
             throw new UnexpectedTypeException($constraint, $this->getConstraint());
         }
 
-        $this->validate = $constraint->container->get('valantic_dataquality_validate_dataobject');
+        $this->validate = \Pimcore::getContainer()->get('valantic_dataquality_validate_dataobject');
 
         if ($value === null || $value === '') {
             return;

@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 
 class Kernel extends SymfonyKernel
 {
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         return [
             new FrameworkBundle(),

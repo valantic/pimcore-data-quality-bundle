@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$container\\.$#"
-			count: 1
-			path: src/Constraint/RelationScore/AbstractValidator.php
-
-		-
 			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$message\\.$#"
 			count: 1
 			path: src/Constraint/RelationScore/AbstractValidator.php
@@ -24,11 +19,6 @@ parameters:
 			message: "#^Parameter \\#4 \\$params of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:modifyRule\\(\\) expects string\\|null, bool\\|float\\|int\\|string\\|null given\\.$#"
 			count: 1
 			path: src/Controller/ConstraintConfigController.php
-
-		-
-			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\:\\:get\\(\\) expects bool\\|float\\|int\\|string\\|null, array given\\.$#"
-			count: 1
-			path: src/Controller/MetaConfigController.php
 
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:addDefaultsIfNotSet\\(\\)\\.$#"
@@ -71,11 +61,6 @@ parameters:
 			path: src/Repository/ConstraintDefinitions.php
 
 		-
-			message: "#^Variable method call on Pimcore\\\\Model\\\\DataObject\\.$#"
-			count: 2
-			path: src/Repository/DataObjectRepository.php
-
-		-
 			message: "#^Method Valantic\\\\DataQualityBundle\\\\Service\\\\Formatters\\\\ValueFormatter\\:\\:shorten\\(\\) should return array\\<string\\>\\|string but returns array\\<array\\<string\\>\\|string\\>\\.$#"
 			count: 1
 			path: src/Service/Formatters/ValueFormatter.php
@@ -89,24 +74,3 @@ parameters:
 			message: "#^Method Valantic\\\\DataQualityBundle\\\\Service\\\\Formatters\\\\ValueFormatter\\:\\:trim\\(\\) should return array\\<string\\>\\|string but returns array\\<array\\<string\\>\\|string\\>\\|string\\.$#"
 			count: 1
 			path: src/Service/Formatters/ValueFormatter.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\|Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Definition\\:\\:getTitle\\(\\)\\.$#"
-			count: 2
-			path: src/Service/Information/AbstractDefinitionInformation.php
-
-		-
-			message: "#^Method Valantic\\\\DataQualityBundle\\\\ValanticDataQualityBundle\\:\\:getInstaller\\(\\) should return Valantic\\\\DataQualityBundle\\\\Installer\\\\Installer but returns object\\|null\\.$#"
-			count: 1
-			path: src/ValanticDataQualityBundle.php
-
-		-
-			message: "#^Instanceof between Valantic\\\\DataQualityBundle\\\\Validation\\\\DataObject\\\\Attributes\\\\AbstractAttribute and Valantic\\\\DataQualityBundle\\\\Validation\\\\ColorableInterface will always evaluate to true\\.$#"
-			count: 1
-			path: src/Validation/AbstractValidateObject.php
-
-		-
-			message: "#^Instanceof between Valantic\\\\DataQualityBundle\\\\Validation\\\\DataObject\\\\Attributes\\\\AbstractAttribute and Valantic\\\\DataQualityBundle\\\\Validation\\\\ScorableInterface will always evaluate to true\\.$#"
-			count: 1
-			path: src/Validation/AbstractValidateObject.php
-

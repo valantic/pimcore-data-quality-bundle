@@ -2,8 +2,8 @@
 
 namespace Valantic\DataQualityBundle\Pimcore\GridColumnConfig\Operator;
 
+use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\Cache;
-use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Valantic\DataQualityBundle\Service\CacheService;

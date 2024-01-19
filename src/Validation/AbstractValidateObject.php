@@ -7,9 +7,8 @@ namespace Valantic\DataQualityBundle\Validation;
 use Pimcore\Localization\LocaleService;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Tool;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Valantic\DataQualityBundle\Model\AttributeScore;
@@ -48,7 +47,6 @@ abstract class AbstractValidateObject implements ValidatableInterface, Colorable
      */
     public function __construct(
         protected EventDispatcherInterface $eventDispatcher,
-        protected ContainerInterface $container,
         protected ConfigurationRepository $configurationRepository,
         protected DataObjectConfigRepository $dataObjectConfigRepository,
         protected TagAwareCacheInterface $cache,

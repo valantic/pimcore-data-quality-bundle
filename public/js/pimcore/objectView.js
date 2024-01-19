@@ -159,7 +159,7 @@ valantic.dataquality.objectView = Class.create({
                                                 if (confirmation === 'yes') {
                                                     const values = {
                                                         // eslint-disable-next-line max-len
-                                                        classname: this.object.data.general.o_className,
+                                                        classname: this.object.data.general.className,
                                                     };
 
                                                     Ext.Ajax.request({
@@ -184,7 +184,7 @@ valantic.dataquality.objectView = Class.create({
                                     handler: () => {
                                         const values = formPanel.getForm().getFieldValues();
 
-                                        values.classname = this.object.data.general.o_className;
+                                        values.classname = this.object.data.general.className;
 
                                         Ext.Ajax.request({
                                             url: Routing.generate('valantic_dataquality_metaconfig_usermodify'),
@@ -216,12 +216,12 @@ valantic.dataquality.objectView = Class.create({
                             pimcore.globalmanager.get('valantic_dataquality_settings')
                                 .activate({
                                     tab: 'constraints',
-                                    filter: this.object.data.general.o_className,
+                                    filter: this.object.data.general.className,
                                 });
                         } catch (e) {
                             pimcore.globalmanager.add('valantic_dataquality_settings', new valantic.dataquality.settings({
                                 tab: 'constraints',
-                                filter: this.object.data.general.o_className,
+                                filter: this.object.data.general.className,
                             }));
                         }
                     },

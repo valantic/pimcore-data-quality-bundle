@@ -10,7 +10,7 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class MetaTest extends AbstractTestCase
 {
-    protected ConfigurationRepository$configurationRepository;
+    protected ConfigurationRepository $configurationRepository;
 
     /** @var class-string */
     protected string $className = 'SomeClass';
@@ -39,8 +39,8 @@ class MetaTest extends AbstractTestCase
 
         $this->assertIsInt($this->configurationRepository->getConfiguredNestingLimit($this->classNameConfigured));
         $this->assertIsArray($this->configurationRepository->getConfiguredLocales($this->classNameConfigured));
-        $this->assertArrayHasKey(ThresholdEnum::orange()->value, $this->configurationRepository->getConfiguredThresholds($this->classNameConfigured));
-        $this->assertArrayHasKey(ThresholdEnum::green()->value, $this->configurationRepository->getConfiguredThresholds($this->classNameConfigured));
+        $this->assertArrayHasKey(ThresholdEnum::ORANGE->value, $this->configurationRepository->getConfiguredThresholds($this->classNameConfigured));
+        $this->assertArrayHasKey(ThresholdEnum::GREEN->value, $this->configurationRepository->getConfiguredThresholds($this->classNameConfigured));
     }
 
     public function testReadMissingClass(): void
@@ -75,11 +75,11 @@ class MetaTest extends AbstractTestCase
     public function testWriteUpdates(): void
     {
         $this->configurationRepository->setClassConfig($this->className, [], 80, 0, 1);
-        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
+        $this->assertSame(0.8, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::GREEN));
 
         $this->configurationRepository->setClassConfig($this->className, [], 70, 0, 1);
         $this->configurationRepository->setClassConfig($this->className, [], 50, 70, 1);
-        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::green()));
+        $this->assertSame(0.5, $this->configurationRepository->getConfiguredThreshold($this->className, ThresholdEnum::GREEN));
 
         $this->configurationRepository->setClassConfig($this->className, [], 0, 0, 1);
         $this->assertSame([], $this->configurationRepository->getConfiguredLocales($this->className));

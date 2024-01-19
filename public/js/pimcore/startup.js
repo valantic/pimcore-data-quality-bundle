@@ -3,21 +3,21 @@ document.addEventListener(pimcore.events.pimcoreReady, () => {
         return;
     }
 
-    const toolbar = pimcore.globalmanager.get('layout_toolbar');
-    if (toolbar.marketingMenu) {
-        const parentMenuEntry = toolbar.marketingMenu;
-
-        parentMenuEntry.add({
-            text: t('valantic_dataquality_config_settings'),
-            iconCls: 'pimcore_nav_icon_properties',
-            handler: function () {
-                try {
-                    pimcore.globalmanager.get('valantic_dataquality_settings').activate({});
-                } catch (e) {
-                    pimcore.globalmanager.add('valantic_dataquality_settings', new valantic.dataquality.settings({}));
-                }
-            },
-        });
+    if (layoutToolbar.settingsMenu) {
+        layoutToolbar.settingsMenu.add(
+            new Ext.Action({
+                id: 'valantic_dataquality_config_settings',
+                text: t('valantic_dataquality_config_settings'),
+                iconCls: 'pimcore_nav_icon_properties',
+                handler: function () {
+                    try {
+                        pimcore.globalmanager.get('valantic_dataquality_settings').activate();
+                    } catch (e) {
+                        pimcore.globalmanager.add('valantic_dataquality_settings', new valantic.dataquality.settings({}));
+                    }
+                },
+            })
+        );
     }
 });
 

@@ -62,10 +62,6 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v2
 
-      - if: matrix.php-versions == '8.2'
-        name: Set phpstan configuration for PHP 8.2
-        run: cat phpstan-php8.2.neon > phpstan.neon
-
       - name: Static analysis using phpstan
         run: composer run phpstan -- --error-format=github
 

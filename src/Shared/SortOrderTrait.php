@@ -37,11 +37,11 @@ trait SortOrderTrait
         // Sorting by $sortByFallback
         uasort(
             $sortByFallback,
-            fn (array $a, array $b): int => strnatcasecmp($a[$fallbackField], $b[$fallbackField])
+            fn (array $a, array $b): int => strnatcasecmp((string) $a[$fallbackField], (string) $b[$fallbackField])
         );
 
-        if (!in_array($sortDirection, UtilConstants::SORT_ORDER_DIRS, true)) {
-            throw new \InvalidArgumentException(sprintf('Unknown sort order %s, please use one of: %s', $sortDirection, implode(', ', UtilConstants::SORT_ORDER_DIRS)));
+        if (!in_array($sortDirection, UtilConstants::getOrderDirs(), true)) {
+            throw new \InvalidArgumentException(sprintf('Unknown sort order %s, please use one of: %s', $sortDirection, implode(', ', UtilConstants::getOrderDirs())));
         }
 
         if ($sortDirection === UtilConstants::SORT_ORDER_DIR_DESC) {

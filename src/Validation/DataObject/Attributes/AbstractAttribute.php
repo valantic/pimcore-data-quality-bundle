@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Validation\DataObject\Attributes;
 
 use Pimcore\Model\DataObject;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -36,7 +35,6 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
     public function __construct(
         protected ConfigurationRepository $configurationRepository,
         protected EventDispatcherInterface $eventDispatcher,
-        protected ContainerInterface $container,
         protected ValidatorInterface $validator,
     ) {
     }
@@ -89,9 +87,6 @@ abstract class AbstractAttribute implements ValidatableInterface, ScorableInterf
 
             try {
                 $instance = new $name(...[$params]);
-                if (method_exists($instance, 'setContainer')) {
-                    $instance->setContainer($this->container);
-                }
                 $this->constraints[] = $instance;
             } catch (\Throwable $throwable) {
                 $this->eventDispatcher->dispatch(new InvalidConstraintEvent($throwable, $name, $params));

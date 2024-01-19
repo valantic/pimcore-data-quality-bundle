@@ -51,7 +51,7 @@ class SettingsStoreService
 
             if ($type === 'array') {
                 $type = 'string';
-                $value = json_encode($value);
+                $value = json_encode($value, JSON_THROW_ON_ERROR);
             }
         }
 

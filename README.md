@@ -6,14 +6,20 @@
 
 ## Installation
 
+```json
+"require" : {
+    "valantic/pimcore-data-quality-bundle" : "^2.0"
+}
 ```
-composer require valantic/pimcore-data-quality-bundle
 
-touch config/pimcore/data_quality.yaml
-
-console pimcore:bundle:enable ValanticDataQualityBundle
-console pimcore:bundle:install ValanticDataQualityBundle
+Add Bundle to `bundles.php`:
+```php
+return [
+    Valantic\DataQualityBundle\ValanticDataQualityBundle::class => ['all' => true],
+];
 ```
+
+- Execute: `$ bin/console pimcore:bundle:install ValanticDataQualityBundle`
 
 ## Documentation
 

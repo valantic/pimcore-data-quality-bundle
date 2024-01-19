@@ -1,6 +1,7 @@
 services:
     _defaults:
         autowire: true
+        autoconfigure: true
         public: false
 
     #
@@ -25,6 +26,6 @@ services:
             -  { name: valantic.dataquality.serializer.normalizer, priority: -910 }
 
     Valantic\DataQualityBundle\Normalizer\:
-        resource: "../../Normalizer"
+        resource: "../src/Normalizer"
         tags:
             - { name: valantic.dataquality.serializer.normalizer }

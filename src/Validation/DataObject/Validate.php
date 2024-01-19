@@ -41,7 +41,7 @@ class Validate extends AbstractValidateObject implements MultiColorableInterface
                 // Force set translator to the current locale
                 $this->localeService->setLocale($locale);
 
-                $parts = explode('.', $attribute, 3);
+                $parts = explode('.', (string) $attribute, 3);
                 $getter = 'get' . ucfirst($parts[0]);
                 if (method_exists($this->obj, $getter)) {
                     $objectData[$attribute][$locale] = $this->normalizer->normalize($this->obj->get($parts[0]), null, [

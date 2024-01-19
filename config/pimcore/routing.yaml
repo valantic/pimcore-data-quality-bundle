@@ -1,0 +1,5 @@
+_valantic_dataquality_bundle:
+    resource: "../../src/Controller/"
+    type: annotation
+    prefix: /admin/valantic/data-quality
+
