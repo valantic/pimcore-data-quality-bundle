@@ -1,18 +1,11 @@
 services:
-    # default configuration for services in *this* file
     _defaults:
-        # automatically injects dependencies in your services
         autowire: true
-        # automatically registers your services as commands, event subscribers, etc.
         autoconfigure: true
-        # this means you cannot fetch services directly from the container via $container->get()
-        # if you need to do this, you can override this setting on individual services
         public: false
 
-    # controllers are imported separately to make sure they're public
-    # and have a tag that allows actions to type-hint services
     Valantic\DataQualityBundle\Controller\:
-        resource: '../../Controller'
+        resource: '../src/Controller'
         public: true
         tags: [ 'controller.service_arguments' ]
 
@@ -20,18 +13,20 @@ services:
 
     Valantic\DataQualityBundle\Installer\Installer:
         public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('ValanticDataQualityBundle')"
 
     Valantic\DataQualityBundle\Service\:
-        resource: '../../Service'
+        resource: '../src/Service'
 
     Valantic\DataQualityBundle\Config\:
-        resource: '../../Config'
+        resource: '../src/Config'
 
     Valantic\DataQualityBundle\Validation\DataObject\Attributes\:
-        resource: '../../Validation/DataObject/Attributes'
+        resource: '../src/Validation/DataObject/Attributes'
 
     Valantic\DataQualityBundle\Repository\:
-        resource: '../../Repository'
+        resource: '../src/Repository'
 
     Valantic\DataQualityBundle\Repository\ConstraintDefinitions:
         arguments:

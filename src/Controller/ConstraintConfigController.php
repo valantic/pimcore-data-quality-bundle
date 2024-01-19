@@ -6,15 +6,14 @@ namespace Valantic\DataQualityBundle\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Throwable;
+use Symfony\Component\Routing\Attribute\Route;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\ConstraintDefinitions;
 use Valantic\DataQualityBundle\Service\CacheService;
 use Valantic\DataQualityBundle\Service\Information\DefinitionInformationFactory;
 use Valantic\DataQualityBundle\Shared\SortOrderTrait;
 
-#[Route('/admin/valantic/data-quality/constraint-config')]
+#[Route('/constraint-config')]
 class ConstraintConfigController extends BaseController
 {
     use SortOrderTrait;
@@ -37,7 +36,7 @@ class ConstraintConfigController extends BaseController
 
         foreach ($configurationRepository->getConfiguredClasses() as $className) {
             foreach ($configurationRepository->getConfiguredAttributes($className) as $attribute) {
-                if (stripos($className, (string) $filter) === false && stripos($attribute, (string) $filter) === false) {
+                if (stripos($className, (string) $filter) === false && stripos((string) $attribute, (string) $filter) === false) {
                     continue;
                 }
 
@@ -97,7 +96,7 @@ class ConstraintConfigController extends BaseController
         try {
             $classInformation = $definitionInformationFactory->make($request->query->get('classname'));
             $attributes = array_keys($classInformation->getAllAttributes());
-        } catch (Throwable) {
+        } catch (\Throwable) {
             return $this->json(['attributes' => []]);
         }
 

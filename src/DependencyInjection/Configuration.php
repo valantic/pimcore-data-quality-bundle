@@ -12,20 +12,20 @@ use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 
 class Configuration implements ConfigurationInterface
 {
-    public const CONFIGURATION_DIRECTORY = '';
-    public const CONFIG_KEY = 'valantic_data_quality';
-    public const CONFIG_KEY_CLASSES = 'classes';
-    public const CONFIG_KEY_CLASSES_CONFIG = 'config';
-    public const CONFIG_KEY_CLASSES_CONFIG_LOCALES = 'locales';
-    public const CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT = 'nesting_limit';
-    public const CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE = 'ignore_fallback_language';
-    public const CONFIG_KEY_CLASSES_CONFIG_DISABLE_TAB_ON_OBJECT = 'disable_tab_on_object';
-    public const CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME = 'score_field_name';
-    public const CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS = 'thresholds';
-    public const CONFIG_KEY_CLASSES_ATTRIBUTES = 'attributes';
-    public const CONFIG_KEY_CLASSES_ATTRIBUTES_RULES = 'rules';
-    public const CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE = 'note';
-    public const CONFIG_VALUE_CLASSES_CONFIG_NESTING_LIMIT = 1;
+    final public const CONFIGURATION_DIRECTORY = '';
+    final public const CONFIG_KEY = 'valantic_data_quality';
+    final public const CONFIG_KEY_CLASSES = 'classes';
+    final public const CONFIG_KEY_CLASSES_CONFIG = 'config';
+    final public const CONFIG_KEY_CLASSES_CONFIG_LOCALES = 'locales';
+    final public const CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT = 'nesting_limit';
+    final public const CONFIG_KEY_CLASSES_CONFIG_IGNORE_FALLBACK_LANGUAGE = 'ignore_fallback_language';
+    final public const CONFIG_KEY_CLASSES_CONFIG_DISABLE_TAB_ON_OBJECT = 'disable_tab_on_object';
+    final public const CONFIG_KEY_CLASSES_CONFIG_SCORE_FIELD_NAME = 'score_field_name';
+    final public const CONFIG_KEY_CLASSES_CONFIG_THRESHOLDS = 'thresholds';
+    final public const CONFIG_KEY_CLASSES_ATTRIBUTES = 'attributes';
+    final public const CONFIG_KEY_CLASSES_ATTRIBUTES_RULES = 'rules';
+    final public const CONFIG_KEY_CLASSES_ATTRIBUTES_NOTE = 'note';
+    final public const CONFIG_VALUE_CLASSES_CONFIG_NESTING_LIMIT = 1;
 
     protected const SYMFONY_CONSTRAINTS_NAMESPACE = 'Symfony\\Component\\Validator\\Constraints\\';
 
@@ -90,8 +90,8 @@ class Configuration implements ConfigurationInterface
             ->info('The thresholds where an object turns from red to orange or from orange to green')
             ->addDefaultsIfNotSet()
             ->children()
-            ->floatNode(ThresholdEnum::green()->value)->defaultValue(ThresholdEnum::green()->defaultValue())->end()
-            ->floatNode(ThresholdEnum::orange()->value)->defaultValue(ThresholdEnum::orange()->defaultValue())->end()
+            ->floatNode(ThresholdEnum::green->name)->defaultValue(ThresholdEnum::green->value / 100)->end()
+            ->floatNode(ThresholdEnum::orange->name)->defaultValue(ThresholdEnum::orange->value / 100)->end()
             ->end()
             ->end()
             ->integerNode(self::CONFIG_KEY_CLASSES_CONFIG_NESTING_LIMIT)

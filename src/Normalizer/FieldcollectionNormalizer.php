@@ -17,7 +17,7 @@ class FieldcollectionNormalizer extends AbstractNormalizer
 
     public function normalize($object, ?string $format = null, array $context = []): mixed
     {
-        $parts = explode('.', $context['resource_attribute'], 3);
+        $parts = explode('.', (string) $context['resource_attribute'], 3);
         $getter = 'get' . ucfirst($parts[2]);
         if (method_exists($object, $getter)) {
             return $this->normalizer->normalize($object->get($parts[2]), $format, $context);

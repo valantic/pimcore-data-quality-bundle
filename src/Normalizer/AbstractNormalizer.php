@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Valantic\DataQualityBundle\Normalizer;
 
 use Pimcore\Model\DataObject;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-abstract class AbstractNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
+abstract class AbstractNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
     use NormalizerAwareTrait;
 

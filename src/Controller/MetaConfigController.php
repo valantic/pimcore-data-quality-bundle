@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Security\User\User;
+use Pimcore\Security\User\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Valantic\DataQualityBundle\Enum\ThresholdEnum;
 use Valantic\DataQualityBundle\Repository\ConfigurationRepository;
 use Valantic\DataQualityBundle\Repository\DataObjectRepository;
@@ -15,7 +15,7 @@ use Valantic\DataQualityBundle\Service\CacheService;
 use Valantic\DataQualityBundle\Service\UserSettingsService;
 use Valantic\DataQualityBundle\Shared\SortOrderTrait;
 
-#[Route('/admin/valantic/data-quality/meta-config')]
+#[Route('/meta-config')]
 class MetaConfigController extends BaseController
 {
     use SortOrderTrait;
@@ -41,8 +41,8 @@ class MetaConfigController extends BaseController
                 'classname' => $className,
                 'nesting_limit' => $configurationRepository->getConfiguredNestingLimit($className),
                 'locales' => $configurationRepository->getConfiguredLocales($className),
-                'threshold_green' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::green()) * 100,
-                'threshold_orange' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::orange()) * 100,
+                'threshold_green' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::green),
+                'threshold_orange' => $configurationRepository->getConfiguredThreshold($className, ThresholdEnum::orange),
                 'ignore_fallback_language' => $configurationRepository->getIgnoreFallbackLanguage($className),
                 'disable_tab_on_object' => $configurationRepository->getDisableTabOnObject($className),
             ];
@@ -85,7 +85,7 @@ class MetaConfigController extends BaseController
         }
         $configurationRepository->setClassConfig(
             $className,
-            (array) $request->request->get('locales', []),
+            $request->get('locales'),
             $request->request->getInt('threshold_green'),
             $request->request->getInt('threshold_orange'),
             $request->request->getInt('nesting_limit', 1),
@@ -170,7 +170,7 @@ class MetaConfigController extends BaseController
         $ignoreFallbackLanguage = $configurationRepository->getIgnoreFallbackLanguage($fullClassName);
 
         $settings = [
-            'groups' => $request->request->get('groups'),
+            'groups' => $request->get('groups'),
             'ignoreFallbackLanguage' => $request->request->getBoolean('ignoreFallbackLanguage'),
         ];
 
@@ -181,8 +181,7 @@ class MetaConfigController extends BaseController
         } else {
             $settingsService->set($settings, $className, $user->getUserIdentifier());
         }
-
-        $cacheService->clearTag(sprintf('%s_%d', CacheService::DATA_QUALITY_USER_TAG_KEY, $user->getUser()->getId()));
+        $cacheService->clearTag(sprintf('%s_%d', CacheService::DATA_QUALITY_USER_TAG_KEY, $user->getId()));
 
         return $this->json([
             'status' => true,
@@ -205,7 +204,7 @@ class MetaConfigController extends BaseController
         $user = $this->getUser();
         $settingsService->delete($className, $user->getUserIdentifier());
 
-        $cacheService->clearTag(sprintf('%s_%d', CacheService::DATA_QUALITY_USER_TAG_KEY, $user->getUser()->getId()));
+        $cacheService->clearTag(sprintf('%s_%d', CacheService::DATA_QUALITY_USER_TAG_KEY, $user->getId()));
 
         return $this->json([
             'status' => true,

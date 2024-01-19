@@ -7,7 +7,7 @@ class UserSettingsService
     private const SCOPE = 'valantic-data-quality';
     private const SETTINGS_ID = 'settings';
 
-    public function __construct(private SettingsStoreService $settingsStoreService)
+    public function __construct(private readonly SettingsStoreService $settingsStoreService)
     {
     }
 

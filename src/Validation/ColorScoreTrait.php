@@ -56,8 +56,8 @@ trait ColorScoreTrait
 
         return $this->greenThreshold[$this->obj::class] = $this->configurationRepository->getConfiguredThreshold(
             $this->obj::class,
-            ThresholdEnum::green()
-        );
+            ThresholdEnum::green
+        ) / 100;
     }
 
     private function getOrangeThreshold(): float
@@ -68,7 +68,7 @@ trait ColorScoreTrait
 
         return $this->orangeThreshold[$this->obj::class] = $this->configurationRepository->getConfiguredThreshold(
             $this->obj::class,
-            ThresholdEnum::orange()
-        );
+            ThresholdEnum::orange
+        ) / 100;
     }
 }

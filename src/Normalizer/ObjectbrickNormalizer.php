@@ -17,7 +17,7 @@ class ObjectbrickNormalizer extends AbstractNormalizer
 
     public function normalize($object, ?string $format = null, array $context = []): mixed
     {
-        $parts = explode('.', $context['resource_attribute'], 3);
+        $parts = explode('.', (string) $context['resource_attribute'], 3);
         $getter = 'get' . ucfirst($parts[1]);
         $objectBrickData = null;
         if (method_exists($object, $getter)) {

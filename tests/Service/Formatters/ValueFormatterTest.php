@@ -37,8 +37,8 @@ class ValueFormatterTest extends AbstractTestCase
         $textRepeated = str_repeat($text, 100);
         $this->assertStringStartsWith($text, $formatter->format($textRepeated));
         $this->assertStringEndsWith(' […]', $formatter->format($textRepeated));
-        $this->assertTrue(strlen($textRepeated) > strlen($formatter->format($textRepeated)));
-        $this->assertSame(80 + 6, strlen($formatter->format($textRepeated)));
+        $this->assertTrue(strlen($textRepeated) > strlen((string) $formatter->format($textRepeated)));
+        $this->assertSame(80 + 6, strlen((string) $formatter->format($textRepeated)));
     }
 
     public function testLengthExact(): void
@@ -95,7 +95,7 @@ class ValueFormatterTest extends AbstractTestCase
         foreach ($text as $i => $t) {
             $this->assertStringStartsWith($t, $formatter->format($textRepeated)[$i]);
             $this->assertStringEndsWith(' […]', $formatter->format($textRepeated)[$i]);
-            $this->assertTrue(strlen($textRepeated[$i]) > strlen($formatter->format($textRepeated)[$i]));
+            $this->assertTrue(strlen($textRepeated[$i]) > strlen((string) $formatter->format($textRepeated)[$i]));
         }
     }
 

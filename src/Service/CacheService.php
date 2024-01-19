@@ -10,9 +10,9 @@ class CacheService
 {
     use ClassBasenameTrait;
 
-    public const DATA_QUALITY_CACHE_KEY = 'valantic_dataquality_object';
-    public const DATA_QUALITY_SCORE_CACHE_KEY = 'valantic_dataquality_object_score';
-    public const DATA_QUALITY_USER_TAG_KEY = 'valantic_dataquality_user';
+    final public const DATA_QUALITY_CACHE_KEY = 'valantic_dataquality_object';
+    final public const DATA_QUALITY_SCORE_CACHE_KEY = 'valantic_dataquality_object_score';
+    final public const DATA_QUALITY_USER_TAG_KEY = 'valantic_dataquality_user';
 
     public function clearTag(string $tag): void
     {

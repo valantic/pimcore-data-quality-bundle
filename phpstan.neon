@@ -18,6 +18,3 @@ parameters:
     ignoreErrors:
         - '#^Method Valantic\\DataQualityBundle\\Normalizer\\ObjectbrickNormalizer\:\:normalize\(\) return type with generic class ArrayObject does not specify its types: TKey, TValue$#'
         - '#^Method Valantic\\DataQualityBundle\\Normalizer\\FieldcollectionNormalizer\:\:normalize\(\) return type with generic class ArrayObject does not specify its types: TKey, TValue$#'
-        - '#^Class Valantic\\DataQualityBundle\\Controller\\BaseController extends deprecated class Pimcore\\Bundle\\AdminBundle\\Controller\\AdminController#'
-        - '#^Call to method checkPermission\(\) of deprecated class Pimcore\\Controller\\UserAwareController#'
-        - '#^Parameter \$userResolver of method Valantic\\DataQualityBundle\\Service\\Formatters\\ValuePreviewFormatter\:\:__construct\(\) has typehint with deprecated class Pimcore\\Bundle\\AdminBundle\\Security\\User\\TokenStorageUserResolver\:#'
