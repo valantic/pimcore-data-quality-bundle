@@ -11,6 +11,22 @@ parameters:
 			path: src/Constraint/RelationScore/AbstractValidator.php
 
 		-
+			message: """
+				#^Call to method checkPermission\\(\\) of deprecated class Pimcore\\\\Controller\\\\UserAwareController\\:
+				and will be removed in Pimcore 11\\. Use Pimcore\\\\Controller\\\\UserAwareController instead\\.$#
+			"""
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: """
+				#^Class Valantic\\\\DataQualityBundle\\\\Controller\\\\BaseController extends deprecated class Pimcore\\\\Bundle\\\\AdminBundle\\\\Controller\\\\AdminController\\:
+				and will be removed in Pimcore 11\\. Use Pimcore\\\\Controller\\\\UserAwareController instead\\.$#
+			"""
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
 			message: "#^Parameter \\#1 \\$className of method Valantic\\\\DataQualityBundle\\\\Repository\\\\ConfigurationRepository\\:\\:addClassAttribute\\(\\) expects class\\-string, string\\|string given\\.$#"
 			count: 1
 			path: src/Controller/ConstraintConfigController.php
@@ -134,6 +150,11 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\|Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Definition\\:\\:getTitle\\(\\)\\.$#"
 			count: 2
 			path: src/Service/Information/AbstractDefinitionInformation.php
+
+		-
+			message: "#^Cannot call method get\\(\\) on Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null\\.$#"
+			count: 1
+			path: src/ValanticDataQualityBundle.php
 
 		-
 			message: "#^Method Valantic\\\\DataQualityBundle\\\\ValanticDataQualityBundle\\:\\:getInstaller\\(\\) should return Valantic\\\\DataQualityBundle\\\\Installer\\\\Installer but returns object\\|null\\.$#"

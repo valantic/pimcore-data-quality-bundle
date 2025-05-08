@@ -135,7 +135,6 @@ Any constraint/validator for this bundle can also be used as a standard Symfony 
 As aforementioned, this bundle was written with robustness as a primary goal. Hence a lot of exceptions will be swalled without further ado. In some instances, events are emitted instead. These events are:
 
 - `Valantic\DataQualityBundle\Event\ConstraintFailureEvent`
-- `Valantic\DataQualityBundle\Event\InvalidConfigEvent`
 - `Valantic\DataQualityBundle\Event\InvalidConstraintEvent`
 
 ## PHP API

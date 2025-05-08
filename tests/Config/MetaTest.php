@@ -10,7 +10,7 @@ use Valantic\DataQualityBundle\Tests\AbstractTestCase;
 
 class MetaTest extends AbstractTestCase
 {
-    protected ConfigurationRepository$configurationRepository;
+    protected ConfigurationRepository $configurationRepository;
 
     /** @var class-string */
     protected string $className = 'SomeClass';
