@@ -18,6 +18,6 @@ class ClassInformation extends AbstractDefinitionInformation
      */
     public function getDefinition(): ?ClassDefinition
     {
-        return ClassDefinition::getByName($this->classBasename($this->name));
+        return ClassDefinition::getByName(self::classBasename($this->name));
     }
 }

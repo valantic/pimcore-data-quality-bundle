@@ -6,7 +6,7 @@ namespace Valantic\DataQualityBundle\Event;
 
 class InvalidConstraintEvent extends Event
 {
-    public const NAME = 'valantic.data_quality.invalid_constraint';
+    final public const NAME = 'valantic.data_quality.invalid_constraint';
 
     public function __construct(protected \Throwable $throwable, protected string $name, protected mixed $params)
     {

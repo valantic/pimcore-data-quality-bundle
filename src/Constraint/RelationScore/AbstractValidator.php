@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
-use Valantic\DataQualityBundle\Validation\BaseColorableInterface;
+use Valantic\DataQualityBundle\Validation\ColorableInterface;
 use Valantic\DataQualityBundle\Validation\DataObject\Validate;
 
 abstract class AbstractValidator extends ConstraintValidator
@@ -20,13 +20,13 @@ abstract class AbstractValidator extends ConstraintValidator
     /**
      * Validation passes if all relations have a green score.
      */
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if ($constraint::class !== $this->getConstraint()) {
             throw new UnexpectedTypeException($constraint, $this->getConstraint());
         }
 
-        $this->validate = $constraint->container->get('valantic_dataquality_validate_dataobject');
+        $this->validate = \Pimcore::getContainer()->get('valantic_dataquality_validate_dataobject');
 
         if ($value === null || $value === '') {
             return;
@@ -49,7 +49,7 @@ abstract class AbstractValidator extends ConstraintValidator
             $validation->validate();
             $totalCount++;
 
-            if ($validation->color() === $this->getThresholdKey() || ($this->getThresholdKey() === BaseColorableInterface::COLOR_ORANGE && $validation->color() === BaseColorableInterface::COLOR_GREEN)) {
+            if ($validation->color() === $this->getThresholdKey() || ($this->getThresholdKey() === ColorableInterface::COLOR_ORANGE && $validation->color() === ColorableInterface::COLOR_GREEN)) {
                 $validCount++;
             } else {
                 $failedIds[] = $id;

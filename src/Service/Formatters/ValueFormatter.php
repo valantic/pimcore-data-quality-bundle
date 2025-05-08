@@ -31,7 +31,7 @@ class ValueFormatter implements FormatterInterface
      */
     protected function trim(mixed $input): array|string
     {
-        return is_array($input) ? array_map(fn ($value) => $this->trim($value), $input) : trim($input);
+        return is_array($input) ? array_map(fn ($value) => $this->trim($value), $input) : trim((string) $input);
     }
 
     /**
@@ -45,10 +45,10 @@ class ValueFormatter implements FormatterInterface
             return array_map(fn ($value) => $this->shorten($value, $threshold), $input);
         }
 
-        if (strlen($input) <= $threshold) {
+        if (strlen((string) $input) <= $threshold) {
             return $input;
         }
 
-        return substr($input, 0, $threshold) . ' […]';
+        return substr((string) $input, 0, $threshold) . ' […]';
     }
 }

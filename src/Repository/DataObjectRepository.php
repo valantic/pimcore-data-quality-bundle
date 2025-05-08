@@ -7,8 +7,8 @@ use Pimcore\Model\DataObject\Listing;
 
 class DataObjectRepository
 {
-    public const PIMCORE_DATA_OBJECT_NAMESPACE = 'Pimcore\Model\DataObject';
-    public const PIMCORE_DATA_OBJECT_LISTING = 'Listing';
+    final public const PIMCORE_DATA_OBJECT_NAMESPACE = 'Pimcore\Model\DataObject';
+    final public const PIMCORE_DATA_OBJECT_LISTING = 'Listing';
 
     public function getListing(string $className): Listing
     {
@@ -20,15 +20,12 @@ class DataObjectRepository
 
     public function getValue(DataObject $object, string $fieldName): mixed
     {
-        $getter = "get$fieldName";
-
-        return $object->$getter();
+        return $object->get($fieldName);
     }
 
     public function setValue(DataObject $object, string $fieldName, mixed $value): void
     {
-        $setter = "set$fieldName";
-        $object->$setter($value);
+        $object->set($fieldName, $value);
     }
 
     public function update(DataObject $object, array $data = []): DataObject

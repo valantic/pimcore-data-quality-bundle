@@ -4,31 +4,8 @@ declare(strict_types=1);
 
 namespace Valantic\DataQualityBundle\Enum;
 
-use Spatie\Enum\Enum;
-
-/**
- * @method static self green()
- * @method static self orange()
- */
-class ThresholdEnum extends Enum
+enum ThresholdEnum: int
 {
-    public function defaultValue(): float
-    {
-        return match ($this->value) {
-            'green' => 0.9,
-            'orange' => 0.5,
-            default => throw new \InvalidArgumentException(),
-        };
-    }
-
-    /**
-     * @return array<string,string>
-     */
-    protected static function values(): array
-    {
-        return [
-            'green' => 'green',
-            'orange' => 'orange',
-        ];
-    }
+    case green = 90;
+    case orange = 50;
 }
